@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "309448590630",
+    "project_id": "izinboss-app",
+    "storage_bucket": "izinboss-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:309448590630:android:4c60ef89f96cff03e1ede7",
+        "android_client_info": {
+          "package_name": "com.naozumi.izinboss"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "309448590630-sfqr0ohqbgvk4sn98hh62mitgj8ch7ik.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfAgU6Y70-ZiyjmSbbX7-9_eaxEkr2SRY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "309448590630-rkp69i193b5kvnhlgs40v49rjbfefltb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,57 @@
+<resources>
+    <string name="app_name">IzinBoss</string>
+
+    <!-- Layout -->
+    <string name="welcome">Welcome</string>
+    <string name="welcome_desc">Let\'s get you started with</string>
+    <string name="register">Register</string>
+    <string name="login">Login</string>
+    <string name="powered_by_dicoding">Powered by Dicoding Story API v1</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="add_new_story">Add New Story</string>
+    <string name="welcome_back">Welcome Back</string>
+    <string name="input_email_password">Please input your email and password</string>
+    <string name="email">Email:</string>
+    <string name="password">Password:</string>
+    <string name="name">Name:</string>
+    <string name="create_account">Create a New Account to Continue</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    <string name="add_description">Add description</string>
+    <string name="upload_story">Upload Story</string>
+    <string name="settings">Settings</string>
+    <string name="log_out">Log out</string>
+    <string name="image_from_user">Image from User</string>
+    <string name="image_preview">Image Preview</string>
+    <string name="english">English</string>
+    <string name="indonesian">Indonesian</string>
+    <string name="start_now">Start Now</string>
+
+    <!-- Onboarding -->
+    <string name="skip_this"><![CDATA[Skip This >]]></string>
+    <string name="onboarding_title_1">Dicoding API v1 is here</string>
+    <string name="onboarding_desc_1">You can now upload an image with description to Dicoding server using this app.</string>
+    <string name="onboarding_title_2">Saved publicly</string>
+    <string name="onboarding_desc_2">The story you\'ve uploaded will be there for others to see!</string>
+    <string name="onboarding_title_3">User-Generated Content</string>
+    <string name="onboarding_desc_3">Watch what other people are sharing</string>
+    <string name="onboarding_title_4">Fast and Reliable</string>
+    <string name="onboarding_desc_4">It just works. No ads, no bloatwares.</string>
+
+    <!-- Used in Activities Dialogs -->
+    <string name="input_name">Please input your name</string>
+    <string name="input_password">Please input your password</string>
+    <string name="input_email">Please input your email address</string>
+    <string name="confirmation">Confirmation</string>
+    <string name="are_you_sure_you_want_to_log_out">Are you sure you want to Log Out?</string>
+    <string name="continue_on">Continue</string>
+    <string name="success">Success</string>
+    <string name="error">Error</string>
+    <string name="choose_picture">Choose a Picture</string>
+    <string name="permissions_error">ERROR: Could not obtain the required permissions</string>
+    <string name="language_switch">The language has been switched</string>
+    <string name="change_language">Change Language</string>
+    <string name="pass_less_than_8_char">Password must not be less than 8 characters</string>
+    <string name="invalid_email">Invalid Email</string>
+</resources>
