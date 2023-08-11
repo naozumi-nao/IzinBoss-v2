@@ -8,17 +8,19 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.userProfileChangeRequest
 import kotlinx.coroutines.tasks.await
 
 class UserRepository (private val firebaseAuth: FirebaseAuth, private var googleSignInClient: GoogleSignInClient) {
 
-    fun signInWithGoogle(idToken: String): LiveData<Result<FirebaseUser>> = liveData {
+    suspend fun signInWithGoogle(idToken: String): LiveData<Result<FirebaseUser>> = liveData {
         emit(Result.Loading)
         try {
             val credential = GoogleAuthProvider.getCredential(idToken, null)
             val authResult = firebaseAuth.signInWithCredential(credential).await()
             val user = authResult.user
             if (user != null) {
+                //user.sendEmailVerification()
                 emit(Result.Success(user))
             } else {
                 emit(Result.Error("Sign-in result does not contain user data"))
@@ -30,12 +32,16 @@ class UserRepository (private val firebaseAuth: FirebaseAuth, private var google
         }
     }
 
-    fun registerWithEmail(email: String, password: String): LiveData<Result<FirebaseUser>> = liveData {
+    suspend fun registerWithEmail(name: String, email: String, password: String): LiveData<Result<FirebaseUser>> = liveData {
         emit(Result.Loading)
         try {
-            firebaseAuth.createUserWithEmailAndPassword(email, password)
+            firebaseAuth.createUserWithEmailAndPassword(email, password).await()
             val user = firebaseAuth.currentUser
             if (user != null) {
+                user.updateProfile(
+                    userProfileChangeRequest { displayName = name }
+                ).await()
+                //user.sendEmailVerification()
                 emit(Result.Success(user))
             } else {
                 emit(Result.Error("Sign-in result does not contain user data"))
@@ -50,7 +56,7 @@ class UserRepository (private val firebaseAuth: FirebaseAuth, private var google
     fun loginWithEmail(email: String, password: String): LiveData<Result<FirebaseUser>> = liveData {
         emit(Result.Loading)
         try {
-            firebaseAuth.signInWithEmailAndPassword(email, password)
+            firebaseAuth.signInWithEmailAndPassword(email, password).await()
             val user = firebaseAuth.currentUser
             if (user != null) {
                 emit(Result.Success(user))

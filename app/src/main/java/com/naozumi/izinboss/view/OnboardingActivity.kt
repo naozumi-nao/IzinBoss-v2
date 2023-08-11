@@ -17,11 +17,11 @@ class OnboardingActivity : AppCompatActivity() {
         ViewUtils.setupFullScreen(this)
 
         binding.btnSkip.setOnClickListener {
-            ViewUtils.moveActivityNoHistory(this, WelcomeActivity::class.java)
+            ViewUtils.moveActivityNoHistory(this, LoginActivity::class.java)
         }
 
         binding.btnStart.setOnClickListener {
-            ViewUtils.moveActivityNoHistory(this, WelcomeActivity::class.java)
+            ViewUtils.moveActivityNoHistory(this, LoginActivity::class.java)
         }
     }
 }

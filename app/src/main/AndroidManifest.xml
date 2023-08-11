@@ -42,9 +42,6 @@
             android:name=".view.LoginActivity"
             android:exported="true" />
         <activity
-            android:name=".view.WelcomeActivity"
-            android:exported="true" />
-        <activity
             android:name=".view.OnboardingActivity"
             android:exported="true" />
         <activity

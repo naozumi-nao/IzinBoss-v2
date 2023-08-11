@@ -1,12 +1,10 @@
 package com.naozumi.izinboss.view
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.lifecycle.ViewModelProvider
-import com.google.firebase.auth.ktx.auth
 import com.naozumi.izinboss.R
 import com.naozumi.izinboss.databinding.ActivityMainBinding
 import com.naozumi.izinboss.util.ViewUtils
@@ -37,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.logout_menu -> {
                 viewModel.signOut()
-                ViewUtils.moveActivityNoHistory(this@MainActivity, WelcomeActivity::class.java)
+                ViewUtils.moveActivityNoHistory(this@MainActivity, LoginActivity::class.java)
                 true
             }
             else -> super.onOptionsItemSelected(item)

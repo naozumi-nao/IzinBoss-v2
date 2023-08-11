@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.naozumi.izinboss.R
@@ -14,6 +16,7 @@ import com.naozumi.izinboss.databinding.ActivityLoginBinding
 import com.naozumi.izinboss.util.ViewUtils
 import com.naozumi.izinboss.viewmodel.LoginViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
+import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
@@ -44,11 +47,11 @@ class LoginActivity : AppCompatActivity() {
         }
 
         binding.btnCreateAccount.setOnClickListener {
-            ViewUtils.moveActivityNoHistory(this, RegisterActivity::class.java)
+            ViewUtils.moveActivity(this, RegisterActivity::class.java)
         }
     }
 
-    private fun setupGoogleSignIn(token: String) {
+    private suspend fun setupGoogleSignIn(token: String) {
         viewModel.signInWithGoogle(token).observe(this) { result ->
             when(result){
                 is Result.Loading -> {
@@ -59,8 +62,13 @@ class LoginActivity : AppCompatActivity() {
                     ViewUtils.moveActivityNoHistory(this@LoginActivity, MainActivity::class.java)
                 }
                 is Result.Error -> {
-                    binding.progressBar.visibility = View.GONE
-                    // TODO(Add message for errors)
+                    AlertDialog.Builder(this).apply {
+                        setTitle(getString(R.string.error))
+                        setMessage(result.error)
+                        setPositiveButton(getString(R.string.continue_on)) { _, _ -> }
+                        create()
+                        show()
+                    }
                 }
             }
         }
@@ -87,8 +95,13 @@ class LoginActivity : AppCompatActivity() {
                             ViewUtils.moveActivityNoHistory(this@LoginActivity, MainActivity::class.java)
                         }
                         is Result.Error -> {
-                            binding.progressBar.visibility = View.GONE
-                            // TODO(Add message for errors)
+                            AlertDialog.Builder(this).apply {
+                                setTitle(getString(R.string.error))
+                                setMessage(result.error)
+                                setPositiveButton(getString(R.string.continue_on)) { _, _ -> }
+                                create()
+                                show()
+                            }
                         }
                     }
                 }
@@ -102,7 +115,9 @@ class LoginActivity : AppCompatActivity() {
         if (result.resultCode == Activity.RESULT_OK) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
             val account = task.getResult(ApiException::class.java)!!
-            setupGoogleSignIn(account.idToken.toString())
+            lifecycleScope.launch {
+                setupGoogleSignIn(account.idToken.toString())
+            }
         }
     }
 

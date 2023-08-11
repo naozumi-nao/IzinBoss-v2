@@ -54,4 +54,5 @@
     <string name="change_language">Change Language</string>
     <string name="pass_less_than_8_char">Password must not be less than 8 characters</string>
     <string name="invalid_email">Invalid Email</string>
+    <string name="account_created">Account Created! Please Login</string>
 </resources>
