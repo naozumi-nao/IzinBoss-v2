@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -47,7 +48,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.7.0-alpha03'
 
     //Firebase
-    implementation 'com.google.firebase:firebase-auth-ktx:22.1.0'
+    implementation 'com.google.firebase:firebase-auth-ktx:22.1.1'
     implementation 'com.google.android.gms:play-services-auth:20.6.0'
 
     //Layout technologies
@@ -58,6 +59,7 @@ dependencies {
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.github.bumptech.glide:glide:4.15.0'
+    implementation 'com.google.firebase:firebase-database-ktx:20.2.2'
 
     //Testing
     testImplementation 'junit:junit:4.13.2'

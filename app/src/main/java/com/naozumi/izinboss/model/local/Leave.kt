@@ -2,7 +2,7 @@ package com.naozumi.izinboss.model.local
 
 data class Leave(
     val leaveID: String? = null,
-    val date: String? = null,
+    val timeStamp: Long? = 0,
     val title: String? = null,
     val staffName: String? = null,
     val staffID: String? = null,

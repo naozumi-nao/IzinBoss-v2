@@ -36,8 +36,16 @@
         android:theme="@style/Theme.IzinBoss"
         tools:targetApi="33">
         <activity
+            android:name=".view.AddLeaveActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ProfileActivity"
+            android:exported="true"
+            android:parentActivityName=".view.MainActivity" />
+        <activity
             android:name=".view.RegisterActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:parentActivityName=".view.LoginActivity" />
         <activity
             android:name=".view.LoginActivity"
             android:exported="true" />

@@ -35,7 +35,9 @@ class LoginActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, factory)[LoginViewModel::class.java]
 
         binding.btnLogin.setOnClickListener {
-            setupEmailLogin()
+            lifecycleScope.launch {
+                setupEmailLogin()
+            }
         }
 
         binding.btnGoogleSignIn.setOnClickListener {
@@ -74,7 +76,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupEmailLogin() {
+    private suspend fun setupEmailLogin() {
         val email = binding.edLoginEmail.text.toString()
         val password = binding.edLoginPassword.text.toString()
         when {

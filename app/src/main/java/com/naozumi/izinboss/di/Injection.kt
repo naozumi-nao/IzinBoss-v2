@@ -4,6 +4,7 @@ import android.content.Context
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import com.naozumi.izinboss.R
 import com.naozumi.izinboss.data.UserRepository
 
@@ -16,8 +17,9 @@ object Injection {
         val googleSignInClient = GoogleSignIn.getClient(context, gso)
         val firebaseAuth = FirebaseAuth.getInstance()
 
-        //val database = UserDatabase.getInstance(context)
-        //val dao = database.userDao()
-        return UserRepository.getInstance(firebaseAuth, googleSignInClient)
+        val firebaseDatabase = FirebaseDatabase.getInstance("https://izinboss-app-default-rtdb.firebaseio.com/")
+        val databaseReference = firebaseDatabase.reference
+
+        return UserRepository.getInstance(firebaseAuth, googleSignInClient, databaseReference)
     }
 }

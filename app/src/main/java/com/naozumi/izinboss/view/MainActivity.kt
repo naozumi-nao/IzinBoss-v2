@@ -5,6 +5,9 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.lifecycle.ViewModelProvider
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.naozumi.izinboss.R
 import com.naozumi.izinboss.databinding.ActivityMainBinding
 import com.naozumi.izinboss.util.ViewUtils
@@ -23,6 +26,10 @@ class MainActivity : AppCompatActivity() {
         val factory: ViewModelFactory =
             ViewModelFactory.getInstance(this)
         viewModel = ViewModelProvider(this, factory)[MainViewModel::class.java]
+
+        binding.fabAddLeave.setOnClickListener {
+            ViewUtils.moveActivity(this, AddLeaveActivity::class.java)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -33,6 +40,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            R.id.profile -> {
+                ViewUtils.moveActivity(this@MainActivity, ProfileActivity::class.java)
+                true
+            }
             R.id.logout_menu -> {
                 viewModel.signOut()
                 ViewUtils.moveActivityNoHistory(this@MainActivity, LoginActivity::class.java)

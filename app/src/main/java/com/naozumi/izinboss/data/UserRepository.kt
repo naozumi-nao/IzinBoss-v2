@@ -9,9 +9,17 @@ import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.userProfileChangeRequest
+import com.google.firebase.database.DatabaseReference
+import com.naozumi.izinboss.model.local.Leave
+import com.naozumi.izinboss.model.local.User
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 
-class UserRepository (private val firebaseAuth: FirebaseAuth, private var googleSignInClient: GoogleSignInClient) {
+class UserRepository (
+    private val firebaseAuth: FirebaseAuth,
+    private var googleSignInClient: GoogleSignInClient,
+    private val databaseReference: DatabaseReference
+    ) {
 
     suspend fun signInWithGoogle(idToken: String): LiveData<Result<FirebaseUser>> = liveData {
         emit(Result.Loading)
@@ -53,7 +61,7 @@ class UserRepository (private val firebaseAuth: FirebaseAuth, private var google
         }
     }
 
-    fun loginWithEmail(email: String, password: String): LiveData<Result<FirebaseUser>> = liveData {
+    suspend fun loginWithEmail(email: String, password: String): LiveData<Result<FirebaseUser>> = liveData {
         emit(Result.Loading)
         try {
             firebaseAuth.signInWithEmailAndPassword(email, password).await()
@@ -70,6 +78,24 @@ class UserRepository (private val firebaseAuth: FirebaseAuth, private var google
         }
     }
 
+    suspend fun addLeaveToDatabase(leave: Leave): LiveData<Result<Unit>> = liveData {
+        emit(Result.Loading)
+
+        val leaveID = databaseReference.child("Leaves").push().key
+        if (leaveID != null) {
+            try {
+                databaseReference.child("Leaves").child(leaveID).setValue(leave).await()
+                emit(Result.Success(Unit))
+            } catch (e: FirebaseAuthException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: Exception) {
+                emit(Result.Error(e.message.toString()))
+            }
+        } else {
+            emit(Result.Error("Failed to generate leave ID"))
+        }
+    }
+
     fun signOut() {
         googleSignInClient.signOut()
         firebaseAuth.signOut()
@@ -79,13 +105,23 @@ class UserRepository (private val firebaseAuth: FirebaseAuth, private var google
         return googleSignInClient.signInIntent
     }
 
+    private fun convertFirebaseUserToUser(firebaseUser: FirebaseUser): User {
+        return firebaseUser.let {
+            User(
+                uid = it.uid,
+                name = it.displayName,
+                email = it.email
+            )
+        }
+    }
+
     companion object {
         @Volatile
         private var instance: UserRepository? = null
 
-        fun getInstance(firebaseAuth: FirebaseAuth, googleSignInClient: GoogleSignInClient): UserRepository {
+        fun getInstance(firebaseAuth: FirebaseAuth, googleSignInClient: GoogleSignInClient, databaseReference: DatabaseReference): UserRepository {
             return instance ?: synchronized(this) {
-                instance ?: UserRepository(firebaseAuth, googleSignInClient)
+                instance ?: UserRepository(firebaseAuth, googleSignInClient, databaseReference)
             }.also { instance = it }
         }
     }
