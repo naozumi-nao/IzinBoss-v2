@@ -55,4 +55,9 @@
     <string name="pass_less_than_8_char">Password must not be less than 8 characters</string>
     <string name="invalid_email">Invalid Email</string>
     <string name="account_created">Account Created! Please Login</string>
+    <string name="approved">Approved</string>
+    <string name="pending">Pending</string>
+    <string name="rejected">Rejected</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="profile">Profile</string>
 </resources>

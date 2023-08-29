@@ -82,6 +82,7 @@ class RegisterActivity : AppCompatActivity() {
                                 }
                             }
                             is Result.Error -> {
+                                binding.progressBar.visibility = View.GONE
                                 AlertDialog.Builder(this).apply {
                                     setTitle(getString(R.string.error))
                                     setMessage(result.error)

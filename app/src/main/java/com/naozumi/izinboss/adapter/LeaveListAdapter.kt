@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.naozumi.izinboss.R
 import com.naozumi.izinboss.databinding.ItemRowLeaveBinding
 import com.naozumi.izinboss.model.local.Leave
+import com.naozumi.izinboss.util.GenericUtils
 
 class LeaveListAdapter : ListAdapter<Leave, LeaveListAdapter.ListViewHolder>(DIFF_CALLBACK) {
     private lateinit var onItemClickCallback: OnItemClickCallback
@@ -30,23 +31,21 @@ class LeaveListAdapter : ListAdapter<Leave, LeaveListAdapter.ListViewHolder>(DIF
             RecyclerView.ViewHolder(binding.root) {
                 fun bind(leave: Leave) {
                     with(binding) {
-                        tvItemTitle.text = leave.title
-                        tvItemDescription.text = leave.description
-                        if (leave.timeStamp != null) {
-                            binding.tvItemDate.text = DateUtils.getRelativeTimeSpanString(leave.timeStamp)
-                        }
-                        when {
-                            leave.status.equals("0") -> {
-                                tvItemStatus.text = "Approved"
+                        tvItemTitle.text = leave.id
+                        tvItemDescription.text = leave.reason
+                        tvItemDate.text = leave.timeStamp
+                        when (leave.status) {
+                            Leave.Status.APPROVED -> {
+                                tvItemStatus.text = itemView.context.getString(R.string.approved)
                                 ivItemPhoto.setImageResource(R.drawable.baseline_check_24)
                             }
-                            leave.status.equals("1") -> {
-                                tvItemStatus.text = "Rejected"
-                                ivItemPhoto.setImageResource(R.drawable.baseline_close_24)
-                            }
-                            else -> {
-                                tvItemStatus.text = "Pending"
+                            Leave.Status.PENDING -> {
+                                tvItemStatus.text = itemView.context.getString(R.string.pending)
                                 ivItemPhoto.setImageResource(R.drawable.outline_pending_24)
+                            }
+                            Leave.Status.REJECTED -> {
+                                tvItemStatus.text = itemView.context.getString(R.string.rejected)
+                                ivItemPhoto.setImageResource(R.drawable.baseline_close_24)
                             }
                         }
                         itemView.setOnClickListener {
@@ -67,7 +66,7 @@ class LeaveListAdapter : ListAdapter<Leave, LeaveListAdapter.ListViewHolder>(DIF
         val DIFF_CALLBACK: DiffUtil.ItemCallback<Leave> =
             object : DiffUtil.ItemCallback<Leave>() {
                 override fun areItemsTheSame(oldItem: Leave, newItem: Leave): Boolean {
-                    return oldItem.title == newItem.title
+                    return oldItem.id == newItem.id
                 }
 
                 override fun areContentsTheSame(oldItem: Leave, newItem: Leave): Boolean {

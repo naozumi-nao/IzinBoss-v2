@@ -64,6 +64,7 @@ class LoginActivity : AppCompatActivity() {
                     ViewUtils.moveActivityNoHistory(this@LoginActivity, MainActivity::class.java)
                 }
                 is Result.Error -> {
+                    binding.progressBar.visibility = View.GONE
                     AlertDialog.Builder(this).apply {
                         setTitle(getString(R.string.error))
                         setMessage(result.error)

@@ -1,13 +1,13 @@
 package com.naozumi.izinboss.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.naozumi.izinboss.data.UserRepository
+import com.naozumi.izinboss.data.DataRepository
 
-class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
+class LoginViewModel(private val dataRepository: DataRepository) : ViewModel() {
 
-    suspend fun signInWithGoogle(userToken: String) = userRepository.signInWithGoogle(userToken)
+    suspend fun signInWithGoogle(userToken: String) = dataRepository.signInWithGoogle(userToken)
 
-    suspend fun loginWithEmail(email: String, password: String) = userRepository.loginWithEmail(email, password)
+    suspend fun loginWithEmail(email: String, password: String) = dataRepository.loginWithEmail(email, password)
 
-    fun getSignInIntent() = userRepository.getSignInIntent()
+    fun getSignInIntent() = dataRepository.getSignInIntent()
 }

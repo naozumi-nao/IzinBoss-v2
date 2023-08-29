@@ -1,9 +1,10 @@
 package com.naozumi.izinboss.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.naozumi.izinboss.data.UserRepository
+import com.naozumi.izinboss.data.DataRepository
 
-class MainViewModel(private val userRepository: UserRepository) : ViewModel() {
+class MainViewModel(private val dataRepository: DataRepository) : ViewModel() {
 
-    fun signOut() = userRepository.signOut()
+    fun signOut() = dataRepository.signOut()
+    suspend fun getAllLeaves() = dataRepository.getAllLeaves()
 }
