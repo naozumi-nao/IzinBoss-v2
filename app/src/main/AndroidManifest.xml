@@ -36,14 +36,20 @@
         android:theme="@style/Theme.IzinBoss"
         tools:targetApi="33">
         <activity
-            android:name=".view.LeaveDetailsActivity"
+            android:name=".view.CreateCompanyActivity"
             android:exported="false" />
+        <activity
+            android:name=".view.LeaveDetailsActivity"
+            android:exported="true"
+            android:parentActivityName=".view.MainActivity"/>
         <activity
             android:name=".view.SettingsActivity"
-            android:exported="false" />
+            android:exported="true"
+            android:parentActivityName=".view.MainActivity"/>
         <activity
             android:name=".view.AddLeaveActivity"
-            android:exported="false" />
+            android:exported="true"
+            android:parentActivityName=".view.MainActivity"/>
         <activity
             android:name=".view.ProfileActivity"
             android:exported="true"

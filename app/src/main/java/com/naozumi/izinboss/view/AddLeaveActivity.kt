@@ -21,7 +21,7 @@ import androidx.lifecycle.lifecycleScope
 import com.naozumi.izinboss.R
 import com.naozumi.izinboss.data.Result
 import com.naozumi.izinboss.databinding.ActivityAddLeaveBinding
-import com.naozumi.izinboss.model.local.Leave
+import com.naozumi.izinboss.model.local.LeaveRequest
 import com.naozumi.izinboss.util.CameraUtils
 import com.naozumi.izinboss.util.CameraUtils.uriToFile
 import com.naozumi.izinboss.util.GenericUtils
@@ -36,6 +36,7 @@ class AddLeaveActivity : AppCompatActivity() {
     private lateinit var viewModel: AddLeaveViewModel
     private lateinit var currentPhotoPath: String
     private var getFile: File? = null
+    private val companyId = intent.getStringExtra("data")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -122,9 +123,9 @@ class AddLeaveActivity : AppCompatActivity() {
         val startDate = binding.tvStartDateInput.text.toString().trim()
         val endDate = binding.tvEndDateInput.text.toString().trim()
 
-        val leave = Leave(timeStamp = timeStamp, startDate = startDate, endDate = endDate, reason = description)
+        val leaveRequest = LeaveRequest(timeStamp = timeStamp, startDate = startDate, endDate = endDate, reason = description)
 
-        viewModel.addLeaveToDatabase(leave).observe(this) { result ->
+        viewModel.addLeaveRequestToDatabase(companyId.toString(), leaveRequest).observe(this) { result ->
             when(result) {
                 is Result.Loading -> {
                     binding.progressBar.visibility = View.VISIBLE

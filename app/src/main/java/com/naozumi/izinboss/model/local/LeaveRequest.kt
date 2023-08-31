@@ -1,6 +1,6 @@
 package com.naozumi.izinboss.model.local
 
-data class Leave(
+data class LeaveRequest(
     var id: String? = null,
     val employeeId: String? = null,
     val timeStamp: String? = null,
@@ -13,11 +13,7 @@ data class Leave(
     enum class Type {
         SICK,
         VACATION,
-        PERSONAL,
-        MATERNITY,
-        PATERNITY,
-        BEREAVEMENT,
-        UNPAID
+        PERSONAL
     }
     enum class Status {
         PENDING,

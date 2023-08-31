@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <item android:title="Category">
+        <menu>
+            <item
+                android:id="@+id/nav_sick_leave"
+                android:icon="@drawable/baseline_calendar_month_24"
+                android:title="Sick" />
+            <item
+                android:id="@+id/nav_vacation_leave"
+                android:icon="@drawable/baseline_person_24"
+                android:title="Vacation" />
+            <item
+                android:id="@+id/nav_personal_leave"
+                android:icon="@drawable/baseline_person_24"
+                android:title="Personal" />
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/nav_logout"
+        android:icon="@drawable/baseline_logout_24"
+        android:title="Logout" />
+</menu>

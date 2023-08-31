@@ -5,7 +5,8 @@ data class User(
     val name: String? = null,
     val email: String? = null,
     val profilePicture: String? = null,
-    val role: UserRole? = null
+    var companyId: String? = null,
+    var role: UserRole? = null
 ) {
     enum class UserRole {
         MANAGER,
