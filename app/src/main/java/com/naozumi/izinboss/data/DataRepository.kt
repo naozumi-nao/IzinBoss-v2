@@ -10,9 +10,13 @@ import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.userProfileChangeRequest
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseException
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.GenericTypeIndicator
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.snapshots
 import com.naozumi.izinboss.model.local.Company
 import com.naozumi.izinboss.model.local.LeaveRequest
 import com.naozumi.izinboss.model.local.User
@@ -221,8 +225,26 @@ class DataRepository (
             )
         }
 
-        // "uid" from FirebaseUser is directly used as the key for each user document
-        databaseReference.child("Users").child(firebaseUser.uid).setValue(user)
+        val userRef = databaseReference.child("Users").child(firebaseUser.uid)
+        // Check if the user already exists in the database
+        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (!snapshot.exists()) {
+                    // User doesn't exist, create a new user node
+                    userRef.setValue(user)
+                        .addOnSuccessListener {
+                            // "uid" from FirebaseUser is directly used as the key for each user document
+                            databaseReference.child("Users").child(firebaseUser.uid).setValue(user)
+                        }
+                        .addOnFailureListener {
+                        }
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+            }
+        })
+
+
     }
 
     fun getCurrentUser(): String? {
