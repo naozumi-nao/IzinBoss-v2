@@ -13,4 +13,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "IzinBoss"
-include ':app'
+include(":app")
