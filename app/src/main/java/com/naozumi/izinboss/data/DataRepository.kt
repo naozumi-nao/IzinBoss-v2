@@ -16,7 +16,7 @@ import com.google.firebase.database.DatabaseException
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.GenericTypeIndicator
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.snapshots
+import com.naozumi.izinboss.helper.Result
 import com.naozumi.izinboss.model.local.Company
 import com.naozumi.izinboss.model.local.LeaveRequest
 import com.naozumi.izinboss.model.local.User
@@ -25,7 +25,8 @@ import kotlinx.coroutines.tasks.await
 class DataRepository (
     private val firebaseAuth: FirebaseAuth,
     private var googleSignInClient: GoogleSignInClient,
-    private val databaseReference: DatabaseReference
+    private val databaseReference: DatabaseReference,
+    private val userPreferences: UserPreferences
     ) {
 
     suspend fun signInWithGoogle(idToken: String): LiveData<Result<FirebaseUser>> = liveData {
@@ -150,6 +151,7 @@ class DataRepository (
                     // Update user locally
                     user.role = User.UserRole.MANAGER
                     user.companyId = companyId
+                    saveUserToDataStore(user)
 
                     val company = Company(
                         id = companyId,
@@ -257,13 +259,22 @@ class DataRepository (
         return dataSnapshot.getValue(User::class.java)
     }
 
+    private suspend fun saveUserToDataStore(user: User) {
+        userPreferences.saveUser(user)
+    }
+
     companion object {
         @Volatile
         private var instance: DataRepository? = null
 
-        fun getInstance(firebaseAuth: FirebaseAuth, googleSignInClient: GoogleSignInClient, databaseReference: DatabaseReference): DataRepository {
+        fun getInstance(
+            firebaseAuth: FirebaseAuth,
+            googleSignInClient: GoogleSignInClient,
+            databaseReference: DatabaseReference,
+            userPreferences: UserPreferences
+        ): DataRepository {
             return instance ?: synchronized(this) {
-                instance ?: DataRepository(firebaseAuth, googleSignInClient, databaseReference)
+                instance ?: DataRepository(firebaseAuth, googleSignInClient, databaseReference, userPreferences)
             }.also { instance = it }
         }
     }

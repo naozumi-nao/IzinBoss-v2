@@ -1,18 +1,24 @@
 package com.naozumi.izinboss.viewmodel
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.naozumi.izinboss.data.DataRepository
+import com.naozumi.izinboss.data.UserPreferences
 import com.naozumi.izinboss.di.Injection
 
 class ViewModelFactory private constructor(
-    private val dataRepository: DataRepository
+    private val dataRepository: DataRepository,
+    private val userPreferences: UserPreferences
 ): ViewModelProvider.NewInstanceFactory() {
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_prefs")
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-            return MainViewModel(dataRepository) as T
+            return MainViewModel(dataRepository, userPreferences) as T
         }
         if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
             return LoginViewModel(dataRepository) as T
@@ -37,7 +43,7 @@ class ViewModelFactory private constructor(
 
         fun getInstance(context: Context): ViewModelFactory =
             instance ?: synchronized(this) {
-                instance ?: ViewModelFactory(Injection.provideRepository(context))
+                instance ?: ViewModelFactory(Injection.provideRepository(context), Injection.provideDataStore(context))
             }.also { instance = it }
     }
 }

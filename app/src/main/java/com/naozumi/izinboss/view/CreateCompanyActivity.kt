@@ -7,7 +7,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.naozumi.izinboss.R
-import com.naozumi.izinboss.data.Result
+import com.naozumi.izinboss.helper.Result
 import com.naozumi.izinboss.databinding.ActivityCreateCompanyBinding
 import com.naozumi.izinboss.util.ViewUtils
 import com.naozumi.izinboss.viewmodel.CreateCompanyViewModel

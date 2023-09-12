@@ -1,17 +1,22 @@
 package com.naozumi.izinboss.view
 
 import android.app.Activity
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.naozumi.izinboss.R
-import com.naozumi.izinboss.data.Result
+import com.naozumi.izinboss.helper.Result
+import com.naozumi.izinboss.data.UserPreferences
 import com.naozumi.izinboss.databinding.ActivityLoginBinding
 import com.naozumi.izinboss.util.ViewUtils
 import com.naozumi.izinboss.viewmodel.LoginViewModel

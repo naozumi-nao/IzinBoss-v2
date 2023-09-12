@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.naozumi.izinboss.R
 import com.naozumi.izinboss.data.SettingsPreferences
+import com.naozumi.izinboss.data.UserPreferences
 import com.naozumi.izinboss.util.ViewUtils
 import com.naozumi.izinboss.viewmodel.ProfileViewModel
 import com.naozumi.izinboss.viewmodel.SettingsViewModel

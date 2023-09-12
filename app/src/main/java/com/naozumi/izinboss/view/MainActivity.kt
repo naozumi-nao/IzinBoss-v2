@@ -1,5 +1,6 @@
 package com.naozumi.izinboss.view
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -9,19 +10,17 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.navigation.NavigationView
 import com.naozumi.izinboss.R
 import com.naozumi.izinboss.adapter.LeaveListAdapter
-import com.naozumi.izinboss.data.Result
+import com.naozumi.izinboss.helper.Result
+import com.naozumi.izinboss.data.UserPreferences
 import com.naozumi.izinboss.databinding.ActivityMainBinding
 import com.naozumi.izinboss.databinding.NavHeaderMainBinding
 import com.naozumi.izinboss.model.local.LeaveRequest
@@ -29,12 +28,13 @@ import com.naozumi.izinboss.model.local.User
 import com.naozumi.izinboss.util.ViewUtils
 import com.naozumi.izinboss.viewmodel.MainViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
-    private var companyId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,20 +70,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             }
         }
-
         onBackPressedDispatcher.addCallback(this, backPressedCallback)
-
 
         val factory: ViewModelFactory =
             ViewModelFactory.getInstance(this)
         viewModel = ViewModelProvider(this, factory)[MainViewModel::class.java]
 
         lifecycleScope.launch {
-            setUserData(viewModel.getCurrentUser().toString())
+            checkIfUserHasCompany(viewModel.getCurrentUser().toString())
         }
 
         binding.fabAddLeave.setOnClickListener {
-            ViewUtils.moveActivity(this, AddLeaveActivity::class.java, companyId)
+            ViewUtils.moveActivity(this@MainActivity, AddLeaveActivity::class.java)
         }
 
         binding.swipeToRefresh.setOnRefreshListener {
@@ -144,17 +142,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    private suspend fun setUserData(userId: String) {
+    private suspend fun checkIfUserHasCompany(userId: String) {
         val user: User? = viewModel.getUserData(userId)
-        if (user?.companyId == null) {
-            ViewUtils.moveActivityNoHistory(this, CreateCompanyActivity::class.java, userId)
-        } else {
-            companyId = user.companyId
+        if (user != null) {
+            viewModel.saveUser(user)
+            if (user.companyId == null) {
+                ViewUtils.moveActivityNoHistory(this, CreateCompanyActivity::class.java, userId)
+            } else {
+                //companyId = user.companyId
+            }
         }
     }
 
     private suspend fun setupLeaveList() {
         val leaveListAdapter = LeaveListAdapter()
+        val user = runBlocking { viewModel.getUser().first() }
         binding.rvLeaves.apply {
             layoutManager = LinearLayoutManager(context)
             setHasFixedSize(true)
@@ -166,12 +168,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 ViewUtils.moveActivity(
                     this@MainActivity,
                     LeaveDetailsActivity::class.java,
-                    companyId
+                    user?.companyId
                 )
             }
         })
 
-        viewModel.getAllLeaveRequests(companyId.toString()).observe(this) { result ->
+        viewModel.getAllLeaveRequests(user?.companyId.toString()).observe(this) { result ->
             if (result != null) {
                 when (result) {
                     is Result.Loading -> {
