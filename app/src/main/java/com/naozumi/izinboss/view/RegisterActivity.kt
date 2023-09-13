@@ -7,11 +7,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.naozumi.izinboss.R
-import com.naozumi.izinboss.helper.Result
-import com.naozumi.izinboss.data.UserPreferences
+import com.naozumi.izinboss.core.helper.Result
+import com.naozumi.izinboss.core.data.UserPreferences
 import com.naozumi.izinboss.databinding.ActivityRegisterBinding
-import com.naozumi.izinboss.util.GenericUtils
-import com.naozumi.izinboss.util.ViewUtils
+import com.naozumi.izinboss.core.util.GenericUtils
+import com.naozumi.izinboss.core.util.ViewUtils
 import com.naozumi.izinboss.viewmodel.RegisterViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import kotlinx.coroutines.launch

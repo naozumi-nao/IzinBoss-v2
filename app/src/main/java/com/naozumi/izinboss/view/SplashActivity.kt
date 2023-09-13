@@ -14,9 +14,9 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.naozumi.izinboss.R
-import com.naozumi.izinboss.data.SettingsPreferences
-import com.naozumi.izinboss.data.UserPreferences
-import com.naozumi.izinboss.util.ViewUtils
+import com.naozumi.izinboss.core.data.SettingsPreferences
+import com.naozumi.izinboss.core.data.UserPreferences
+import com.naozumi.izinboss.core.util.ViewUtils
 import com.naozumi.izinboss.viewmodel.ProfileViewModel
 import com.naozumi.izinboss.viewmodel.SettingsViewModel
 import com.naozumi.izinboss.viewmodel.SettingsViewModelFactory
@@ -32,8 +32,7 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-
-        supportActionBar?.hide()
+        ViewUtils.setupFullScreen(this)
 
         val content = findViewById<View>(android.R.id.content)
         @Suppress("UNUSED_EXPRESSION")

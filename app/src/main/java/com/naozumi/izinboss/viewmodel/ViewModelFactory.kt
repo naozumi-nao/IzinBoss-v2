@@ -6,9 +6,9 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.naozumi.izinboss.data.DataRepository
-import com.naozumi.izinboss.data.UserPreferences
-import com.naozumi.izinboss.di.Injection
+import com.naozumi.izinboss.core.data.DataRepository
+import com.naozumi.izinboss.core.data.UserPreferences
+import com.naozumi.izinboss.core.di.Injection
 
 class ViewModelFactory private constructor(
     private val dataRepository: DataRepository,
@@ -27,7 +27,7 @@ class ViewModelFactory private constructor(
             return RegisterViewModel(dataRepository) as T
         }
         if (modelClass.isAssignableFrom(AddLeaveViewModel::class.java)) {
-            return AddLeaveViewModel(dataRepository) as T
+            return AddLeaveViewModel(dataRepository, userPreferences) as T
         }
         if (modelClass.isAssignableFrom(ProfileViewModel::class.java)) {
             return ProfileViewModel(dataRepository) as T

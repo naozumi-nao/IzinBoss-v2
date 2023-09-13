@@ -1,4 +1,4 @@
-package com.naozumi.izinboss.model.local
+package com.naozumi.izinboss.core.model.local
 
 data class Company (
     val id: String? = null,

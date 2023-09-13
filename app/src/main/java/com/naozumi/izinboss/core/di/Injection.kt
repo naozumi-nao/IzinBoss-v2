@@ -1,4 +1,4 @@
-package com.naozumi.izinboss.di
+package com.naozumi.izinboss.core.di
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -10,8 +10,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.naozumi.izinboss.R
-import com.naozumi.izinboss.data.DataRepository
-import com.naozumi.izinboss.data.UserPreferences
+import com.naozumi.izinboss.core.data.DataRepository
+import com.naozumi.izinboss.core.data.UserPreferences
 
 object Injection {
 

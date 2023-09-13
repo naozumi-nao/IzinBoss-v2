@@ -2,9 +2,9 @@ package com.naozumi.izinboss.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naozumi.izinboss.data.DataRepository
-import com.naozumi.izinboss.data.UserPreferences
-import com.naozumi.izinboss.model.local.User
+import com.naozumi.izinboss.core.data.DataRepository
+import com.naozumi.izinboss.core.data.UserPreferences
+import com.naozumi.izinboss.core.model.local.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
@@ -25,9 +25,9 @@ class MainViewModel(private val dataRepository: DataRepository, private val user
         return userPreferences.getUser()
     }
 
-    fun deleteUser(user: User) {
+    fun deleteCurrentUserDataStore() {
         viewModelScope.launch {
-            userPreferences.deleteUser(user)
+            userPreferences.deleteCurrentUserDataStore()
         }
     }
 }

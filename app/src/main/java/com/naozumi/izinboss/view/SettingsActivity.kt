@@ -11,7 +11,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.naozumi.izinboss.R
-import com.naozumi.izinboss.data.SettingsPreferences
+import com.naozumi.izinboss.core.data.SettingsPreferences
 import com.naozumi.izinboss.viewmodel.SettingsViewModel
 import com.naozumi.izinboss.viewmodel.SettingsViewModelFactory
 

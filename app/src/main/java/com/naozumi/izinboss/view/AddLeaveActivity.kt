@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -19,16 +20,18 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.naozumi.izinboss.R
-import com.naozumi.izinboss.helper.Result
+import com.naozumi.izinboss.core.helper.Result
 import com.naozumi.izinboss.databinding.ActivityAddLeaveBinding
-import com.naozumi.izinboss.model.local.LeaveRequest
-import com.naozumi.izinboss.util.CameraUtils
-import com.naozumi.izinboss.util.CameraUtils.uriToFile
-import com.naozumi.izinboss.util.GenericUtils
-import com.naozumi.izinboss.util.ViewUtils
+import com.naozumi.izinboss.core.model.local.LeaveRequest
+import com.naozumi.izinboss.core.util.CameraUtils
+import com.naozumi.izinboss.core.util.CameraUtils.uriToFile
+import com.naozumi.izinboss.core.util.GenericUtils
+import com.naozumi.izinboss.core.util.ViewUtils
 import com.naozumi.izinboss.viewmodel.AddLeaveViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.File
 
 class AddLeaveActivity : AppCompatActivity() {
@@ -36,7 +39,6 @@ class AddLeaveActivity : AppCompatActivity() {
     private lateinit var viewModel: AddLeaveViewModel
     private lateinit var currentPhotoPath: String
     private var getFile: File? = null
-    //private val companyId = intent.getStringExtra("data")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +58,13 @@ class AddLeaveActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, factory)[AddLeaveViewModel::class.java]
 
         binding.progressBar.visibility = View.GONE
+
+        val leaveTypeList: List<String> = LeaveRequest.Type.values().map { type ->
+            type.name.lowercase().replaceFirstChar { it.uppercase() }
+        }
+        val typeAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, leaveTypeList)
+        binding.actvAddType.setAdapter(typeAdapter)
+
         binding.btnPickDate.setOnClickListener{
             GenericUtils.showDateRangePicker(this, supportFragmentManager) { startDate, endDate ->
                 binding.tvStartDateInput.text = GenericUtils.convertLongToDate(startDate)
@@ -117,15 +126,30 @@ class AddLeaveActivity : AppCompatActivity() {
     }
 
     private suspend fun uploadLeave() {
-
+        val user = runBlocking { viewModel.getUser().first() }
         val timeStamp = GenericUtils.getCurrentDateAndTime()
         val description = binding.edAddDescription.text.toString().trim()
         val startDate = binding.tvStartDateInput.text.toString().trim()
         val endDate = binding.tvEndDateInput.text.toString().trim()
+        val typeString = binding.actvAddType.text.toString().trim()
+        val typeMap = mapOf(
+            "Sick" to LeaveRequest.Type.SICK,
+            "Vacation" to LeaveRequest.Type.VACATION,
+            "Personal" to LeaveRequest.Type.PERSONAL
+        )
+        val type = typeMap[typeString]
 
-        val leaveRequest = LeaveRequest(timeStamp = timeStamp, startDate = startDate, endDate = endDate, reason = description)
+        val leaveRequest = LeaveRequest(
+            employeeId = user?.uid,
+            employeeName = user?.name,
+            timeStamp = timeStamp,
+            startDate = startDate,
+            endDate = endDate,
+            reason = description,
+            type = type ?: LeaveRequest.Type.SICK
+        )
 
-        viewModel.addLeaveRequestToDatabase("", leaveRequest).observe(this) { result ->
+        viewModel.addLeaveRequestToDatabase(user?.companyId.toString(), leaveRequest).observe(this) { result ->
             when(result) {
                 is Result.Loading -> {
                     binding.progressBar.visibility = View.VISIBLE

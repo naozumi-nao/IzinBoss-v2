@@ -56,6 +56,8 @@ dependencies {
     //Firebase
     implementation ("com.google.firebase:firebase-auth-ktx:22.1.1")
     implementation ("com.google.android.gms:play-services-auth:20.7.0")
+    implementation ("com.google.firebase:firebase-database-ktx:20.2.2")
+    implementation ("com.google.firebase:firebase-storage-ktx:20.2.1")
 
     //Layout technologies
     implementation ("com.google.android.material:material:1.9.0")
@@ -65,8 +67,6 @@ dependencies {
     implementation ("androidx.viewpager2:viewpager2:1.0.0")
     implementation ("de.hdodenhof:circleimageview:3.1.0")
     implementation ("com.github.bumptech.glide:glide:4.15.0")
-    implementation ("com.google.firebase:firebase-database-ktx:20.2.2")
-    implementation ("com.google.firebase:firebase-storage-ktx:20.2.1")
 
     //Navigation Drawer
     implementation ("androidx.navigation:navigation-fragment-ktx:2.7.2")

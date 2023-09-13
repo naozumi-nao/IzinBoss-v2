@@ -1,9 +1,17 @@
 package com.naozumi.izinboss.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.naozumi.izinboss.data.DataRepository
-import com.naozumi.izinboss.model.local.LeaveRequest
+import com.naozumi.izinboss.core.data.DataRepository
+import com.naozumi.izinboss.core.data.UserPreferences
+import com.naozumi.izinboss.core.model.local.LeaveRequest
+import com.naozumi.izinboss.core.model.local.User
+import kotlinx.coroutines.flow.Flow
 
-class AddLeaveViewModel(private val dataRepository: DataRepository) : ViewModel() {
-    suspend fun addLeaveRequestToDatabase(companyId: String,leaveRequest: LeaveRequest) = dataRepository.addLeaveRequestToDatabase(companyId, leaveRequest)
+class AddLeaveViewModel(private val dataRepository: DataRepository, private val userPreferences: UserPreferences) : ViewModel() {
+    suspend fun addLeaveRequestToDatabase(companyId: String,leaveRequest: LeaveRequest) =
+        dataRepository.addLeaveRequestToDatabase(companyId, leaveRequest)
+
+    fun getUser(): Flow<User?> {
+        return userPreferences.getUser()
+    }
 }

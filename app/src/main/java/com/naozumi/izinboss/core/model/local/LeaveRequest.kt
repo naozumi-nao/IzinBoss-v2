@@ -1,8 +1,9 @@
-package com.naozumi.izinboss.model.local
+package com.naozumi.izinboss.core.model.local
 
 data class LeaveRequest(
     var id: String? = null,
     val employeeId: String? = null,
+    val employeeName: String? = null,
     val timeStamp: String? = null,
     val startDate: String? = null,
     val endDate: String? = null,

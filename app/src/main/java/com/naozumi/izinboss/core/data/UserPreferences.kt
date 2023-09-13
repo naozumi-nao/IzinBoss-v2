@@ -1,11 +1,10 @@
-package com.naozumi.izinboss.data
+package com.naozumi.izinboss.core.data
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.naozumi.izinboss.model.local.User
+import com.naozumi.izinboss.core.model.local.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -34,8 +33,11 @@ class UserPreferences private constructor (private val dataStore: DataStore<Pref
         }
     }
 
-    suspend fun deleteUser(user: User) {
-        dataStore.edit { preferences ->
+    suspend fun deleteCurrentUserDataStore() {
+        dataStore.edit {
+            it.clear()
+        }
+        /*dataStore.edit { preferences ->
             preferences[UID_KEY] = ""
             preferences[NAME_KEY] = ""
             preferences[EMAIL_KEY] = ""
@@ -43,6 +45,7 @@ class UserPreferences private constructor (private val dataStore: DataStore<Pref
             preferences[COMPANY_ID_KEY] = ""
             preferences[ROLE_KEY] = ""
         }
+         */
     }
 
     companion object {

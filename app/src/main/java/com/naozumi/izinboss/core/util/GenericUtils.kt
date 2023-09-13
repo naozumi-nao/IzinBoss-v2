@@ -1,4 +1,4 @@
-package com.naozumi.izinboss.util
+package com.naozumi.izinboss.core.util
 
 import android.app.AlertDialog
 import android.content.Context

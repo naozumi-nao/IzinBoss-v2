@@ -1,4 +1,4 @@
-package com.naozumi.izinboss.data
+package com.naozumi.izinboss.core.data
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences

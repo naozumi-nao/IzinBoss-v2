@@ -1,4 +1,4 @@
-package com.naozumi.izinboss.helper
+package com.naozumi.izinboss.core.helper
 
 sealed class Result<out R> private constructor() {
     data class Success<out T>(val data: T) : Result<T>()

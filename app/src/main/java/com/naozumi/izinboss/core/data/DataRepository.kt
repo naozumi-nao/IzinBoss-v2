@@ -1,4 +1,4 @@
-package com.naozumi.izinboss.data
+package com.naozumi.izinboss.core.data
 
 import android.content.Intent
 import androidx.lifecycle.LiveData
@@ -16,10 +16,10 @@ import com.google.firebase.database.DatabaseException
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.GenericTypeIndicator
 import com.google.firebase.database.ValueEventListener
-import com.naozumi.izinboss.helper.Result
-import com.naozumi.izinboss.model.local.Company
-import com.naozumi.izinboss.model.local.LeaveRequest
-import com.naozumi.izinboss.model.local.User
+import com.naozumi.izinboss.core.helper.Result
+import com.naozumi.izinboss.core.model.local.Company
+import com.naozumi.izinboss.core.model.local.LeaveRequest
+import com.naozumi.izinboss.core.model.local.User
 import kotlinx.coroutines.tasks.await
 
 class DataRepository (

@@ -51,10 +51,6 @@
             android:exported="true"
             android:parentActivityName=".view.MainActivity"/>
         <activity
-            android:name=".view.ProfileActivity"
-            android:exported="true"
-            android:parentActivityName=".view.MainActivity" />
-        <activity
             android:name=".view.RegisterActivity"
             android:exported="true"
             android:parentActivityName=".view.LoginActivity" />

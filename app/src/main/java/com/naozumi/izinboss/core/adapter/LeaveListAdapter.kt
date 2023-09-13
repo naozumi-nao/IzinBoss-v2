@@ -1,4 +1,4 @@
-package com.naozumi.izinboss.adapter
+package com.naozumi.izinboss.core.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.naozumi.izinboss.R
 import com.naozumi.izinboss.databinding.ItemRowLeaveBinding
-import com.naozumi.izinboss.model.local.LeaveRequest
+import com.naozumi.izinboss.core.model.local.LeaveRequest
 
 class LeaveListAdapter : ListAdapter<LeaveRequest, LeaveListAdapter.ListViewHolder>(DIFF_CALLBACK) {
     private lateinit var onItemClickCallback: OnItemClickCallback
@@ -15,7 +15,7 @@ class LeaveListAdapter : ListAdapter<LeaveRequest, LeaveListAdapter.ListViewHold
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): LeaveListAdapter.ListViewHolder {
+    ): ListViewHolder {
         val binding = ItemRowLeaveBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ListViewHolder(binding)
     }
@@ -29,7 +29,7 @@ class LeaveListAdapter : ListAdapter<LeaveRequest, LeaveListAdapter.ListViewHold
             RecyclerView.ViewHolder(binding.root) {
                 fun bind(leaveRequest: LeaveRequest) {
                     with(binding) {
-                        tvItemTitle.text = leaveRequest.id
+                        tvItemName.text = leaveRequest.employeeName
                         tvItemDescription.text = leaveRequest.reason
                         tvItemDate.text = leaveRequest.timeStamp
                         when (leaveRequest.status) {

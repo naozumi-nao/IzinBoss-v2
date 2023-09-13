@@ -1,7 +1,7 @@
 package com.naozumi.izinboss.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.naozumi.izinboss.data.DataRepository
+import com.naozumi.izinboss.core.data.DataRepository
 
 class LoginViewModel(private val dataRepository: DataRepository) : ViewModel() {
 

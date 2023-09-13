@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.naozumi.izinboss.R
 import com.naozumi.izinboss.databinding.ActivityOnboardingBinding
-import com.naozumi.izinboss.util.ViewUtils
+import com.naozumi.izinboss.core.util.ViewUtils
 
 class OnboardingActivity : AppCompatActivity() {
     private lateinit var binding: ActivityOnboardingBinding

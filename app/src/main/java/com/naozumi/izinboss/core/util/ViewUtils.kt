@@ -1,4 +1,4 @@
-package com.naozumi.izinboss.util
+package com.naozumi.izinboss.core.util
 
 import android.content.Context
 import android.content.Intent
@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 
 object ViewUtils {
     fun setupFullScreen(activity: AppCompatActivity) {
