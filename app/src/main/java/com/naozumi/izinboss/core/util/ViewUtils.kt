@@ -8,6 +8,7 @@ import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 
 object ViewUtils {
     fun setupFullScreen(activity: AppCompatActivity) {
@@ -42,5 +43,33 @@ object ViewUtils {
         } else {
             context.startActivity(moveIntent)
         }
+    }
+
+    fun replaceFragment(
+        activity: AppCompatActivity,
+        containerId: Int,
+        fragment: Fragment,
+        fragmentTag: String,
+        title: String
+    ) {
+        val fragmentManager = activity.supportFragmentManager
+        fragmentManager.commit {
+            replace(containerId, fragment, fragmentTag)
+        }
+        activity.title = title
+    }
+
+    fun addFragment(
+        activity: AppCompatActivity,
+        containerId: Int,
+        fragment: Fragment,
+        fragmentTag: String,
+        title: String
+    ) {
+        val fragmentManager = activity.supportFragmentManager
+        fragmentManager.commit {
+            replace(containerId, fragment, fragmentTag)
+        }
+        activity.title = title
     }
 }

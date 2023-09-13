@@ -46,8 +46,11 @@ class ProfileFragment : Fragment() {
 
         binding?.apply {
             if (user != null) {
-                tvFullName.text = user.name
-                tvEmail.text = user.email
+                tvFullNameInput.text = user.name
+                tvCompanyInput.text = user.companyId
+                tvRoleInput.text = user.role.toString().lowercase().replaceFirstChar { it.uppercase() }
+                tvUidInput.text = user.uid
+                tvEmailInput.text = user.email
                 Glide.with(this@ProfileFragment)
                     .load(user.profilePicture)
                     .error(R.drawable.onboarding_image_1)

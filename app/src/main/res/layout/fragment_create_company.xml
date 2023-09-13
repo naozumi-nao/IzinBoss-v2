@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.CreateCompanyActivity">
+    tools:context=".view.CreateCompanyFragment">
 
     <ImageView
         android:id="@+id/iv_register_manager"
@@ -49,7 +49,7 @@
         app:layout_constraintTop_toBottomOf="@id/tv_title" />
 
     <TextView
-        android:id="@+id/tv_name"
+        android:id="@+id/tv_full_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Company Name"
@@ -67,7 +67,7 @@
         android:layout_marginEnd="32dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_name"
+        app:layout_constraintTop_toBottomOf="@id/tv_full_name"
         app:startIconDrawable="@drawable/baseline_work_24">
 
         <com.google.android.material.textfield.TextInputEditText

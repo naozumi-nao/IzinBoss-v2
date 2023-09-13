@@ -36,9 +36,6 @@
         android:theme="@style/Theme.IzinBoss"
         tools:targetApi="33">
         <activity
-            android:name=".view.CreateCompanyActivity"
-            android:exported="false" />
-        <activity
             android:name=".view.LeaveDetailsActivity"
             android:exported="true"
             android:parentActivityName=".view.MainActivity"/>

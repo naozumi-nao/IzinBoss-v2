@@ -13,6 +13,11 @@
         android:icon="@drawable/baseline_person_24"
         android:title="@string/profile" />
 
+    <item
+        android:id="@+id/nav_company"
+        android:icon="@drawable/baseline_company_24"
+        android:title="@string/company" />
+
     <item android:title="Category">
         <menu>
             <item

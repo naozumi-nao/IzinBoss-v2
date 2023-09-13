@@ -68,6 +68,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             ViewModelFactory.getInstance(this)
         viewModel = ViewModelProvider(this, factory)[MainViewModel::class.java]
 
+        /* DEBUG FOR STUCK LOGINS
+        viewModel.signOut()
+        viewModel.deleteCurrentUserDataStore()
+        ViewUtils.moveActivityNoHistory(this@MainActivity, LoginActivity::class.java)
+
+         */
+
         lifecycleScope.launch {
             setUserData(viewModel.getCurrentUser().toString())
         }
@@ -76,10 +83,28 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_home -> {
-                moveFragment(HomeFragment(), item.title.toString())
+                ViewUtils.replaceFragment(this,
+                    R.id.nav_host_fragment_content_main,
+                    HomeFragment(),
+                    HomeFragment::class.java.simpleName,
+                    getString(R.string.home)
+                )
             }
             R.id.nav_profile -> {
-                moveFragment(ProfileFragment(), item.title.toString())
+                ViewUtils.replaceFragment(this,
+                    R.id.nav_host_fragment_content_main,
+                    ProfileFragment(),
+                    ProfileFragment::class.java.simpleName,
+                    getString(R.string.profile)
+                )
+            }
+            R.id.nav_company -> {
+                ViewUtils.replaceFragment(this,
+                    R.id.nav_host_fragment_content_main,
+                    CompanyFragment(),
+                    CompanyFragment::class.java.simpleName,
+                    getString(R.string.company)
+                )
             }
             R.id.nav_logout -> {
                 viewModel.signOut()
@@ -115,20 +140,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    private fun moveFragment(fragment: Fragment, title: String) {
-        val fragmentManager = supportFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.nav_host_fragment_content_main, fragment)
-        fragmentTransaction.commit()
-        setTitle(title)
-    }
-
     private suspend fun setUserData(userId: String) {
         val headerBinding = NavHeaderMainBinding.bind(binding.navigationView.getHeaderView(0))
         val user: User? = viewModel.getUserData(userId)
         if (user != null) {
             headerBinding.apply {
-                tvName.text = user.name
+                tvFullName.text = user.name
                 tvEmail.text = user.email
                 Glide.with(this@MainActivity)
                     .load(user.profilePicture)

@@ -29,7 +29,7 @@ class UserPreferences private constructor (private val dataStore: DataStore<Pref
             preferences[EMAIL_KEY] = user.email ?: ""
             preferences[PROFILE_PICTURE_KEY] = user.profilePicture ?: ""
             preferences[COMPANY_ID_KEY] = user.companyId ?: ""
-            preferences[ROLE_KEY] = user.role?.name ?: ""
+            preferences[ROLE_KEY] = (user.role?.name ?: User.UserRole.EMPLOYEE).toString()
         }
     }
 

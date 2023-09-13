@@ -6,13 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.naozumi.izinboss.R
 import com.naozumi.izinboss.core.adapter.LeaveListAdapter
 import com.naozumi.izinboss.databinding.FragmentHomeBinding
 import com.naozumi.izinboss.core.helper.Result
+import com.naozumi.izinboss.core.helper.setOnClickListener
 import com.naozumi.izinboss.core.model.local.LeaveRequest
 import com.naozumi.izinboss.core.model.local.User
 import com.naozumi.izinboss.core.util.ViewUtils
@@ -42,31 +44,43 @@ class HomeFragment : Fragment() {
         val factory: ViewModelFactory =
             ViewModelFactory.getInstance(requireActivity())
         viewModel = ViewModelProvider(this, factory)[MainViewModel::class.java]
+        binding?.progressBar?.visibility = View.GONE
 
-        lifecycleScope.launch {
-            checkIfUserHasCompany(viewModel.getCurrentUser().toString())
-            setupLeaveList()
-        }
-
-        binding?.swipeToRefresh?.setOnRefreshListener {
+        if( runBlocking {
+                !checkIfUserHasCompany(viewModel.getCurrentUser().toString()) }
+            ) {
+            ViewUtils.replaceFragment(requireActivity() as AppCompatActivity,
+                R.id.nav_host_fragment_content_main,
+                CreateCompanyFragment(),
+                CreateCompanyFragment::class.java.simpleName,
+                getString(R.string.company)
+            )
+        } else {
             lifecycleScope.launch {
                 setupLeaveList()
             }
-        }
 
-        binding?.fabAddLeave?.setOnClickListener {
-            ViewUtils.moveActivity(requireActivity(), AddLeaveActivity::class.java)
+            binding?.swipeToRefresh?.setOnRefreshListener {
+                lifecycleScope.launch {
+                    setupLeaveList()
+                }
+            }
+
+            binding?.fabAddLeave?.setOnClickListener(1000L) {
+                ViewUtils.moveActivity(requireActivity(), AddLeaveActivity::class.java)
+            }
         }
     }
 
-    private suspend fun checkIfUserHasCompany(userId: String) {
+    private suspend fun checkIfUserHasCompany(userId: String): Boolean {
         val user: User? = viewModel.getUserData(userId)
         if (user != null) {
             viewModel.saveUser(user)
-            if (user.companyId == null) {
-                ViewUtils.moveActivityNoHistory(requireActivity(), CreateCompanyActivity::class.java, userId)
+            if (user.companyId != null) {
+                return true
             }
         }
+        return false
     }
 
     private suspend fun setupLeaveList() {

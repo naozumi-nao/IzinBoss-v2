@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.naozumi.izinboss.R
 import com.naozumi.izinboss.core.helper.Result
+import com.naozumi.izinboss.core.helper.setOnClickListener
 import com.naozumi.izinboss.databinding.ActivityAddLeaveBinding
 import com.naozumi.izinboss.core.model.local.LeaveRequest
 import com.naozumi.izinboss.core.util.CameraUtils
@@ -65,15 +66,15 @@ class AddLeaveActivity : AppCompatActivity() {
         val typeAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, leaveTypeList)
         binding.actvAddType.setAdapter(typeAdapter)
 
-        binding.btnPickDate.setOnClickListener{
+        binding.btnPickDate.setOnClickListener(2000L){
             GenericUtils.showDateRangePicker(this, supportFragmentManager) { startDate, endDate ->
                 binding.tvStartDateInput.text = GenericUtils.convertLongToDate(startDate)
                 binding.tvEndDateInput.text = GenericUtils.convertLongToDate(endDate)
             }
         }
-        binding.btnCamera.setOnClickListener { startCamera() }
-        binding.btnGallery.setOnClickListener { startGallery() }
-        binding.btnAdd.setOnClickListener {
+        binding.btnCamera.setOnClickListener(2000L) { startCamera() }
+        binding.btnGallery.setOnClickListener(2000L) { startGallery() }
+        binding.btnAdd.setOnClickListener(2000L) {
             lifecycleScope.launch {
                 uploadLeave()
             }

@@ -71,6 +71,10 @@ dependencies {
     //Navigation Drawer
     implementation ("androidx.navigation:navigation-fragment-ktx:2.7.2")
     implementation ("androidx.navigation:navigation-ui-ktx:2.7.2")
+    implementation("androidx.legacy:legacy-support-v4:1.0.0")
+
+    //Fragment Manager KTX
+    implementation ("androidx.fragment:fragment-ktx:1.6.1")
 
     //Testing
     testImplementation ("junit:junit:4.13.2")
