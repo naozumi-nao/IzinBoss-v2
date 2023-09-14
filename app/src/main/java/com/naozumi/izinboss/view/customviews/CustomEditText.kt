@@ -6,7 +6,8 @@ import android.text.TextWatcher
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatEditText
 import com.naozumi.izinboss.R
-import com.naozumi.izinboss.core.util.GenericUtils
+import com.naozumi.izinboss.core.util.TimeUtils
+import com.naozumi.izinboss.core.util.ViewUtils
 
 class CustomEditText : AppCompatEditText {
 
@@ -50,7 +51,7 @@ class CustomEditText : AppCompatEditText {
                     }
 
                     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                        if (!GenericUtils.isValidEmail(s.toString())) {
+                        if (!ViewUtils.isValidEmail(s.toString())) {
                             setError(context.getString(R.string.invalid_email), null)
                         } else {
                             error = null

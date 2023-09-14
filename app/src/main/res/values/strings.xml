@@ -35,12 +35,12 @@
 
     <!-- Onboarding -->
     <string name="skip_this"><![CDATA[Skip This >]]></string>
-    <string name="onboarding_title_1">Dicoding API v1 is here</string>
-    <string name="onboarding_desc_1">You can now upload an image with description to Dicoding server using this app.</string>
-    <string name="onboarding_title_2">Saved publicly</string>
-    <string name="onboarding_desc_2">The story you\'ve uploaded will be there for others to see!</string>
-    <string name="onboarding_title_3">User-Generated Content</string>
-    <string name="onboarding_desc_3">Watch what other people are sharing</string>
+    <string name="onboarding_title_1">IzinBoss v2 is here</string>
+    <string name="onboarding_desc_1">You can now manage Leave Requests easier than ever using this app.</string>
+    <string name="onboarding_title_2">Re-design with Material 3 Components</string>
+    <string name="onboarding_desc_2">Now the app adheres to M3 Design Standards</string>
+    <string name="onboarding_title_3">Firebase Realtime Database</string>
+    <string name="onboarding_desc_3">Your data is secure, we do not store your passwords, ever</string>
     <string name="onboarding_title_4">Fast and Reliable</string>
     <string name="onboarding_desc_4">It just works. No ads, no bloatwares.</string>
 
@@ -72,4 +72,5 @@
     <string name="user_id">User ID</string>
     <string name="bio">Bio</string>
     <string name="role">Role</string>
+    <string name="account_deleted">Your Account Has Been Deleted</string>
 </resources>

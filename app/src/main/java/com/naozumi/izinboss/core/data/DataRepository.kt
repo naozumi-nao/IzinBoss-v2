@@ -17,6 +17,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.GenericTypeIndicator
 import com.google.firebase.database.ValueEventListener
 import com.naozumi.izinboss.core.helper.Result
+import com.naozumi.izinboss.core.helper.wrapEspressoIdlingResource
 import com.naozumi.izinboss.core.model.local.Company
 import com.naozumi.izinboss.core.model.local.LeaveRequest
 import com.naozumi.izinboss.core.model.local.User
@@ -53,158 +54,201 @@ class DataRepository (
 
     suspend fun registerWithEmail(name: String, email: String, password: String): LiveData<Result<FirebaseUser>> = liveData {
         emit(Result.Loading)
-        try {
-            firebaseAuth.createUserWithEmailAndPassword(email, password).await()
-            val user = firebaseAuth.currentUser
-            if (user != null) {
-                user.updateProfile(
-                    userProfileChangeRequest { displayName = name }
-                ).await()
-                //user.sendEmailVerification()
-                convertFirebaseUserToUser(user)
-                emit(Result.Success(user))
-            } else {
-                emit(Result.Error("Sign-in result does not contain user data"))
+        wrapEspressoIdlingResource {
+            try {
+                firebaseAuth.createUserWithEmailAndPassword(email, password).await()
+                val user = firebaseAuth.currentUser
+                if (user != null) {
+                    user.updateProfile(
+                        userProfileChangeRequest { displayName = name }
+                    ).await()
+                    //user.sendEmailVerification()
+                    convertFirebaseUserToUser(user)
+                    emit(Result.Success(user))
+                } else {
+                    emit(Result.Error("Sign-in result does not contain user data"))
+                }
+            } catch (e: FirebaseAuthException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: FirebaseException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: Exception) {
+                emit(Result.Error(e.message.toString()))
             }
-        } catch (e: FirebaseAuthException) {
-            emit(Result.Error(e.message.toString()))
-        } catch (e: FirebaseException) {
-            emit(Result.Error(e.message.toString()))
-        } catch (e: Exception) {
-            emit(Result.Error(e.message.toString()))
         }
     }
 
     suspend fun loginWithEmail(email: String, password: String): LiveData<Result<FirebaseUser>> = liveData {
         emit(Result.Loading)
-        try {
-            firebaseAuth.signInWithEmailAndPassword(email, password).await()
-            val user = firebaseAuth.currentUser
-            if (user != null) {
-                emit(Result.Success(user))
-            } else {
-                emit(Result.Error("Sign-in result does not contain user data"))
+        wrapEspressoIdlingResource {
+            try {
+                firebaseAuth.signInWithEmailAndPassword(email, password).await()
+                val user = firebaseAuth.currentUser
+                if (user != null) {
+                    emit(Result.Success(user))
+                } else {
+                    emit(Result.Error("Sign-in result does not contain user data"))
+                }
+            } catch (e: FirebaseAuthException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: FirebaseException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: Exception) {
+                emit(Result.Error(e.message.toString()))
             }
-        } catch (e: FirebaseAuthException) {
-            emit(Result.Error(e.message.toString()))
-        } catch (e: FirebaseException) {
-            emit(Result.Error(e.message.toString()))
-        } catch (e: Exception) {
-            emit(Result.Error(e.message.toString()))
         }
     }
 
     suspend fun getAllLeaveRequests(companyId: String): LiveData<Result<List<LeaveRequest>>> = liveData {
         emit(Result.Loading)
-        try {
-            val dataSnapShot = databaseReference.child("Companies").child(companyId).child("leaveRequestList").get().await()
-            val leaveRequestList = mutableListOf<LeaveRequest>()
+        wrapEspressoIdlingResource {
+            try {
+                val dataSnapShot = databaseReference.child("Companies").child(companyId).child("leaveRequestList").get().await()
+                val leaveRequestList = mutableListOf<LeaveRequest>()
 
-            dataSnapShot.children.forEach { leaveSnapShot ->
-                val leaveRequest = leaveSnapShot.getValue(LeaveRequest::class.java)
-                leaveRequest?.let {
-                    leaveRequestList.add(it)
+                dataSnapShot.children.forEach { leaveSnapShot ->
+                    val leaveRequest = leaveSnapShot.getValue(LeaveRequest::class.java)
+                    leaveRequest?.let {
+                        leaveRequestList.add(it)
+                    }
                 }
+                emit(Result.Success(leaveRequestList))
+            } catch (e: FirebaseException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: DatabaseException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: Exception) {
+                emit(Result.Error(e.message.toString()))
             }
-            emit(Result.Success(leaveRequestList))
-        } catch (e: FirebaseException) {
-            emit(Result.Error(e.message.toString()))
-        } catch (e: DatabaseException) {
-            emit(Result.Error(e.message.toString()))
-        } catch (e: Exception) {
-            emit(Result.Error(e.message.toString()))
         }
     }
 
     suspend fun addLeaveRequestToDatabase(companyId: String, leaveRequest: LeaveRequest): LiveData<Result<Unit>> = liveData {
         emit(Result.Loading)
-        try {
-            val companyRef = databaseReference.child("Companies").child(companyId)
-            val leaveRequestListRef = companyRef.child("leaveRequestList")
-            val leaveID = leaveRequestListRef.push().key
+        wrapEspressoIdlingResource {
+            try {
+                val companyRef = databaseReference.child("Companies").child(companyId)
+                val leaveRequestListRef = companyRef.child("leaveRequestList")
+                val leaveID = leaveRequestListRef.push().key
 
-            if (leaveID != null) {
-                leaveRequest.id = leaveID
-                leaveRequestListRef.child(leaveID).setValue(leaveRequest).await()
-                emit(Result.Success(Unit))
-            } else {
-                emit(Result.Error("Failed to generate leave ID"))
+                if (leaveID != null) {
+                    leaveRequest.id = leaveID
+                    leaveRequestListRef.child(leaveID).setValue(leaveRequest).await()
+                    emit(Result.Success(Unit))
+                } else {
+                    emit(Result.Error("Failed to generate leave ID"))
+                }
+            } catch (e: FirebaseException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: DatabaseException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: Exception) {
+                emit(Result.Error(e.message.toString()))
             }
-        } catch (e: FirebaseException) {
-            emit(Result.Error(e.message.toString()))
-        } catch (e: DatabaseException) {
-            emit(Result.Error(e.message.toString()))
-        } catch (e: Exception) {
-            emit(Result.Error(e.message.toString()))
         }
     }
 
     suspend fun createCompany(companyName: String, userId: String): LiveData<Result<Company>> = liveData {
         emit(Result.Loading)
-        try {
-            val companyId = databaseReference.child("Companies").push().key
+        wrapEspressoIdlingResource {
+            try {
+                val companyId = databaseReference.child("Companies").push().key
 
-            if (companyId != null) {
-                val user = getUserData(userId) // Fetch user data from repository
+                if (companyId != null) {
+                    val user = getUserData(userId) // Fetch user data from repository
 
-                if (user != null) {
-                    // Update user locally
-                    user.role = User.UserRole.MANAGER
-                    user.companyId = companyId
-                    saveUserToDataStore(user)
+                    if (user != null) {
+                        // Update user locally
+                        user.role = User.UserRole.MANAGER
+                        user.companyId = companyId
+                        saveUserToDataStore(user)
 
-                    val company = Company(
-                        id = companyId,
-                        name = companyName,
-                        members = listOf(user)
-                    )
-                    // Save Company in the Firebase database
-                    databaseReference.child("Companies").child(companyId).setValue(company).await()
-                    // Update user in the Firebase database
-                    databaseReference.child("Users").child(userId).setValue(user).await()
+                        val company = Company(
+                            id = companyId,
+                            name = companyName,
+                            members = listOf(user)
+                        )
+                        // Save Company in the Firebase database
+                        databaseReference.child("Companies").child(companyId).setValue(company).await()
+                        // Update user in the Firebase database
+                        databaseReference.child("Users").child(userId).setValue(user).await()
 
-                    emit(Result.Success(company))
+                        emit(Result.Success(company))
+                    } else {
+                        emit(Result.Error("User data not found"))
+                    }
                 } else {
-                    emit(Result.Error("User data not found"))
+                    emit(Result.Error("Failed to generate company ID"))
                 }
-            } else {
-                emit(Result.Error("Failed to generate company ID"))
+            } catch (e: FirebaseException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: DatabaseException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: Exception) {
+                emit(Result.Error(e.message.toString()))
             }
-        } catch (e: FirebaseException) {
-            emit(Result.Error(e.message.toString()))
-        } catch (e: DatabaseException) {
-            emit(Result.Error(e.message.toString()))
-        } catch (e: Exception) {
-            emit(Result.Error(e.message.toString()))
         }
     }
 
     suspend fun addEmployee(companyId: String, employee: User): LiveData<Result<Unit>> = liveData {
         emit(Result.Loading)
-        try {
-            val companyRef = databaseReference.child("Companies").child(companyId)
-            val existingMembersSnapshot = companyRef.child("members").get().await()
-            val existingMembers = existingMembersSnapshot.getValue(object : GenericTypeIndicator<List<User>>() {})
+        wrapEspressoIdlingResource {
+            try {
+                val companyRef = databaseReference.child("Companies").child(companyId)
+                val existingMembersSnapshot = companyRef.child("members").get().await()
+                val existingMembers = existingMembersSnapshot.getValue(object : GenericTypeIndicator<List<User>>() {})
 
-            if (existingMembers != null) {
-                val updatedMembers = existingMembers.toMutableList()
-                updatedMembers.add(employee)
-                companyRef.child("members").setValue(updatedMembers).await()
+                if (existingMembers != null) {
+                    val updatedMembers = existingMembers.toMutableList()
+                    updatedMembers.add(employee)
+                    companyRef.child("members").setValue(updatedMembers).await()
 
-                // Initialize an empty leaveRequestList for the company
-                val leaveRequestList = mutableListOf<LeaveRequest>()
-                companyRef.child("leaveRequestList").setValue(leaveRequestList).await()
+                    // Initialize an empty leaveRequestList for the company
+                    val leaveRequestList = mutableListOf<LeaveRequest>()
+                    companyRef.child("leaveRequestList").setValue(leaveRequestList).await()
 
-                emit(Result.Success(Unit))
-            } else {
-                emit(Result.Error("Failed to update company members"))
+                    emit(Result.Success(Unit))
+                } else {
+                    emit(Result.Error("Failed to update company members"))
+                }
+            } catch (e: FirebaseException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: DatabaseException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: Exception) {
+                emit(Result.Error(e.message.toString()))
             }
-        } catch (e: FirebaseException) {
-            emit(Result.Error(e.message.toString()))
-        } catch (e: DatabaseException) {
-            emit(Result.Error(e.message.toString()))
-        } catch (e: Exception) {
-            emit(Result.Error(e.message.toString()))
+        }
+    }
+
+    suspend fun deleteAccount(userId: String): LiveData<Result<Unit>> = liveData {
+        emit(Result.Loading)
+        wrapEspressoIdlingResource {
+            try {
+                val firebaseUser = firebaseAuth.currentUser
+                val databaseUser = getUserData(userId)
+                if (firebaseUser != null && databaseUser != null) {
+                    databaseReference.child("Users")
+                        .child(userId)
+                        .removeValue()
+                        .await()
+                    databaseReference.child("Companies")
+                        .child(databaseUser.companyId.toString())
+                        .removeValue()
+                        .await()
+                    firebaseUser.delete().await()
+                    signOut()
+                    emit(Result.Success(Unit))
+                } else {
+                    emit(Result.Error("Error: User Not Found"))
+                }
+            } catch (e: FirebaseAuthException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: FirebaseException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: Exception) {
+                emit(Result.Error(e.message.toString()))
+            }
         }
     }
 
@@ -245,8 +289,6 @@ class DataRepository (
             override fun onCancelled(error: DatabaseError) {
             }
         })
-
-
     }
 
     fun getCurrentUser(): String? {

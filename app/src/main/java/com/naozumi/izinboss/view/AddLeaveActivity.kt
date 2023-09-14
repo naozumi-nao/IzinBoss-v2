@@ -26,7 +26,7 @@ import com.naozumi.izinboss.databinding.ActivityAddLeaveBinding
 import com.naozumi.izinboss.core.model.local.LeaveRequest
 import com.naozumi.izinboss.core.util.CameraUtils
 import com.naozumi.izinboss.core.util.CameraUtils.uriToFile
-import com.naozumi.izinboss.core.util.GenericUtils
+import com.naozumi.izinboss.core.util.TimeUtils
 import com.naozumi.izinboss.core.util.ViewUtils
 import com.naozumi.izinboss.viewmodel.AddLeaveViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
@@ -67,14 +67,14 @@ class AddLeaveActivity : AppCompatActivity() {
         binding.actvAddType.setAdapter(typeAdapter)
 
         binding.btnPickDate.setOnClickListener(2000L){
-            GenericUtils.showDateRangePicker(this, supportFragmentManager) { startDate, endDate ->
-                binding.tvStartDateInput.text = GenericUtils.convertLongToDate(startDate)
-                binding.tvEndDateInput.text = GenericUtils.convertLongToDate(endDate)
+            TimeUtils.showDateRangePicker(this, supportFragmentManager) { startDate, endDate ->
+                binding.tvStartDateInput.text = TimeUtils.convertLongToDate(startDate)
+                binding.tvEndDateInput.text = TimeUtils.convertLongToDate(endDate)
             }
         }
         binding.btnCamera.setOnClickListener(2000L) { startCamera() }
         binding.btnGallery.setOnClickListener(2000L) { startGallery() }
-        binding.btnAdd.setOnClickListener(2000L) {
+        binding.btnRequestLeave.setOnClickListener(2000L) {
             lifecycleScope.launch {
                 uploadLeave()
             }
@@ -128,7 +128,7 @@ class AddLeaveActivity : AppCompatActivity() {
 
     private suspend fun uploadLeave() {
         val user = runBlocking { viewModel.getUser().first() }
-        val timeStamp = GenericUtils.getCurrentDateAndTime()
+        val timeStamp = TimeUtils.getCurrentDateAndTime()
         val description = binding.edAddDescription.text.toString().trim()
         val startDate = binding.tvStartDateInput.text.toString().trim()
         val endDate = binding.tvEndDateInput.text.toString().trim()

@@ -8,9 +8,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.naozumi.izinboss.R
 import com.naozumi.izinboss.core.helper.Result
-import com.naozumi.izinboss.core.data.UserPreferences
 import com.naozumi.izinboss.databinding.ActivityRegisterBinding
-import com.naozumi.izinboss.core.util.GenericUtils
+import com.naozumi.izinboss.core.util.TimeUtils
 import com.naozumi.izinboss.core.util.ViewUtils
 import com.naozumi.izinboss.viewmodel.RegisterViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
@@ -31,7 +30,7 @@ class RegisterActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, factory)[RegisterViewModel::class.java]
 
         binding.progressBar.visibility = View.GONE
-        binding.btnRegister.setOnClickListener {
+        binding.btnRegisterUser.setOnClickListener {
             lifecycleScope.launch {
                 setupRegister()
             }
@@ -39,17 +38,17 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private suspend fun setupRegister() {
-        val name = binding.edRegisterName.text.toString()
+        val name = binding.edRegisterFullName.text.toString()
         val email = binding.edRegisterEmail.text.toString()
         val password = binding.edRegisterPassword.text.toString()
         when {
             name.isEmpty() -> {
-                binding.edRegisterName.error = getString(R.string.input_name)
+                binding.edRegisterFullName.error = getString(R.string.input_name)
             }
             email.isEmpty() -> {
                 binding.edRegisterEmail.error = getString(R.string.input_email)
             }
-            !GenericUtils.isValidEmail(email) -> {
+            !ViewUtils.isValidEmail(email) -> {
                 binding.edRegisterPassword.error = getString(R.string.invalid_email)
             }
             password.isEmpty() -> {

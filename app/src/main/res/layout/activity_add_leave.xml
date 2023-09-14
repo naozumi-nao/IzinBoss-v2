@@ -153,7 +153,7 @@
             app:layout_constraintTop_toBottomOf="@id/iv_preview" />
 
         <Button
-            android:id="@+id/btn_add"
+            android:id="@+id/btn_request_leave"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"

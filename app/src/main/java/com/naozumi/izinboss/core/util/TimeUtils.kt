@@ -9,11 +9,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-object GenericUtils {
-    fun isValidEmail(email: String): Boolean {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
-    }
-
+object TimeUtils {
     fun getCurrentDateAndTime():String{
         val timeDate = SimpleDateFormat(
             "HH:mm dd-MMM-yyyy",

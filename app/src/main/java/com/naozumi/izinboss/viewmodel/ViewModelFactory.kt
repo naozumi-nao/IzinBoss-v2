@@ -30,7 +30,7 @@ class ViewModelFactory private constructor(
             return AddLeaveViewModel(dataRepository, userPreferences) as T
         }
         if (modelClass.isAssignableFrom(ProfileViewModel::class.java)) {
-            return ProfileViewModel(dataRepository) as T
+            return ProfileViewModel(dataRepository, userPreferences) as T
         }
         if (modelClass.isAssignableFrom(CompanyViewModel::class.java)) {
             return CompanyViewModel(dataRepository) as T

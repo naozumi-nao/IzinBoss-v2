@@ -38,7 +38,7 @@ class CreateCompanyFragment : Fragment() {
         viewModel = ViewModelProvider(this, factory)[CompanyViewModel::class.java]
 
         binding?.progressBar?.visibility = View.GONE
-        binding?.btnRegister?.setOnClickListener {
+        binding?.btnRegisterCompany?.setOnClickListener {
             lifecycleScope.launch {
                 registerCompany(viewModel.getCurrentUser())
             }
@@ -46,7 +46,7 @@ class CreateCompanyFragment : Fragment() {
     }
 
     private suspend fun registerCompany(userId: String?) {
-        val name = binding?.edRegisterName?.text.toString()
+        val name = binding?.edRegisterCompanyName?.text.toString()
 
         viewModel.createCompany(name, userId.toString()).observe(viewLifecycleOwner) {result ->
             if(result != null) {

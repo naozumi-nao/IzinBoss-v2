@@ -76,11 +76,6 @@ dependencies {
     //Fragment Manager KTX
     implementation ("androidx.fragment:fragment-ktx:1.6.1")
 
-    //Testing
-    testImplementation ("junit:junit:4.13.2")
-    androidTestImplementation ("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation ("androidx.test.espresso:espresso-core:3.5.1")
-
     //API handling (retrofit2 + okhttp3)
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
@@ -103,4 +98,28 @@ dependencies {
     //Koin Dependency Injection
     implementation ("io.insert-koin:koin-core:3.3.2")
     implementation ("io.insert-koin:koin-android:3.3.2")
+
+    //Testing
+    testImplementation ("junit:junit:4.13.2")
+    androidTestImplementation ("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation ("androidx.test.espresso:espresso-core:3.5.1")
+
+    //mockito
+    testImplementation ("org.mockito:mockito-core:4.4.0")
+    testImplementation ("org.mockito:mockito-inline:4.4.0")
+
+    //special testing
+    testImplementation ("androidx.arch.core:core-testing:2.2.0") // InstantTaskExecutorRule
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3") //TestDispatcher
+
+    //special instrumentation testing
+    //Note Regarding Instrumentation Testing: allow "Display pop-up windows while running in the background" under "Other permissions" in the app info.
+    androidTestImplementation ("androidx.arch.core:core-testing:2.2.0") // InstantTaskExecutorRule
+    androidTestImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3") //TestCoroutineDispatcher
+    androidTestImplementation ("androidx.test.espresso:espresso-intents:3.5.1") //IntentsTestRule
+    debugImplementation ("androidx.fragment:fragment-testing:1.6.1") //launchFragmentInContainer
+    implementation ("androidx.test.espresso:espresso-contrib:3.5.1") //RecyclerViewActions
+
+    //Idling Resource
+    implementation("androidx.test.espresso:espresso-idling-resource:3.5.1")
 }
