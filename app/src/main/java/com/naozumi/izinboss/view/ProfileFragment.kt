@@ -10,11 +10,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.naozumi.izinboss.R
-import com.naozumi.izinboss.core.helper.Result
-import com.naozumi.izinboss.core.helper.setOnClickListener
+import com.naozumi.izinboss.model.helper.Result
+import com.naozumi.izinboss.model.helper.setOnClickListener
 import com.naozumi.izinboss.databinding.FragmentProfileBinding
-import com.naozumi.izinboss.core.model.local.User
-import com.naozumi.izinboss.core.util.ViewUtils
+import com.naozumi.izinboss.model.datamodel.User
+import com.naozumi.izinboss.model.util.ViewUtils
+import com.naozumi.izinboss.view.entry.LoginActivity
 import com.naozumi.izinboss.viewmodel.ProfileViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import kotlinx.coroutines.launch
@@ -106,5 +107,10 @@ class ProfileFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 }

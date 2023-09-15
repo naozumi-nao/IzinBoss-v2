@@ -9,8 +9,8 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import com.naozumi.izinboss.R
-import com.naozumi.izinboss.core.helper.Result
-import com.naozumi.izinboss.core.util.ViewUtils
+import com.naozumi.izinboss.model.helper.Result
+import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.databinding.FragmentCreateCompanyBinding
 import com.naozumi.izinboss.viewmodel.CompanyViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory

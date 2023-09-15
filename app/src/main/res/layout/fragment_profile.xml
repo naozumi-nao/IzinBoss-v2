@@ -55,7 +55,7 @@
             app:layout_constraintTop_toBottomOf="@id/iv_profile_photo" />
 
         <TextView
-            android:id="@+id/tv_company_name"
+            android:id="@+id/tv_full_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
@@ -76,7 +76,7 @@
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="@id/guideline"
-            app:layout_constraintTop_toBottomOf="@id/tv_company_name" />
+            app:layout_constraintTop_toBottomOf="@id/tv_full_name" />
 
         <TextView
             android:id="@+id/tv_role"
@@ -224,5 +224,4 @@
             app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </ScrollView>

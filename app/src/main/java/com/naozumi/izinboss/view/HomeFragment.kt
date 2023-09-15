@@ -11,13 +11,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.naozumi.izinboss.R
-import com.naozumi.izinboss.core.adapter.LeaveListAdapter
+import com.naozumi.izinboss.model.adapter.LeaveListAdapter
 import com.naozumi.izinboss.databinding.FragmentHomeBinding
-import com.naozumi.izinboss.core.helper.Result
-import com.naozumi.izinboss.core.helper.setOnClickListener
-import com.naozumi.izinboss.core.model.local.LeaveRequest
-import com.naozumi.izinboss.core.model.local.User
-import com.naozumi.izinboss.core.util.ViewUtils
+import com.naozumi.izinboss.model.helper.Result
+import com.naozumi.izinboss.model.helper.setOnClickListener
+import com.naozumi.izinboss.model.datamodel.LeaveRequest
+import com.naozumi.izinboss.model.datamodel.User
+import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.viewmodel.MainViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import kotlinx.coroutines.flow.first
@@ -46,28 +46,25 @@ class HomeFragment : Fragment() {
         viewModel = ViewModelProvider(this, factory)[MainViewModel::class.java]
         binding?.progressBar?.visibility = View.GONE
 
-        if( runBlocking {
-                !checkIfUserHasCompany(viewModel.getCurrentUser().toString()) }
-            ) {
-            ViewUtils.replaceFragment(requireActivity() as AppCompatActivity,
-                R.id.nav_host_fragment_content_main,
-                CreateCompanyFragment(),
-                CreateCompanyFragment::class.java.simpleName,
-                getString(R.string.company)
-            )
-        } else {
-            lifecycleScope.launch {
+        lifecycleScope.launch {
+            if( !checkIfUserHasCompany(viewModel.getCurrentUser().toString()) ) {
+                ViewUtils.replaceFragment(requireActivity() as AppCompatActivity,
+                    R.id.nav_host_fragment_content_main,
+                    CreateCompanyFragment(),
+                    CreateCompanyFragment::class.java.simpleName,
+                    getString(R.string.company)
+                )
+            } else {
                 setupLeaveList()
-            }
-
-            binding?.swipeToRefresh?.setOnRefreshListener {
-                lifecycleScope.launch {
-                    setupLeaveList()
+                binding?.swipeToRefresh?.setOnRefreshListener {
+                    lifecycleScope.launch {
+                        setupLeaveList()
+                    }
                 }
-            }
 
-            binding?.fabAddLeave?.setOnClickListener(1000L) {
-                ViewUtils.moveActivity(requireActivity(), AddLeaveActivity::class.java)
+                binding?.fabAddLeave?.setOnClickListener(1000L) {
+                    ViewUtils.moveActivity(requireActivity(), AddLeaveActivity::class.java)
+                }
             }
         }
     }
@@ -125,5 +122,10 @@ class HomeFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 }

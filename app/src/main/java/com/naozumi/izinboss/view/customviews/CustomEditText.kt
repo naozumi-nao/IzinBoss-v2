@@ -6,8 +6,7 @@ import android.text.TextWatcher
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatEditText
 import com.naozumi.izinboss.R
-import com.naozumi.izinboss.core.util.TimeUtils
-import com.naozumi.izinboss.core.util.ViewUtils
+import com.naozumi.izinboss.model.util.ViewUtils
 
 class CustomEditText : AppCompatEditText {
 

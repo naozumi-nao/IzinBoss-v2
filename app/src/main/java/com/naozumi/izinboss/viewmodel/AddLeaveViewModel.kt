@@ -1,10 +1,10 @@
 package com.naozumi.izinboss.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.naozumi.izinboss.core.data.DataRepository
-import com.naozumi.izinboss.core.data.UserPreferences
-import com.naozumi.izinboss.core.model.local.LeaveRequest
-import com.naozumi.izinboss.core.model.local.User
+import com.naozumi.izinboss.model.repo.DataRepository
+import com.naozumi.izinboss.model.repo.UserPreferences
+import com.naozumi.izinboss.model.datamodel.LeaveRequest
+import com.naozumi.izinboss.model.datamodel.User
 import kotlinx.coroutines.flow.Flow
 
 class AddLeaveViewModel(private val dataRepository: DataRepository, private val userPreferences: UserPreferences) : ViewModel() {

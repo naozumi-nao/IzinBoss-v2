@@ -10,9 +10,8 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-import androidx.test.rule.GrantPermissionRule
-import com.naozumi.izinboss.core.helper.EspressoIdlingResource
-import com.naozumi.izinboss.view.LoginActivity
+import com.naozumi.izinboss.model.helper.EspressoIdlingResource
+import com.naozumi.izinboss.view.entry.LoginActivity
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -42,10 +41,10 @@ class RegisterLoginTest {
         testIfLoginSuccess()
         testIfCreateCompanySuccess()
         //testIfAddLeaveRequestSuccess()
-        testIfUserDeletionSuccess()
+        //testIfUserDeletionSuccess()
     }
 
-    //@Test
+    @Test
     fun testIfRegisterSuccess() {
         onView(withId(R.id.btn_create_account)).perform(ViewActions.click())
         onView(withId(R.id.ed_register_full_name))
@@ -58,7 +57,7 @@ class RegisterLoginTest {
         onView(withText(R.string.continue_on)).perform(ViewActions.click())
     }
 
-    //@Test
+    @Test
     fun testIfLoginSuccess() {
         onView(withId(R.id.ed_login_email))
             .perform(ViewActions.typeText("bimaadityokurniawan@gmail.com"))

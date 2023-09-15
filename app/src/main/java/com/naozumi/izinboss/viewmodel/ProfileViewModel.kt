@@ -2,8 +2,8 @@ package com.naozumi.izinboss.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naozumi.izinboss.core.data.DataRepository
-import com.naozumi.izinboss.core.data.UserPreferences
+import com.naozumi.izinboss.model.repo.DataRepository
+import com.naozumi.izinboss.model.repo.UserPreferences
 import kotlinx.coroutines.launch
 
 class ProfileViewModel(private val dataRepository: DataRepository, private val userPreferences: UserPreferences): ViewModel() {

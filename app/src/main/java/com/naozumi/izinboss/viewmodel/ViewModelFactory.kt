@@ -6,9 +6,11 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.naozumi.izinboss.core.data.DataRepository
-import com.naozumi.izinboss.core.data.UserPreferences
-import com.naozumi.izinboss.core.di.Injection
+import com.naozumi.izinboss.model.repo.DataRepository
+import com.naozumi.izinboss.model.repo.UserPreferences
+import com.naozumi.izinboss.model.di.Injection
+import com.naozumi.izinboss.viewmodel.entry.LoginViewModel
+import com.naozumi.izinboss.viewmodel.entry.RegisterViewModel
 
 class ViewModelFactory private constructor(
     private val dataRepository: DataRepository,
@@ -34,6 +36,9 @@ class ViewModelFactory private constructor(
         }
         if (modelClass.isAssignableFrom(CompanyViewModel::class.java)) {
             return CompanyViewModel(dataRepository) as T
+        }
+        if (modelClass.isAssignableFrom(MembersListViewModel::class.java)) {
+            return MembersListViewModel(dataRepository, userPreferences) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }

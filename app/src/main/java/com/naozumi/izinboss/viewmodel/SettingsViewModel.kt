@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.naozumi.izinboss.core.data.SettingsPreferences
+import com.naozumi.izinboss.model.repo.SettingsPreferences
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(private val pref: SettingsPreferences) : ViewModel() {

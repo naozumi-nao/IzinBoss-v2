@@ -1,6 +1,5 @@
 package com.naozumi.izinboss
 
-import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.*
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions
@@ -10,7 +9,7 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-import com.naozumi.izinboss.core.helper.EspressoIdlingResource
+import com.naozumi.izinboss.model.helper.EspressoIdlingResource
 import com.naozumi.izinboss.view.MainActivity
 import org.junit.After
 import org.junit.Before

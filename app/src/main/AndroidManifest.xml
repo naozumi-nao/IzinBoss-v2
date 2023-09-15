@@ -36,29 +36,32 @@
         android:theme="@style/Theme.IzinBoss"
         tools:targetApi="33">
         <activity
+            android:name=".view.CompanyActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.LeaveDetailsActivity"
             android:exported="true"
-            android:parentActivityName=".view.MainActivity"/>
+            android:parentActivityName=".view.MainActivity" />
         <activity
             android:name=".view.SettingsActivity"
             android:exported="true"
-            android:parentActivityName=".view.MainActivity"/>
+            android:parentActivityName=".view.MainActivity" />
         <activity
             android:name=".view.AddLeaveActivity"
             android:exported="true"
-            android:parentActivityName=".view.MainActivity"/>
+            android:parentActivityName=".view.MainActivity" />
         <activity
-            android:name=".view.RegisterActivity"
+            android:name=".view.entry.RegisterActivity"
             android:exported="true"
-            android:parentActivityName=".view.LoginActivity" />
+            android:parentActivityName=".view.entry.LoginActivity" />
         <activity
-            android:name=".view.LoginActivity"
+            android:name=".view.entry.LoginActivity"
             android:exported="true" />
         <activity
-            android:name=".view.OnboardingActivity"
+            android:name=".view.entry.OnboardingActivity"
             android:exported="true" />
         <activity
-            android:name=".view.SplashActivity"
+            android:name=".view.entry.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

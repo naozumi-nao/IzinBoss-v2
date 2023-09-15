@@ -44,17 +44,17 @@
         tools:layout="@layout/fragment_profile" />
     <activity
         android:id="@+id/loginActivity"
-        android:name="com.naozumi.izinboss.view.LoginActivity"
+        android:name="com.naozumi.izinboss.view.entry.LoginActivity"
         android:label="activity_login"
         tools:layout="@layout/activity_login" />
     <activity
         android:id="@+id/splashActivity"
-        android:name="com.naozumi.izinboss.view.SplashActivity"
+        android:name="com.naozumi.izinboss.view.entry.SplashActivity"
         android:label="activity_splash"
         tools:layout="@layout/activity_splash" />
     <activity
         android:id="@+id/registerActivity"
-        android:name="com.naozumi.izinboss.view.RegisterActivity"
+        android:name="com.naozumi.izinboss.view.entry.RegisterActivity"
         android:label="RegisterActivity"
         tools:layout="@layout/activity_register" />
     <fragment
@@ -74,7 +74,7 @@
         tools:layout="@layout/activity_leave_details" />
     <activity
         android:id="@+id/onboardingActivity"
-        android:name="com.naozumi.izinboss.view.OnboardingActivity"
+        android:name="com.naozumi.izinboss.view.entry.OnboardingActivity"
         android:label="activity_onboarding"
         tools:layout="@layout/activity_onboarding" />
     <activity

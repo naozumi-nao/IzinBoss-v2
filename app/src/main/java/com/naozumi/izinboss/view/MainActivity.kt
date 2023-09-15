@@ -7,7 +7,6 @@ import android.view.MenuItem
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
@@ -15,8 +14,9 @@ import com.google.android.material.navigation.NavigationView
 import com.naozumi.izinboss.R
 import com.naozumi.izinboss.databinding.ActivityMainBinding
 import com.naozumi.izinboss.databinding.NavHeaderMainBinding
-import com.naozumi.izinboss.core.model.local.User
-import com.naozumi.izinboss.core.util.ViewUtils
+import com.naozumi.izinboss.model.datamodel.User
+import com.naozumi.izinboss.model.util.ViewUtils
+import com.naozumi.izinboss.view.entry.LoginActivity
 import com.naozumi.izinboss.viewmodel.MainViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import kotlinx.coroutines.launch
@@ -68,12 +68,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             ViewModelFactory.getInstance(this)
         viewModel = ViewModelProvider(this, factory)[MainViewModel::class.java]
 
-        /* DEBUG FOR STUCK LOGINS
-        viewModel.signOut()
-        viewModel.deleteCurrentUserDataStore()
-        ViewUtils.moveActivityNoHistory(this@MainActivity, LoginActivity::class.java)
-
-         */
+        //DEBUG FOR STUCK LOGINS
+        if (viewModel.getCurrentUser().toString() == "") {
+            viewModel.signOut()
+            viewModel.deleteCurrentUserDataStore()
+            ViewUtils.moveActivityNoHistory(this@MainActivity, LoginActivity::class.java)
+        }
 
         lifecycleScope.launch {
             setUserData(viewModel.getCurrentUser().toString())
@@ -99,12 +99,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 )
             }
             R.id.nav_company -> {
-                ViewUtils.replaceFragment(this,
+                ViewUtils.moveActivity(this, CompanyActivity::class.java)
+                /*ViewUtils.replaceFragment(this,
                     R.id.nav_host_fragment_content_main,
                     CompanyFragment(),
                     CompanyFragment::class.java.simpleName,
                     getString(R.string.company)
                 )
+                 */
             }
             R.id.nav_logout -> {
                 viewModel.signOut()
@@ -154,5 +156,4 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
     }
-
 }

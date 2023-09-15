@@ -73,4 +73,6 @@
     <string name="bio">Bio</string>
     <string name="role">Role</string>
     <string name="account_deleted">Your Account Has Been Deleted</string>
+    <string name="employees">Employees</string>
+    <string name="managers">Managers</string>
 </resources>

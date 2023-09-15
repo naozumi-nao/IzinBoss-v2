@@ -3,14 +3,13 @@ package com.naozumi.izinboss
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import com.naozumi.izinboss.core.data.DataRepository
-import com.naozumi.izinboss.core.data.UserPreferences
-import com.naozumi.izinboss.core.model.local.LeaveRequest
+import com.naozumi.izinboss.model.repo.DataRepository
+import com.naozumi.izinboss.model.repo.UserPreferences
+import com.naozumi.izinboss.model.datamodel.LeaveRequest
 import com.naozumi.izinboss.util.MainDispatcherRule
 import com.naozumi.izinboss.viewmodel.MainViewModel
-import com.naozumi.izinboss.core.helper.Result
+import com.naozumi.izinboss.model.helper.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.junit.Assert
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -18,7 +17,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
 
 /**
