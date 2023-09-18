@@ -54,10 +54,14 @@ dependencies {
     implementation ("androidx.appcompat:appcompat:1.7.0-alpha03")
 
     //Firebase
-    implementation ("com.google.firebase:firebase-auth-ktx:22.1.1")
+    implementation (platform("com.google.firebase:firebase-bom:32.3.1"))
+    implementation ("com.google.firebase:firebase-auth-ktx")
+    implementation ("com.google.firebase:firebase-database-ktx")
+    implementation ("com.google.firebase:firebase-storage-ktx")
+    implementation("com.google.firebase:firebase-firestore-ktx")
+
+    //Play Services
     implementation ("com.google.android.gms:play-services-auth:20.7.0")
-    implementation ("com.google.firebase:firebase-database-ktx:20.2.2")
-    implementation ("com.google.firebase:firebase-storage-ktx:20.2.1")
 
     //Layout technologies
     implementation ("com.google.android.material:material:1.9.0")
@@ -118,7 +122,9 @@ dependencies {
     androidTestImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3") //TestCoroutineDispatcher
     androidTestImplementation ("androidx.test.espresso:espresso-intents:3.5.1") //IntentsTestRule
     debugImplementation ("androidx.fragment:fragment-testing:1.6.1") //launchFragmentInContainer
-    implementation ("androidx.test.espresso:espresso-contrib:3.5.1") //RecyclerViewActions
+    implementation("androidx.test.espresso:espresso-contrib:3.5.1") {
+        exclude(group = "com.google.protobuf")
+    }
 
     //Idling Resource
     implementation("androidx.test.espresso:espresso-idling-resource:3.5.1")

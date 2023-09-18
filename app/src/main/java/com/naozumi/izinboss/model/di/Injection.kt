@@ -7,7 +7,8 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.naozumi.izinboss.R
 import com.naozumi.izinboss.model.repo.DataRepository
 import com.naozumi.izinboss.model.repo.UserPreferences
@@ -24,12 +25,9 @@ object Injection {
         val googleSignInClient = GoogleSignIn.getClient(context, gso)
         val firebaseAuth = FirebaseAuth.getInstance()
 
-        val firebaseDatabase = FirebaseDatabase.getInstance("https://izinboss-app-default-rtdb.firebaseio.com/")
-        val databaseReference = firebaseDatabase.reference
+        val firestore = Firebase.firestore
 
-        //val userPreferences = UserPreferences.getInstance(context.dataStore)
-
-        return DataRepository.getInstance(firebaseAuth, googleSignInClient, databaseReference, provideDataStore(context))
+        return DataRepository.getInstance(firebaseAuth, googleSignInClient, firestore, provideDataStore(context))
     }
 
     fun provideDataStore(context: Context): UserPreferences {

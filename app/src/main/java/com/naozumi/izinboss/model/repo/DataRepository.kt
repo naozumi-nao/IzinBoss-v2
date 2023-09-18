@@ -10,12 +10,8 @@ import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.userProfileChangeRequest
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseException
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.GenericTypeIndicator
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.naozumi.izinboss.model.helper.Result
 import com.naozumi.izinboss.model.helper.wrapEspressoIdlingResource
 import com.naozumi.izinboss.model.datamodel.Company
@@ -27,7 +23,7 @@ import kotlinx.coroutines.tasks.await
 class DataRepository (
     private val firebaseAuth: FirebaseAuth,
     private var googleSignInClient: GoogleSignInClient,
-    private val databaseReference: DatabaseReference,
+    private val firestore: FirebaseFirestore,
     private val userPreferences: UserPreferences
     ) {
 
@@ -106,41 +102,29 @@ class DataRepository (
         emit(Result.Loading)
         wrapEspressoIdlingResource {
             try {
-                val companyId = databaseReference.child("Companies").push().key
+                val user = getUserData(userId)
+                if (user != null) {
+                    user.role = User.UserRole.MANAGER
 
-                if (companyId != null) {
-                    val user = getUserData(userId) // Fetch user data from repository
+                    val companyId = firestore.collection("Companies").document().id // Generate a unique ID
 
-                    if (user != null) {
-                        // Update user locally
-                        user.role = User.UserRole.MANAGER
-                        user.companyId = companyId
-                        saveUserToDataStore(user)
+                    val company = Company(
+                        id = companyId,
+                        name = companyName,
+                        members = mutableListOf(user)
+                    )
 
-                        val company = Company(
-                            id = companyId,
-                            name = companyName,
-                            // members = listOf(user) // Store the user's ID as a member
-                        )
-                        // Save Company in the Firebase database
-                        databaseReference.child("Companies").child(companyId).setValue(company).await()
-                        // Update user in the Firebase database
-                        databaseReference.child("Users").child(userId).setValue(user).await()
+                    val companyCollection = firestore.collection("Companies")
+                    companyCollection.document(companyId).set(company).await() // Create the document with the specified ID
 
-                        val companyRef = databaseReference.child("Companies").child(companyId)
-                        val membersListRef = companyRef.child("MembersList")
-                        membersListRef.child(userId).setValue(user).await()
+                    val userDocumentRef = firestore.collection("Users").document(userId)
+                    userDocumentRef.update("companyId", companyId).await()
 
-                        emit(Result.Success(company))
-                    } else {
-                        emit(Result.Error("User data not found"))
-                    }
-                } else {
-                    emit(Result.Error("Failed to generate company ID"))
+                    emit(Result.Success(company))
                 }
             } catch (e: FirebaseException) {
                 emit(Result.Error(e.message.toString()))
-            } catch (e: DatabaseException) {
+            } catch (e: FirebaseFirestoreException) {
                 emit(Result.Error(e.message.toString()))
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
@@ -152,20 +136,16 @@ class DataRepository (
         emit(Result.Loading)
         wrapEspressoIdlingResource {
             try {
-                val companyRef = databaseReference.child("Companies").child(companyId)
-                val leaveRequestListRef = companyRef.child("LeaveRequestList")
-                val leaveID = leaveRequestListRef.push().key
+                val companyDocumentRef = firestore.collection("Companies").document(companyId)
 
-                if (leaveID != null) {
-                    leaveRequest.id = leaveID
-                    leaveRequestListRef.child(leaveID).setValue(leaveRequest).await()
-                    emit(Result.Success(Unit))
-                } else {
-                    emit(Result.Error("Failed to generate leave ID"))
-                }
+                companyDocumentRef.collection("leaveRequests")
+                    .add(leaveRequest).await()
+
+                emit(Result.Success(Unit))
+
             } catch (e: FirebaseException) {
                 emit(Result.Error(e.message.toString()))
-            } catch (e: DatabaseException) {
+            } catch (e: FirebaseFirestoreException) {
                 emit(Result.Error(e.message.toString()))
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
@@ -177,78 +157,46 @@ class DataRepository (
         emit(Result.Loading)
         wrapEspressoIdlingResource {
             try {
-                val dataSnapShot = databaseReference.child("Companies").child(companyId).child("LeaveRequestList").get().await()
                 val leaveRequestList = mutableListOf<LeaveRequest>()
+                val companyCollection = firestore.collection("Companies").document(companyId)
+                val leaveRequestCollection = companyCollection.collection("leaveRequests")
+                val leaveRequestQuery = leaveRequestCollection.get().await()
 
-                dataSnapShot.children.forEach { leaveSnapShot ->
-                    val leaveRequest = leaveSnapShot.getValue(LeaveRequest::class.java)
-                    leaveRequest?.let {
-                        leaveRequestList.add(it)
-                    }
+                for (document in leaveRequestQuery) {
+                    val leaveRequest = document.toObject(LeaveRequest::class.java)
+                    leaveRequestList.add(leaveRequest)
                 }
+
                 emit(Result.Success(leaveRequestList))
             } catch (e: FirebaseException) {
                 emit(Result.Error(e.message.toString()))
-            } catch (e: DatabaseException) {
+            } catch (e: FirebaseFirestoreException) {
                 emit(Result.Error(e.message.toString()))
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
             }
         }
     }
-
-    /*
-    suspend fun addEmployee(companyId: String, employee: User): LiveData<Result<Unit>> = liveData {
-        emit(Result.Loading)
-        wrapEspressoIdlingResource {
-            try {
-                val companyRef = databaseReference.child("Companies").child(companyId)
-                val existingMembersSnapshot = companyRef.child("members").get().await()
-                val existingMembers = existingMembersSnapshot.getValue(object : GenericTypeIndicator<List<User>>() {})
-
-                if (existingMembers != null) {
-                    val updatedMembers = existingMembers.toMutableList()
-                    updatedMembers.add(employee)
-                    companyRef.child("members").setValue(updatedMembers).await()
-
-                    // Initialize an empty leaveRequestList for the company
-                    val leaveRequestList = mutableListOf<LeaveRequest>()
-                    companyRef.child("leaveRequestList").setValue(leaveRequestList).await()
-
-                    emit(Result.Success(Unit))
-                } else {
-                    emit(Result.Error("Failed to update company members"))
-                }
-            } catch (e: FirebaseException) {
-                emit(Result.Error(e.message.toString()))
-            } catch (e: DatabaseException) {
-                emit(Result.Error(e.message.toString()))
-            } catch (e: Exception) {
-                emit(Result.Error(e.message.toString()))
-            }
-        }
-    }
-
- */
 
     suspend fun getCompanyMembers(companyId: String, role: User.UserRole? = null): LiveData<Result<List<User>>> = liveData {
         emit(Result.Loading)
         wrapEspressoIdlingResource {
             try {
-                val dataSnapShot = databaseReference.child("Companies").child(companyId).child("MembersList").get().await()
                 val companyMembersList = mutableListOf<User>()
+                val companyCollection = firestore.collection("Companies").document(companyId)
+                val membersCollection = companyCollection.collection("members")
+                val membersQuery = membersCollection.get().await()
 
-                dataSnapShot.children.forEach { memberSnapShot ->
-                    val user = memberSnapShot.getValue(User::class.java)
-                    user?.let {
-                        companyMembersList.add(it)
-                    }
+                for (document in membersQuery) {
+                    val companyMember = document.toObject(User::class.java)
+                    if (role == null || companyMember.role == role)
+                        companyMembersList.add(companyMember)
                 }
-                emit(Result.Success(companyMembersList))
 
+                emit(Result.Success(companyMembersList))
             } catch (e: FirebaseException) {
                 emit(Result.Error(e.message.toString()))
-            } catch (e: DatabaseException) {
+            } catch (e: FirebaseFirestoreException) {
                 emit(Result.Error(e.message.toString()))
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
@@ -264,17 +212,19 @@ class DataRepository (
             try {
                 val firebaseUser = firebaseAuth.currentUser
                 val databaseUser = getUserData(userId)
+
                 if (firebaseUser != null && databaseUser != null) {
-                    databaseReference.child("Users")
-                        .child(userId)
-                        .removeValue()
-                        .await()
-                    databaseReference.child("Companies")
-                        .child(databaseUser.companyId.toString())
-                        .removeValue()
-                        .await()
+                    firestore.collection("Users").document(userId).delete().await()
+
+                    if (!databaseUser.companyId.isNullOrEmpty()) {
+                        val companyId = databaseUser.companyId.toString()
+                        val companyRef = firestore.collection("Companies").document(companyId)
+                        val membersCollection = companyRef.collection("members")
+                        membersCollection.document(userId).delete().await()
+                    }
+
                     firebaseUser.delete().await()
-                    delay(1000L)
+                    delay(2000L)
                     signOut()
                     emit(Result.Success(Unit))
                 } else {
@@ -299,34 +249,25 @@ class DataRepository (
         return googleSignInClient.signInIntent
     }
 
-    private fun convertFirebaseUserToUser(firebaseUser: FirebaseUser) {
-        val user = firebaseUser.let {
-            User(
-                uid = it.uid,
-                name = it.displayName,
-                email = it.email,
-                profilePicture = it.photoUrl.toString(),
-            )
-        }
+    private suspend fun convertFirebaseUserToUser(firebaseUser: FirebaseUser) {
+        val userRef = firestore.collection("Users").document(firebaseUser.uid)
 
-        val userRef = databaseReference.child("Users").child(firebaseUser.uid)
-        // Check if the user already exists in the database
-        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if (!snapshot.exists()) {
-                    // User doesn't exist, create a new user node
-                    userRef.setValue(user)
-                        .addOnSuccessListener {
-                            // "uid" from FirebaseUser is directly used as the key for each user document
-                            databaseReference.child("Users").child(firebaseUser.uid).setValue(user)
-                        }
-                        .addOnFailureListener {
-                        }
+        try {
+            userRef.get().addOnSuccessListener { documentSnapshot ->
+                if (!documentSnapshot.exists()) { // User doesn't exist, create a new user document
+                    val newUser = User(
+                        uid = firebaseUser.uid,
+                        name = firebaseUser.displayName,
+                        email = firebaseUser.email,
+                        profilePicture = firebaseUser.photoUrl.toString()
+                    )
+                    userRef.set(newUser)
+                    // TODO saveUserToDataStore(newUser)
                 }
-            }
-            override fun onCancelled(error: DatabaseError) {
-            }
-        })
+            }.await()
+        } catch (exception: Exception) {
+            // Handle errors here
+        }
     }
 
     fun getCurrentUser(): String? {
@@ -335,13 +276,19 @@ class DataRepository (
     }
 
     suspend fun getUserData(userId: String): User? {
-        val dataSnapshot = databaseReference.child("Users").child(userId).get().await()
-        return dataSnapshot.getValue(User::class.java)
+        val userDocument = firestore.collection("Users").document(userId).get().await()
+        if (userDocument.exists()) {
+            return userDocument.toObject(User::class.java)
+        }
+        return null
     }
 
     suspend fun getCompanyData(companyId: String): Company? {
-        val dataSnapshot = databaseReference.child("Companies").child(companyId).get().await()
-        return dataSnapshot.getValue(Company::class.java)
+        val companyDocument = firestore.collection("Companies").document(companyId).get().await()
+        if (companyDocument.exists()) {
+            return companyDocument.toObject(Company::class.java)
+        }
+        return null
     }
 
     private suspend fun saveUserToDataStore(user: User) {
@@ -355,11 +302,11 @@ class DataRepository (
         fun getInstance(
             firebaseAuth: FirebaseAuth,
             googleSignInClient: GoogleSignInClient,
-            databaseReference: DatabaseReference,
+            firestore: FirebaseFirestore,
             userPreferences: UserPreferences
         ): DataRepository {
             return instance ?: synchronized(this) {
-                instance ?: DataRepository(firebaseAuth, googleSignInClient, databaseReference, userPreferences)
+                instance ?: DataRepository(firebaseAuth, googleSignInClient, firestore, userPreferences)
             }.also { instance = it }
         }
     }
