@@ -14,16 +14,19 @@ import com.naozumi.izinboss.model.helper.Result
 import com.naozumi.izinboss.model.helper.setOnClickListener
 import com.naozumi.izinboss.databinding.FragmentProfileBinding
 import com.naozumi.izinboss.model.datamodel.User
+import com.naozumi.izinboss.model.util.StringUtils
 import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.view.entry.LoginActivity
 import com.naozumi.izinboss.viewmodel.ProfileViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding
     private lateinit var viewModel: ProfileViewModel
+    private var user: User? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,26 +46,29 @@ class ProfileFragment : Fragment() {
         viewModel = ViewModelProvider(this, factory)[ProfileViewModel::class.java]
 
         lifecycleScope.launch {
-            setUserData(viewModel.getCurrentUser().toString())
+            user =  viewModel.getUser().first()
+            setUserData(user)
         }
 
         binding?.btnDeleteAccount?.setOnClickListener(2000L) {
             lifecycleScope.launch {
-                deleteUserData(viewModel.getCurrentUser().toString())
+                deleteUserData(user?.uid)
                 viewModel.deleteCurrentUserDataStore()
             }
         }
     }
 
-    private suspend fun setUserData(userId: String) {
-        val user: User? = viewModel.getUserData(userId)
-
+    private suspend fun setUserData(user: User?) {
+        val company = viewModel.getCompanyData(user?.companyId.toString())
         binding?.apply {
             if (user != null) {
                 tvFullNameInput.text = user.name
-                tvCompanyInput.text = user.companyId
+                tvCompanyInput.text = company?.name
                 tvRoleInput.text = user.role.toString().lowercase().replaceFirstChar { it.uppercase() }
                 tvUidInput.text = user.uid
+                tvUidInput.setOnClickListener {
+                    StringUtils.copyTextToClipboard(requireActivity(), tvUidInput.text)
+                }
                 tvEmailInput.text = user.email
                 Glide.with(this@ProfileFragment)
                     .load(user.profilePicture)
@@ -72,7 +78,7 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    private suspend fun deleteUserData(userId: String) {
+    private suspend fun deleteUserData(userId: String?) {
         viewModel.deleteAccount(userId).observe(viewLifecycleOwner) { result ->
             when(result){
                 is Result.Loading -> {

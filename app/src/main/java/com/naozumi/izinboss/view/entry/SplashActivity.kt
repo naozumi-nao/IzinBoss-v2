@@ -22,6 +22,7 @@ import com.naozumi.izinboss.viewmodel.SettingsViewModel
 import com.naozumi.izinboss.viewmodel.SettingsViewModelFactory
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -63,7 +64,7 @@ class SplashActivity : AppCompatActivity() {
             delay(500.toLong())
 
             val userLogin = runBlocking {
-                viewModel.getCurrentUser()
+                viewModel.getUser().first()
             }
 
             if (userLogin != null)

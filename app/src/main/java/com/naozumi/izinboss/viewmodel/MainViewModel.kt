@@ -13,7 +13,7 @@ class MainViewModel(private val dataRepository: DataRepository, private val user
     fun signOut() = dataRepository.signOut()
     suspend fun getAllLeaveRequests(companyId: String) = dataRepository.getAllLeaveRequests(companyId)
     suspend fun getUserData(userId: String) = dataRepository.getUserData(userId)
-    fun getCurrentUser() = dataRepository.getCurrentUser()
+    fun getCurrentUser() = dataRepository.getUserId()
 
     fun saveUser(user: User) {
         viewModelScope.launch {

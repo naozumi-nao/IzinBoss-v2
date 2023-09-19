@@ -12,14 +12,17 @@ import com.naozumi.izinboss.databinding.ActivityCompanyBinding
 import com.naozumi.izinboss.model.adapter.UserListAdapter
 import com.naozumi.izinboss.model.datamodel.User
 import com.naozumi.izinboss.model.helper.Result
+import com.naozumi.izinboss.model.util.StringUtils
 import com.naozumi.izinboss.viewmodel.CompanyViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class CompanyActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCompanyBinding
     private lateinit var viewModel: CompanyViewModel
+    private var user: User? = null
     private val userListAdapter = UserListAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +34,7 @@ class CompanyActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, factory)[CompanyViewModel::class.java]
 
         lifecycleScope.launch {
-            val user = viewModel.getUserData(viewModel.getCurrentUser().toString())
+            user =  viewModel.getUser().first()
             setCompanyData(user?.companyId.toString())
             getCompanyMembers()
         }
@@ -52,14 +55,15 @@ class CompanyActivity : AppCompatActivity() {
             binding.apply {
                 tvCompanyNameInput.text = company.name
                 tvCompanyIdInput.text = company.id
+                tvIndustrySectorInput.text = StringUtils.capitalizeWordsExceptAnd(company.industrySector.toString().lowercase())
+                tvCompanyIdInput.setOnClickListener {
+                    StringUtils.copyTextToClipboard(this@CompanyActivity, tvCompanyIdInput.text)
+                }
             }
         }
     }
 
     private suspend fun getCompanyMembers() {
-        val user = viewModel.getUserData(viewModel.getCurrentUser().toString())
-        val companyId = runBlocking { user?.companyId.toString() }
-
         userListAdapter.setOnItemClickCallback(object : UserListAdapter.OnItemClickCallback {
             override fun onItemClicked(data: User) {
                 Toast.makeText(
@@ -70,7 +74,7 @@ class CompanyActivity : AppCompatActivity() {
                 // TODO move to User Profile
             }
         })
-        viewModel.getCompanyMembers(companyId).observe(this) { result ->
+        viewModel.getCompanyMembers(user?.companyId).observe(this) { result ->
             if (result != null) {
                 when (result) {
                     is Result.Loading -> {

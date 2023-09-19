@@ -43,7 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:layout_marginStart="16dp"
-        android:text="@string/name"
+        android:text="Company Name"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="@id/guideline"
@@ -62,12 +62,12 @@
         app:layout_constraintTop_toBottomOf="@id/tv_company_name" />
 
     <TextView
-        android:id="@+id/tv_industry"
+        android:id="@+id/tv_industry_sector"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
-        android:text="Industry"
+        android:text="Industry Sector"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="@id/guideline"
@@ -78,7 +78,7 @@
         android:layout_height="1dp"
         android:background="@android:color/darker_gray"
         android:layout_margin="16dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_role_input"
+        app:layout_constraintTop_toBottomOf="@id/tv_industry_sector_input"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -87,7 +87,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="100dp" />
+        app:layout_constraintGuide_begin="140dp" />
 
     <TextView
         android:id="@+id/tv_company_name_input"
@@ -104,17 +104,21 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="@string/company"
+        android:text="ID1234567890"
+        android:drawablePadding="4dp"
+        android:drawableTint="@color/blue"
+        app:drawableStartCompat="@drawable/baseline_content_copy_24"
         app:layout_constraintStart_toStartOf="@id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_company_name_input" />
 
     <TextView
-        android:id="@+id/tv_role_input"
+        android:id="@+id/tv_industry_sector_input"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="N/A (wait for next update patch)"
+        android:layout_marginBottom="8dp"
+        android:text="N/A"
         app:layout_constraintStart_toStartOf="@id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_company_id_input" />
@@ -127,10 +131,10 @@
         android:layout_marginTop="16dp"
         android:text="Company Members"
         android:textSize="20sp"
-        app:icon="@drawable/baseline_edit_24"
+        app:icon="@drawable/baseline_add_24"
         app:iconGravity="end"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_role_input" />
+        app:layout_constraintTop_toBottomOf="@id/tv_industry_sector_input" />
 
     <ProgressBar
         android:id="@+id/progress_bar"
@@ -145,6 +149,7 @@
         android:id="@+id/rv_members_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:padding="8dp"
         app:layout_constraintTop_toBottomOf="@+id/btn_company_members"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -8,7 +8,7 @@ data class LeaveRequest(
     val startDate: String? = null,
     val endDate: String? = null,
     val reason: String? = null,
-    val type: Type = Type.SICK,
+    val type: Type? = null,
     val status: Status = Status.PENDING
 ) {
     enum class Type {

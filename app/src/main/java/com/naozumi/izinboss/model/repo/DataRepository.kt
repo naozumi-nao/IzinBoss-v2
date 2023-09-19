@@ -1,7 +1,6 @@
 package com.naozumi.izinboss.model.repo
 
 import android.content.Intent
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -78,14 +77,15 @@ class DataRepository (
         }
     }
 
-    suspend fun loginWithEmail(email: String, password: String): LiveData<Result<FirebaseUser>> = liveData {
+    suspend fun loginWithEmail(email: String, password: String): LiveData<Result<Unit>> = liveData {
         emit(Result.Loading)
         wrapEspressoIdlingResource {
             try {
                 firebaseAuth.signInWithEmailAndPassword(email, password).await()
-                val user = firebaseAuth.currentUser
+                val user = getUserData(firebaseAuth.currentUser?.uid.toString())
                 if (user != null) {
-                    emit(Result.Success(user))
+                    saveUserToPreferences(user)
+                    emit(Result.Success(Unit))
                 } else {
                     emit(Result.Error("Sign-in result does not contain user data"))
                 }
@@ -99,32 +99,35 @@ class DataRepository (
         }
     }
 
-    suspend fun createCompany(companyName: String, userId: String): LiveData<Result<Company>> = liveData {
+    suspend fun createCompany(companyName: String, industrySector: Company.IndustrySector?, user: User?): LiveData<Result<Company>> = liveData {
         emit(Result.Loading)
         wrapEspressoIdlingResource {
             try {
-                val user = getUserData(userId)
+                val companyId = firestore.collection("Companies").document().id // Generate a unique ID
                 if (user != null) {
                     user.role = User.UserRole.MANAGER
-
-                    val companyId = firestore.collection("Companies").document().id // Generate a unique ID
+                    user.companyId = companyId
 
                     val company = Company(
-                        id = companyId,
-                        name = companyName
+                        companyId,
+                        companyName,
+                        industrySector
                     )
 
                     val companyCollection = firestore.collection("Companies")
                     companyCollection.document(companyId).set(company).await() // Create the document with the specified ID
 
-                    val userDocumentRef = firestore.collection("Users").document(userId)
+                    val userDocumentRef = firestore.collection("Users").document(user.uid.toString())
                     val userUpdate = mapOf(
                         "companyId" to companyId,
                         "role" to user.role
                     )
                     userDocumentRef.update(userUpdate).await()
+                    saveUserToPreferences(user)
 
                     emit(Result.Success(company))
+                } else {
+                    emit(Result.Error("Error: User is Null!"))
                 }
             } catch (e: FirebaseException) {
                 emit(Result.Error(e.message.toString()))
@@ -182,7 +185,7 @@ class DataRepository (
         }
     }
 
-    suspend fun getCompanyMembers(companyId: String): LiveData<Result<List<User>>> = liveData {
+    suspend fun getCompanyMembers(companyId: String?): LiveData<Result<List<User>>> = liveData {
         emit(Result.Loading)
         wrapEspressoIdlingResource {
             try {
@@ -208,26 +211,21 @@ class DataRepository (
 
 
     // TODO: This deleteAccount deletes both account and company, use with caution. Need to separate it later
-    suspend fun deleteAccount(userId: String): LiveData<Result<Unit>> = liveData {
+    suspend fun deleteAccount(userId: String?): LiveData<Result<Unit>> = liveData {
         emit(Result.Loading)
         wrapEspressoIdlingResource {
             try {
                 val firebaseUser = firebaseAuth.currentUser
                 val databaseUser = getUserData(userId)
 
-                if (firebaseUser != null && databaseUser != null) {
+                if (firebaseUser != null && databaseUser != null && userId != null) {
                     firestore.collection("Users").document(userId).delete().await()
 
-                    if (!databaseUser.companyId.isNullOrEmpty()) {
-                        val companyId = databaseUser.companyId.toString()
-                        val companyRef = firestore.collection("Companies").document(companyId)
-                        val membersCollection = companyRef.collection("members")
-                        membersCollection.document(userId).delete().await()
-                    }
+                    val companyId = databaseUser.companyId.toString()
+                    val companyRef = firestore.collection("Companies").document(companyId)
+                    companyRef.delete().await()
 
                     firebaseUser.delete().await()
-                    delay(2000L)
-                    signOut()
                     emit(Result.Success(Unit))
                 } else {
                     emit(Result.Error("Error: User Not Found"))
@@ -272,13 +270,13 @@ class DataRepository (
         }
     }
 
-    fun getCurrentUser(): String? {
+    fun getUserId(): String? {
         val currentUser = firebaseAuth.currentUser
         return currentUser?.uid
     }
 
-    suspend fun getUserData(userId: String): User? {
-        val userDocument = firestore.collection("Users").document(userId).get().await()
+    suspend fun getUserData(userId: String?): User? {
+        val userDocument = firestore.collection("Users").document(userId.toString()).get().await()
         if (userDocument.exists()) {
             return userDocument.toObject(User::class.java)
         }
@@ -293,7 +291,7 @@ class DataRepository (
         return null
     }
 
-    private suspend fun saveUserToDataStore(user: User) {
+    private suspend fun saveUserToPreferences(user: User) {
         userPreferences.saveUser(user)
     }
 
