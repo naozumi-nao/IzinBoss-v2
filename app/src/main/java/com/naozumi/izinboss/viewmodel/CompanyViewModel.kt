@@ -11,5 +11,7 @@ class CompanyViewModel(private val dataRepository: DataRepository): ViewModel() 
     fun getCurrentUser() = dataRepository.getCurrentUser()
     suspend fun getUserData(userId: String) = dataRepository.getUserData(userId)
     suspend fun getCompanyData(companyId: String) = dataRepository.getCompanyData(companyId)
+    suspend fun getCompanyMembers(companyId: String) =
+        dataRepository.getCompanyMembers(companyId)
 
 }

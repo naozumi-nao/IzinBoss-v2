@@ -1,6 +1,7 @@
 package com.naozumi.izinboss.model.repo
 
 import android.content.Intent
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -110,15 +111,18 @@ class DataRepository (
 
                     val company = Company(
                         id = companyId,
-                        name = companyName,
-                        members = mutableListOf(user)
+                        name = companyName
                     )
 
                     val companyCollection = firestore.collection("Companies")
                     companyCollection.document(companyId).set(company).await() // Create the document with the specified ID
 
                     val userDocumentRef = firestore.collection("Users").document(userId)
-                    userDocumentRef.update("companyId", companyId).await()
+                    val userUpdate = mapOf(
+                        "companyId" to companyId,
+                        "role" to user.role
+                    )
+                    userDocumentRef.update(userUpdate).await()
 
                     emit(Result.Success(company))
                 }
@@ -178,19 +182,17 @@ class DataRepository (
         }
     }
 
-    suspend fun getCompanyMembers(companyId: String, role: User.UserRole? = null): LiveData<Result<List<User>>> = liveData {
+    suspend fun getCompanyMembers(companyId: String): LiveData<Result<List<User>>> = liveData {
         emit(Result.Loading)
         wrapEspressoIdlingResource {
             try {
                 val companyMembersList = mutableListOf<User>()
-                val companyCollection = firestore.collection("Companies").document(companyId)
-                val membersCollection = companyCollection.collection("members")
-                val membersQuery = membersCollection.get().await()
+                val usersCollection = firestore.collection("Users")
+                val query = usersCollection.whereEqualTo("companyId", companyId).get().await()
 
-                for (document in membersQuery) {
+                for (document in query) {
                     val companyMember = document.toObject(User::class.java)
-                    if (role == null || companyMember.role == role)
-                        companyMembersList.add(companyMember)
+                    companyMembersList.add(companyMember)
                 }
 
                 emit(Result.Success(companyMembersList))

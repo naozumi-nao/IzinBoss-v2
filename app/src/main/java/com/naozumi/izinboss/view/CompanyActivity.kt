@@ -2,23 +2,25 @@ package com.naozumi.izinboss.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
-import com.naozumi.izinboss.R
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.naozumi.izinboss.databinding.ActivityCompanyBinding
-import com.naozumi.izinboss.model.adapter.MembersSectionsPagerAdapter
+import com.naozumi.izinboss.model.adapter.UserListAdapter
+import com.naozumi.izinboss.model.datamodel.User
+import com.naozumi.izinboss.model.helper.Result
 import com.naozumi.izinboss.viewmodel.CompanyViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class CompanyActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCompanyBinding
     private lateinit var viewModel: CompanyViewModel
+    private val userListAdapter = UserListAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,15 +33,14 @@ class CompanyActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val user = viewModel.getUserData(viewModel.getCurrentUser().toString())
             setCompanyData(user?.companyId.toString())
+            getCompanyMembers()
         }
 
-        val membersSectionsPagerAdapter = MembersSectionsPagerAdapter(this)
-        binding.viewPager.adapter = membersSectionsPagerAdapter
-        TabLayoutMediator(
-            binding.tabs, binding.viewPager
-        ) { tab: TabLayout.Tab, position: Int ->
-            tab.text = resources.getString(TAB_TITLES[position])
-        }.attach()
+        binding.rvMembersList.apply {
+            layoutManager = LinearLayoutManager(this@CompanyActivity)
+            setHasFixedSize(true)
+            adapter = userListAdapter
+        }
 
         binding.progressBar.visibility = View.GONE
     }
@@ -55,8 +56,43 @@ class CompanyActivity : AppCompatActivity() {
         }
     }
 
-    companion object {
-        @StringRes
-        private val TAB_TITLES = intArrayOf(R.string.employees, R.string.managers)
+    private suspend fun getCompanyMembers() {
+        val user = viewModel.getUserData(viewModel.getCurrentUser().toString())
+        val companyId = runBlocking { user?.companyId.toString() }
+
+        userListAdapter.setOnItemClickCallback(object : UserListAdapter.OnItemClickCallback {
+            override fun onItemClicked(data: User) {
+                Toast.makeText(
+                    this@CompanyActivity,
+                    "Clicked on user",
+                    Toast.LENGTH_SHORT
+                ).show()
+                // TODO move to User Profile
+            }
+        })
+        viewModel.getCompanyMembers(companyId).observe(this) { result ->
+            if (result != null) {
+                when (result) {
+                    is Result.Loading -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                    }
+                    is Result.Success -> {
+                        binding.progressBar.visibility = View.GONE
+                        val memberData = result.data
+                        Log.d("getCompanyMembers: ", "$memberData")
+                        userListAdapter.submitList(memberData)
+                        Log.d("currentList: ", "${userListAdapter.currentList}")
+                    }
+                    is Result.Error -> {
+                        binding.progressBar.visibility = View.GONE
+                        Toast.makeText(
+                            this@CompanyActivity,
+                            "Error: " + result.error,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+        }
     }
 }

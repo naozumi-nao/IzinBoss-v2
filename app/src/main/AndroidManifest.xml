@@ -37,7 +37,8 @@
         tools:targetApi="33">
         <activity
             android:name=".view.CompanyActivity"
-            android:exported="false" />
+            android:exported="true"
+            android:parentActivityName=".view.MainActivity" />
         <activity
             android:name=".view.LeaveDetailsActivity"
             android:exported="true"

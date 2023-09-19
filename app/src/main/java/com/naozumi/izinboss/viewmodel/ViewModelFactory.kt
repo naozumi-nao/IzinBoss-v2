@@ -37,9 +37,6 @@ class ViewModelFactory private constructor(
         if (modelClass.isAssignableFrom(CompanyViewModel::class.java)) {
             return CompanyViewModel(dataRepository) as T
         }
-        if (modelClass.isAssignableFrom(MembersListViewModel::class.java)) {
-            return MembersListViewModel(dataRepository, userPreferences) as T
-        }
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }
 

@@ -57,7 +57,6 @@ class UserListAdapter : ListAdapter<User, UserListAdapter.ListViewHolder>(DIFF_C
                     return oldUser.name == newUser.name
                 }
 
-                @SuppressLint("DiffUtilEquals")
                 override fun areContentsTheSame(oldUser: User, newUser: User): Boolean {
                     return oldUser == newUser
                 }
