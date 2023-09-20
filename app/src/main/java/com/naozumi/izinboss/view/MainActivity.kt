@@ -16,6 +16,7 @@ import com.naozumi.izinboss.databinding.ActivityMainBinding
 import com.naozumi.izinboss.databinding.NavHeaderMainBinding
 import com.naozumi.izinboss.model.datamodel.User
 import com.naozumi.izinboss.model.util.ViewUtils
+import com.naozumi.izinboss.view.company.CompanyProfileActivity
 import com.naozumi.izinboss.view.entry.LoginActivity
 import com.naozumi.izinboss.viewmodel.MainViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
@@ -69,7 +70,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         viewModel = ViewModelProvider(this, factory)[MainViewModel::class.java]
 
         //DEBUG FOR STUCK LOGINS
-        if (viewModel.getCurrentUser().toString() == "") {
+        if (viewModel.getCurrentUser().isNullOrEmpty()) {
             viewModel.signOut()
             viewModel.deleteCurrentUserDataStore()
             ViewUtils.moveActivityNoHistory(this@MainActivity, LoginActivity::class.java)
@@ -93,20 +94,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_profile -> {
                 ViewUtils.replaceFragment(this,
                     R.id.nav_host_fragment_content_main,
-                    ProfileFragment(),
-                    ProfileFragment::class.java.simpleName,
+                    UserProfileFragment(),
+                    UserProfileFragment::class.java.simpleName,
                     getString(R.string.profile)
                 )
             }
             R.id.nav_company -> {
-                ViewUtils.moveActivity(this, CompanyActivity::class.java)
-                /*ViewUtils.replaceFragment(this,
-                    R.id.nav_host_fragment_content_main,
-                    CompanyFragment(),
-                    CompanyFragment::class.java.simpleName,
-                    getString(R.string.company)
-                )
-                 */
+                ViewUtils.moveActivity(this, CompanyProfileActivity::class.java)
             }
             R.id.nav_logout -> {
                 viewModel.signOut()

@@ -1,4 +1,4 @@
-package com.naozumi.izinboss.viewmodel
+package com.naozumi.izinboss.viewmodel.company
 
 import androidx.lifecycle.ViewModel
 import com.naozumi.izinboss.model.datamodel.Company
@@ -10,6 +10,10 @@ import kotlinx.coroutines.flow.Flow
 class CompanyViewModel(private val dataRepository: DataRepository, private val userPreferences: UserPreferences): ViewModel() {
     suspend fun createCompany(companyName: String, industrySector: Company.IndustrySector?, user: User?) =
         dataRepository.createCompany(companyName, industrySector, user)
+
+    suspend fun addUserToCompany(companyId: String, user: User?, position: User.UserRole?) =
+        dataRepository.addUserToCompany(companyId, user, position)
+
     fun getUser(): Flow<User?> {
         return userPreferences.getUser()
     }

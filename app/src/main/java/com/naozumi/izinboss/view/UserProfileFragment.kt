@@ -17,15 +17,15 @@ import com.naozumi.izinboss.model.datamodel.User
 import com.naozumi.izinboss.model.util.StringUtils
 import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.view.entry.LoginActivity
-import com.naozumi.izinboss.viewmodel.ProfileViewModel
+import com.naozumi.izinboss.viewmodel.UserProfileViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class ProfileFragment : Fragment() {
+class UserProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding
-    private lateinit var viewModel: ProfileViewModel
+    private lateinit var viewModel: UserProfileViewModel
     private var user: User? = null
 
     override fun onCreateView(
@@ -43,7 +43,7 @@ class ProfileFragment : Fragment() {
 
         val factory: ViewModelFactory =
             ViewModelFactory.getInstance(requireActivity())
-        viewModel = ViewModelProvider(this, factory)[ProfileViewModel::class.java]
+        viewModel = ViewModelProvider(this, factory)[UserProfileViewModel::class.java]
 
         lifecycleScope.launch {
             user =  viewModel.getUser().first()
@@ -70,7 +70,7 @@ class ProfileFragment : Fragment() {
                     StringUtils.copyTextToClipboard(requireActivity(), tvUidInput.text)
                 }
                 tvEmailInput.text = user.email
-                Glide.with(this@ProfileFragment)
+                Glide.with(this@UserProfileFragment)
                     .load(user.profilePicture)
                     .error(R.drawable.onboarding_image_1)
                     .into(ivProfilePhoto)

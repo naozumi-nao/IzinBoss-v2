@@ -6,11 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.naozumi.izinboss.R
 import com.naozumi.izinboss.model.adapter.LeaveListAdapter
 import com.naozumi.izinboss.databinding.FragmentHomeBinding
 import com.naozumi.izinboss.model.helper.Result
@@ -18,6 +16,7 @@ import com.naozumi.izinboss.model.helper.setOnClickListener
 import com.naozumi.izinboss.model.datamodel.LeaveRequest
 import com.naozumi.izinboss.model.datamodel.User
 import com.naozumi.izinboss.model.util.ViewUtils
+import com.naozumi.izinboss.view.company.CreateCompanyActivity
 import com.naozumi.izinboss.viewmodel.MainViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import kotlinx.coroutines.flow.first
@@ -48,12 +47,7 @@ class HomeFragment : Fragment() {
 
         lifecycleScope.launch {
             if( !checkIfUserHasCompany(viewModel.getCurrentUser().toString()) ) {
-                ViewUtils.replaceFragment(requireActivity() as AppCompatActivity,
-                    R.id.nav_host_fragment_content_main,
-                    CreateCompanyFragment(),
-                    CreateCompanyFragment::class.java.simpleName,
-                    getString(R.string.company)
-                )
+                ViewUtils.moveActivityNoHistory(requireActivity(), CreateCompanyActivity::class.java)
             } else {
                 setupLeaveList()
                 binding?.swipeToRefresh?.setOnRefreshListener {
@@ -63,7 +57,7 @@ class HomeFragment : Fragment() {
                 }
 
                 binding?.fabAddLeave?.setOnClickListener(1000L) {
-                    ViewUtils.moveActivity(requireActivity(), AddLeaveActivity::class.java)
+                    ViewUtils.moveActivity(requireActivity(), RequestLeaveActivity::class.java)
                 }
             }
         }

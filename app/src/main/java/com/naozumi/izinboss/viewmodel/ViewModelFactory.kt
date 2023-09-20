@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.naozumi.izinboss.model.repo.DataRepository
 import com.naozumi.izinboss.model.repo.UserPreferences
 import com.naozumi.izinboss.model.di.Injection
+import com.naozumi.izinboss.viewmodel.company.CompanyViewModel
 import com.naozumi.izinboss.viewmodel.entry.LoginViewModel
 import com.naozumi.izinboss.viewmodel.entry.RegisterViewModel
 
@@ -31,8 +32,8 @@ class ViewModelFactory private constructor(
         if (modelClass.isAssignableFrom(AddLeaveViewModel::class.java)) {
             return AddLeaveViewModel(dataRepository, userPreferences) as T
         }
-        if (modelClass.isAssignableFrom(ProfileViewModel::class.java)) {
-            return ProfileViewModel(dataRepository, userPreferences) as T
+        if (modelClass.isAssignableFrom(UserProfileViewModel::class.java)) {
+            return UserProfileViewModel(dataRepository, userPreferences) as T
         }
         if (modelClass.isAssignableFrom(CompanyViewModel::class.java)) {
             return CompanyViewModel(dataRepository, userPreferences) as T

@@ -8,7 +8,7 @@ import com.naozumi.izinboss.model.repo.UserPreferences
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
-class ProfileViewModel(private val dataRepository: DataRepository, private val userPreferences: UserPreferences): ViewModel() {
+class UserProfileViewModel(private val dataRepository: DataRepository, private val userPreferences: UserPreferences): ViewModel() {
     suspend fun getUserData(userId: String) = dataRepository.getUserData(userId)
     fun getUser(): Flow<User?> {
         return userPreferences.getUser()

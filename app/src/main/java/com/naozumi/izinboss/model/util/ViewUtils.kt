@@ -68,7 +68,7 @@ object ViewUtils {
         containerId: Int,
         fragment: Fragment,
         fragmentTag: String,
-        title: String
+        title: String? = null
     ) {
         val fragmentManager = activity.supportFragmentManager
         fragmentManager.commit {

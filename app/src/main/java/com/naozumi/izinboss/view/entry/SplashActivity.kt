@@ -17,7 +17,7 @@ import com.naozumi.izinboss.R
 import com.naozumi.izinboss.model.repo.SettingsPreferences
 import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.view.MainActivity
-import com.naozumi.izinboss.viewmodel.ProfileViewModel
+import com.naozumi.izinboss.viewmodel.UserProfileViewModel
 import com.naozumi.izinboss.viewmodel.SettingsViewModel
 import com.naozumi.izinboss.viewmodel.SettingsViewModelFactory
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
@@ -56,7 +56,7 @@ class SplashActivity : AppCompatActivity() {
 
         val factory: ViewModelFactory =
             ViewModelFactory.getInstance(this)
-        val viewModel: ProfileViewModel by viewModels {
+        val viewModel: UserProfileViewModel by viewModels {
             factory
         }
 

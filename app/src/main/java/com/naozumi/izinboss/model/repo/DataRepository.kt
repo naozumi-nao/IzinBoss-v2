@@ -105,6 +105,7 @@ class DataRepository (
             try {
                 val companyId = firestore.collection("Companies").document().id // Generate a unique ID
                 if (user != null) {
+                    // Update user's role and companyId locally
                     user.role = User.UserRole.MANAGER
                     user.companyId = companyId
 
@@ -123,12 +124,77 @@ class DataRepository (
                         "role" to user.role
                     )
                     userDocumentRef.update(userUpdate).await()
-                    saveUserToPreferences(user)
 
                     emit(Result.Success(company))
                 } else {
                     emit(Result.Error("Error: User is Null!"))
                 }
+            } catch (e: FirebaseException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: FirebaseFirestoreException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: Exception) {
+                emit(Result.Error(e.message.toString()))
+            }
+        }
+    }
+
+
+    suspend fun addUserToCompany(companyId: String, user: User?, position: User.UserRole?): LiveData<Result<Unit>> = liveData {
+        emit(Result.Loading)
+        wrapEspressoIdlingResource {
+            try {
+                if (user != null) {
+                    // Check if the company with the specified companyId exists
+                    val companyDocument = firestore.collection("Companies").document(companyId).get().await()
+                    if (companyDocument.exists()) {
+                        val userDocumentRef = firestore.collection("Users").document(user.uid.toString())
+
+                        user.role = when (position) {
+                            User.UserRole.MANAGER -> User.UserRole.MANAGER
+                            User.UserRole.EMPLOYEE -> User.UserRole.EMPLOYEE
+                            else -> User.UserRole.EMPLOYEE
+                        }
+
+                        val userUpdate = mapOf(
+                            "companyId" to companyId,
+                            "role" to user.role
+                        )
+                        userDocumentRef.update(userUpdate).await()
+                        saveUserToPreferences(user)
+
+                        emit(Result.Success(Unit))
+                    } else {
+                        emit(Result.Error("Error: Company with ID $companyId does not exist"))
+                    }
+                } else {
+                    emit(Result.Error("Error: User is Null"))
+                }
+            } catch (e: FirebaseException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: FirebaseFirestoreException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: Exception) {
+                emit(Result.Error(e.message.toString()))
+            }
+        }
+    }
+
+
+    suspend fun getCompanyMembers(companyId: String?): LiveData<Result<List<User>>> = liveData {
+        emit(Result.Loading)
+        wrapEspressoIdlingResource {
+            try {
+                val companyMembersList = mutableListOf<User>()
+                val usersCollection = firestore.collection("Users")
+                val query = usersCollection.whereEqualTo("companyId", companyId).get().await()
+
+                for (document in query) {
+                    val companyMember = document.toObject(User::class.java)
+                    companyMembersList.add(companyMember)
+                }
+
+                emit(Result.Success(companyMembersList))
             } catch (e: FirebaseException) {
                 emit(Result.Error(e.message.toString()))
             } catch (e: FirebaseFirestoreException) {
@@ -184,31 +250,6 @@ class DataRepository (
             }
         }
     }
-
-    suspend fun getCompanyMembers(companyId: String?): LiveData<Result<List<User>>> = liveData {
-        emit(Result.Loading)
-        wrapEspressoIdlingResource {
-            try {
-                val companyMembersList = mutableListOf<User>()
-                val usersCollection = firestore.collection("Users")
-                val query = usersCollection.whereEqualTo("companyId", companyId).get().await()
-
-                for (document in query) {
-                    val companyMember = document.toObject(User::class.java)
-                    companyMembersList.add(companyMember)
-                }
-
-                emit(Result.Success(companyMembersList))
-            } catch (e: FirebaseException) {
-                emit(Result.Error(e.message.toString()))
-            } catch (e: FirebaseFirestoreException) {
-                emit(Result.Error(e.message.toString()))
-            } catch (e: Exception) {
-                emit(Result.Error(e.message.toString()))
-            }
-        }
-    }
-
 
     // TODO: This deleteAccount deletes both account and company, use with caution. Need to separate it later
     suspend fun deleteAccount(userId: String?): LiveData<Result<Unit>> = liveData {

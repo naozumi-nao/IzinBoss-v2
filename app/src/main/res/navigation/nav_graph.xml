@@ -27,7 +27,7 @@
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.naozumi.izinboss.view.ProfileFragment"
+        android:name="com.naozumi.izinboss.view.UserProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
     <activity
@@ -47,14 +47,14 @@
         tools:layout="@layout/activity_register" />
     <fragment
         android:id="@+id/createCompanyFragment"
-        android:name="com.naozumi.izinboss.view.CreateCompanyFragment"
+        android:name="com.naozumi.izinboss.view.company.JoinCompanyFragment"
         android:label="fragment_create_company"
-        tools:layout="@layout/fragment_create_company" />
+        tools:layout="@layout/fragment_join_company" />
     <activity
         android:id="@+id/addLeaveActivity"
-        android:name="com.naozumi.izinboss.view.AddLeaveActivity"
+        android:name="com.naozumi.izinboss.view.RequestLeaveActivity"
         android:label="activity_add_leave"
-        tools:layout="@layout/activity_add_leave" />
+        tools:layout="@layout/activity_request_leave" />
     <activity
         android:id="@+id/leaveDetailsActivity"
         android:name="com.naozumi.izinboss.view.LeaveDetailsActivity"
