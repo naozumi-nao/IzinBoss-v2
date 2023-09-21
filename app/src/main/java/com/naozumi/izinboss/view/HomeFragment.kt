@@ -16,7 +16,6 @@ import com.naozumi.izinboss.model.helper.setOnClickListener
 import com.naozumi.izinboss.model.datamodel.LeaveRequest
 import com.naozumi.izinboss.model.datamodel.User
 import com.naozumi.izinboss.model.util.ViewUtils
-import com.naozumi.izinboss.view.company.CreateCompanyActivity
 import com.naozumi.izinboss.viewmodel.MainViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import kotlinx.coroutines.flow.first
@@ -27,6 +26,7 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding
     private lateinit var viewModel: MainViewModel
+    private var user: User? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,8 +46,11 @@ class HomeFragment : Fragment() {
         binding?.progressBar?.visibility = View.GONE
 
         lifecycleScope.launch {
-            if( !checkIfUserHasCompany(viewModel.getCurrentUser().toString()) ) {
-                ViewUtils.moveActivityNoHistory(requireActivity(), CreateCompanyActivity::class.java)
+            user = viewModel.getUser().first()
+            if(user?.companyId.isNullOrBlank()) {
+                binding?.animEmptyList?.playAnimation()
+                binding?.swipeToRefresh?.visibility = View.GONE
+                binding?.fabAddLeave?.visibility = View.GONE
             } else {
                 setupLeaveList()
                 binding?.swipeToRefresh?.setOnRefreshListener {
@@ -55,10 +58,9 @@ class HomeFragment : Fragment() {
                         setupLeaveList()
                     }
                 }
-
-                binding?.fabAddLeave?.setOnClickListener(1000L) {
-                    ViewUtils.moveActivity(requireActivity(), RequestLeaveActivity::class.java)
-                }
+            }
+            binding?.fabAddLeave?.setOnClickListener(1000L) {
+                ViewUtils.moveActivity(requireActivity(), RequestLeaveActivity::class.java)
             }
         }
     }
@@ -102,8 +104,14 @@ class HomeFragment : Fragment() {
                     is Result.Success -> {
                         binding?.progressBar?.visibility = View.GONE
                         val leaveData = result.data
-                        leaveListAdapter.submitList(leaveData)
-                        binding?.swipeToRefresh?.isRefreshing = false
+                        if (leaveData.isEmpty()) {
+                            binding?.animEmptyList?.playAnimation()
+                            binding?.swipeToRefresh?.isRefreshing = false
+                        } else {
+                            binding?.animEmptyList?.visibility = View.GONE
+                            leaveListAdapter.submitList(leaveData)
+                            binding?.swipeToRefresh?.isRefreshing = false
+                        }
                     }
                     is Result.Error -> {
                         binding?.progressBar?.visibility = View.GONE

@@ -17,7 +17,6 @@ class ViewModelFactory private constructor(
     private val dataRepository: DataRepository,
     private val userPreferences: UserPreferences
 ): ViewModelProvider.NewInstanceFactory() {
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_prefs")
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MainViewModel::class.java)) {

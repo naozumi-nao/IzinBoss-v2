@@ -13,11 +13,8 @@ class UserProfileViewModel(private val dataRepository: DataRepository, private v
     fun getUser(): Flow<User?> {
         return userPreferences.getUser()
     }
-
     suspend fun getCompanyData(companyId: String) = dataRepository.getCompanyData(companyId)
-
     suspend fun deleteAccount(userId: String?) = dataRepository.deleteAccount(userId)
-
     fun deleteCurrentUserDataStore() {
         viewModelScope.launch {
             userPreferences.deleteCurrentUserDataStore()

@@ -17,8 +17,10 @@ import com.naozumi.izinboss.model.helper.wrapEspressoIdlingResource
 import com.naozumi.izinboss.model.datamodel.Company
 import com.naozumi.izinboss.model.datamodel.LeaveRequest
 import com.naozumi.izinboss.model.datamodel.User
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class DataRepository (
     private val firebaseAuth: FirebaseAuth,
@@ -180,7 +182,6 @@ class DataRepository (
         }
     }
 
-
     suspend fun getCompanyMembers(companyId: String?): LiveData<Result<List<User>>> = liveData {
         emit(Result.Loading)
         wrapEspressoIdlingResource {
@@ -229,24 +230,31 @@ class DataRepository (
     suspend fun getAllLeaveRequests(companyId: String): LiveData<Result<List<LeaveRequest>>> = liveData {
         emit(Result.Loading)
         wrapEspressoIdlingResource {
+            if(companyId.isNotBlank()) {
+
+            }
             try {
                 val leaveRequestList = mutableListOf<LeaveRequest>()
-                val companyCollection = firestore.collection("Companies").document(companyId)
-                val leaveRequestCollection = companyCollection.collection("leaveRequests")
+                val leaveRequestCollection = firestore.collection("Companies").document(companyId).collection("leaveRequests")
                 val leaveRequestQuery = leaveRequestCollection.get().await()
 
-                for (document in leaveRequestQuery) {
-                    val leaveRequest = document.toObject(LeaveRequest::class.java)
-                    leaveRequestList.add(leaveRequest)
-                }
+                if (leaveRequestQuery.isEmpty) {
+                    // If the collection is empty, return an empty list
+                    emit(Result.Success(emptyList()))
+                } else {
+                    for (document in leaveRequestQuery) {
+                        val leaveRequest = document.toObject(LeaveRequest::class.java)
+                        leaveRequestList.add(leaveRequest)
+                    }
 
-                emit(Result.Success(leaveRequestList))
+                    emit(Result.Success(leaveRequestList))
+                }
             } catch (e: FirebaseException) {
-                emit(Result.Error(e.message.toString()))
+                emit(Result.Error("getAllLeaveRequests: " + e.message.toString()))
             } catch (e: FirebaseFirestoreException) {
-                emit(Result.Error(e.message.toString()))
+                emit(Result.Error("getAllLeaveRequests: " + e.message.toString()))
             } catch (e: Exception) {
-                emit(Result.Error(e.message.toString()))
+                emit(Result.Error("getAllLeaveRequests: " + e.message.toString()))
             }
         }
     }
@@ -267,6 +275,8 @@ class DataRepository (
                     companyRef.delete().await()
 
                     firebaseUser.delete().await()
+                    signOut()
+
                     emit(Result.Success(Unit))
                 } else {
                     emit(Result.Error("Error: User Not Found"))
@@ -293,21 +303,29 @@ class DataRepository (
     private suspend fun convertFirebaseUserToUser(firebaseUser: FirebaseUser) {
         val userRef = firestore.collection("Users").document(firebaseUser.uid)
 
-        try {
+        val documentSnapshot = suspendCoroutine { continuation ->
             userRef.get().addOnSuccessListener { documentSnapshot ->
-                if (!documentSnapshot.exists()) { // User doesn't exist, create a new user document
-                    val newUser = User(
-                        uid = firebaseUser.uid,
-                        name = firebaseUser.displayName,
-                        email = firebaseUser.email,
-                        profilePicture = firebaseUser.photoUrl.toString()
-                    )
-                    userRef.set(newUser)
-                    // TODO saveUserToDataStore(newUser)
-                }
-            }.await()
-        } catch (exception: Exception) {
-            // Handle errors here
+                continuation.resume(documentSnapshot)
+            }.addOnFailureListener {
+                continuation.resume(null)
+            }
+        }
+
+        if (documentSnapshot == null || !documentSnapshot.exists()) {
+            // User doesn't exist, create a new user document
+            val newUser = User(
+                uid = firebaseUser.uid,
+                name = firebaseUser.displayName,
+                email = firebaseUser.email,
+                profilePicture = firebaseUser.photoUrl.toString()
+            )
+            userRef.set(newUser).await()
+            saveUserToPreferences(newUser)
+        } else {
+            val user = getUserData(firebaseUser.uid)
+            if (user != null) {
+                saveUserToPreferences(user)
+            }
         }
     }
 
@@ -325,9 +343,11 @@ class DataRepository (
     }
 
     suspend fun getCompanyData(companyId: String): Company? {
-        val companyDocument = firestore.collection("Companies").document(companyId).get().await()
-        if (companyDocument.exists()) {
-            return companyDocument.toObject(Company::class.java)
+        if(companyId.isNotBlank()) {
+            val companyDocument = firestore.collection("Companies").document(companyId).get().await()
+            if (companyDocument.exists()) {
+                return companyDocument.toObject(Company::class.java)
+            }
         }
         return null
     }

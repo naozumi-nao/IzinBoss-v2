@@ -63,7 +63,7 @@ dependencies {
     //Play Services
     implementation ("com.google.android.gms:play-services-auth:20.7.0")
 
-    //Layout technologies
+    //Layout Technologies
     implementation ("com.google.android.material:material:1.9.0")
     implementation ("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
@@ -71,6 +71,9 @@ dependencies {
     implementation ("androidx.viewpager2:viewpager2:1.0.0")
     implementation ("de.hdodenhof:circleimageview:3.1.0")
     implementation ("com.github.bumptech.glide:glide:4.15.0")
+
+    //Animations
+    implementation ("com.airbnb.android:lottie:6.1.0")
 
     //Navigation Drawer
     implementation ("androidx.navigation:navigation-fragment-ktx:2.7.2")
@@ -80,7 +83,7 @@ dependencies {
     //Fragment Manager KTX
     implementation ("androidx.fragment:fragment-ktx:1.6.1")
 
-    //API handling (retrofit2 + okhttp3)
+    //API Handling (retrofit2 + okhttp3)
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation ("com.squareup.okhttp3:logging-interceptor:4.9.3")
@@ -103,23 +106,25 @@ dependencies {
     implementation ("io.insert-koin:koin-core:3.3.2")
     implementation ("io.insert-koin:koin-android:3.3.2")
 
-    //Testing
+    //Unit Testing
     testImplementation ("junit:junit:4.13.2")
     androidTestImplementation ("androidx.test.ext:junit:1.1.5")
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.5.1")
 
-    //mockito
+    //Mock Dummy Data
     testImplementation ("org.mockito:mockito-core:4.4.0")
     testImplementation ("org.mockito:mockito-inline:4.4.0")
 
-    //special testing
+    //Special Testing
     testImplementation ("androidx.arch.core:core-testing:2.2.0") // InstantTaskExecutorRule
     testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3") //TestDispatcher
 
-    //special instrumentation testing
-    //Note Regarding Instrumentation Testing: allow "Display pop-up windows while running in the background" under "Other permissions" in the app info.
+    //Special Instrumentation Testing
+    //Note Regarding Instrumentation & UI Testing: allow "Display pop-up windows while running in the background" under "Other permissions" in the app info.
     androidTestImplementation ("androidx.arch.core:core-testing:2.2.0") // InstantTaskExecutorRule
     androidTestImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3") //TestCoroutineDispatcher
+
+    //UI Testing
     androidTestImplementation ("androidx.test.espresso:espresso-intents:3.5.1") //IntentsTestRule
     debugImplementation ("androidx.fragment:fragment-testing:1.6.1") //launchFragmentInContainer
     implementation("androidx.test.espresso:espresso-contrib:3.5.1") {

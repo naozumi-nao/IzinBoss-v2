@@ -41,6 +41,7 @@
             app:helperText="@string/required"
             app:helperTextTextColor="@color/red"
             app:endIconDrawable="@drawable/baseline_calendar_month_24"
+            app:endIconMode="custom"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/til_add_type" >
@@ -62,6 +63,7 @@
             app:helperText="@string/required"
             app:helperTextTextColor="@color/red"
             app:endIconDrawable="@drawable/baseline_calendar_month_24"
+            app:endIconMode="custom"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/til_start_date" >

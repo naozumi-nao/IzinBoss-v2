@@ -51,9 +51,18 @@ class UserProfileFragment : Fragment() {
         }
 
         binding?.btnDeleteAccount?.setOnClickListener(2000L) {
-            lifecycleScope.launch {
-                deleteUserData(user?.uid)
-                viewModel.deleteCurrentUserDataStore()
+            AlertDialog.Builder(requireActivity()).apply {
+                setTitle("Warning")
+                setMessage("Are you sure you want to delete your account?")
+                setPositiveButton("Yes") { _, _ ->
+                    lifecycleScope.launch {
+                        deleteUserData(user?.uid)
+                        viewModel.deleteCurrentUserDataStore()
+                    }
+                }
+                setNegativeButton("No") { _, _ -> }
+                create()
+                show()
             }
         }
     }

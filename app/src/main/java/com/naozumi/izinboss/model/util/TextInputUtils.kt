@@ -6,7 +6,7 @@ import android.widget.Button
 import android.widget.TextView
 
 object TextInputUtils {
-    fun createTextWatcherWithButton(
+    fun createTextWatcherWithButton( //Disables Button if Input Fields are Blank
         button: Button?,
         vararg textview: TextView?
     ): TextWatcher {
@@ -16,7 +16,7 @@ object TextInputUtils {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
             override fun afterTextChanged(s: Editable?) {
-                val isFormFilled = textview.all { it?.text?.isNotEmpty() ?: false }
+                val isFormFilled = textview.all { it?.text?.isNotBlank() ?: false }
                 button?.isEnabled = isFormFilled
             }
         }

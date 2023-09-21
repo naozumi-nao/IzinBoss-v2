@@ -2,27 +2,24 @@ package com.naozumi.izinboss.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
-import com.google.android.material.navigation.NavigationView
 import com.naozumi.izinboss.R
 import com.naozumi.izinboss.databinding.ActivityMainBinding
 import com.naozumi.izinboss.databinding.NavHeaderMainBinding
 import com.naozumi.izinboss.model.datamodel.User
 import com.naozumi.izinboss.model.util.ViewUtils
-import com.naozumi.izinboss.view.company.CompanyProfileActivity
+import com.naozumi.izinboss.view.company.CompanyProfileFragment
 import com.naozumi.izinboss.view.entry.LoginActivity
 import com.naozumi.izinboss.viewmodel.MainViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import kotlinx.coroutines.launch
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
 
@@ -31,10 +28,83 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        this.supportActionBar?.setHomeButtonEnabled(true)
-        this.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding.bottomNavigation.setOnItemSelectedListener { menuItem ->
+            when(menuItem.itemId) {
+                R.id.bottom_nav_home -> {
+                    ViewUtils.replaceFragment(this,
+                        R.id.nav_main_content_container,
+                        HomeFragment(),
+                        HomeFragment::class.java.simpleName
+                    )
+                    true
+                }
+                R.id.bottom_nav_company -> {
+                    ViewUtils.replaceFragment(this,
+                        R.id.nav_main_content_container,
+                        CompanyProfileFragment(),
+                        CompanyProfileFragment::class.java.simpleName
+                    )
+                    true
+                }
+                R.id.bottom_nav_profile -> {
+                    ViewUtils.replaceFragment(this,
+                        R.id.nav_main_content_container,
+                        UserProfileFragment(),
+                        UserProfileFragment::class.java.simpleName
+                    )
+                    true
+                }
+                else -> false
+            }
+        }
 
-        binding.navigationView.setNavigationItemSelectedListener(this)
+        binding.appBar.setNavigationOnClickListener {
+            binding.drawerLayout.open()
+        }
+
+        binding.appBar.setOnMenuItemClickListener { menuItem ->
+            when(menuItem.itemId) {
+                R.id.action_settings -> {
+                    ViewUtils.moveActivity(this@MainActivity, SettingsActivity::class.java)
+                    true
+                }
+                else -> false
+            }
+        }
+
+        binding.navigationView.setNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    ViewUtils.replaceFragment(this,
+                        R.id.nav_main_content_container,
+                        HomeFragment(),
+                        HomeFragment::class.java.simpleName
+                    )
+                }
+                R.id.nav_profile -> {
+                    ViewUtils.replaceFragment(this,
+                        R.id.nav_main_content_container,
+                        UserProfileFragment(),
+                        UserProfileFragment::class.java.simpleName
+                    )
+                }
+                R.id.nav_company -> {
+                    ViewUtils.replaceFragment(this,
+                        R.id.nav_main_content_container,
+                        CompanyProfileFragment(),
+                        CompanyProfileFragment::class.java.simpleName
+                    )
+                }
+                R.id.nav_logout -> {
+                    viewModel.signOut()
+                    viewModel.deleteCurrentUserDataStore()
+                    ViewUtils.moveActivityNoHistory(this@MainActivity, LoginActivity::class.java)
+                }
+            }
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+            true
+        }
+
         val toggle = ActionBarDrawerToggle(this ,binding.drawerLayout, R.string.open_nav, R.string.close_nav)
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
@@ -49,7 +119,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.nav_host_fragment_content_main, HomeFragment()).commit()
+                .replace(R.id.nav_main_content_container, HomeFragment()).commit()
             binding.navigationView.setCheckedItem(R.id.nav_home)
         }
 
@@ -81,61 +151,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.nav_home -> {
-                ViewUtils.replaceFragment(this,
-                    R.id.nav_host_fragment_content_main,
-                    HomeFragment(),
-                    HomeFragment::class.java.simpleName,
-                    getString(R.string.home)
-                )
-            }
-            R.id.nav_profile -> {
-                ViewUtils.replaceFragment(this,
-                    R.id.nav_host_fragment_content_main,
-                    UserProfileFragment(),
-                    UserProfileFragment::class.java.simpleName,
-                    getString(R.string.profile)
-                )
-            }
-            R.id.nav_company -> {
-                ViewUtils.moveActivity(this, CompanyProfileActivity::class.java)
-            }
-            R.id.nav_logout -> {
-                viewModel.signOut()
-                viewModel.deleteCurrentUserDataStore()
-                ViewUtils.moveActivityNoHistory(this@MainActivity, LoginActivity::class.java)
-            }
-        }
-        binding.drawerLayout.closeDrawer(GravityCompat.START)
-        return true
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.main_menu, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    binding.drawerLayout.closeDrawer(GravityCompat.START)
-                } else {
-                    binding.drawerLayout.openDrawer(GravityCompat.START)
-                }
-                true
-            }
-            R.id.action_settings -> {
-                ViewUtils.moveActivity(this@MainActivity, SettingsActivity::class.java)
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
     private suspend fun setUserData(userId: String) {
         val headerBinding = NavHeaderMainBinding.bind(binding.navigationView.getHeaderView(0))
         val user: User? = viewModel.getUserData(userId)
@@ -145,7 +160,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 tvEmail.text = user.email
                 Glide.with(this@MainActivity)
                     .load(user.profilePicture)
-                    .error(R.drawable.onboarding_image_1)
+                    .error(R.drawable.baseline_person_24)
                     .into(ivProfilePhoto)
             }
         }

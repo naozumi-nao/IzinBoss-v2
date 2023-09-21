@@ -1,4 +1,4 @@
-package com.naozumi.izinboss.view.customviews
+package com.naozumi.izinboss.view.entry.validation
 
 import android.content.Context
 import android.text.Editable

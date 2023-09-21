@@ -44,22 +44,7 @@ class RequestLeaveActivity : AppCompatActivity() {
             ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, leaveTypeList)
         binding.actvAddType.setAdapter(typeAdapter)
 
-        binding.edStartDateInput.setOnClickListener(2000L) {
-            TimeUtils.showDateRangePicker(this, supportFragmentManager) { startDate, endDate ->
-                binding.edStartDateInput.text = Editable.Factory.getInstance()
-                    .newEditable(TimeUtils.convertLongToDate(startDate))
-                binding.edEndDateInput.text =
-                    Editable.Factory.getInstance().newEditable(TimeUtils.convertLongToDate(endDate))
-            }
-        }
-        binding.edEndDateInput.setOnClickListener(2000L) {
-            TimeUtils.showDateRangePicker(this, supportFragmentManager) { startDate, endDate ->
-                binding.edStartDateInput.text = Editable.Factory.getInstance()
-                    .newEditable(TimeUtils.convertLongToDate(startDate))
-                binding.edEndDateInput.text =
-                    Editable.Factory.getInstance().newEditable(TimeUtils.convertLongToDate(endDate))
-            }
-        }
+        setupDateRangePicker()
 
         val textWatcher = TextInputUtils.createTextWatcherWithButton(
             binding.btnRequestLeave,
@@ -74,6 +59,7 @@ class RequestLeaveActivity : AppCompatActivity() {
         binding.edStartDateInput.addTextChangedListener(textWatcher)
         binding.edEndDateInput.addTextChangedListener(textWatcher)
         binding.edAddDescription.addTextChangedListener(textWatcher)
+
         binding.btnRequestLeave.setOnClickListener(2000L) {
             lifecycleScope.launch {
                 uploadLeave()
@@ -136,24 +122,32 @@ class RequestLeaveActivity : AppCompatActivity() {
             }
     }
 
-    /*
-    private val textWatcher = object : TextWatcher {
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+    private fun setupDateRangePicker() {
+        val dateRangePickerCallback: (Long, Long) -> Unit = { startDate, endDate ->
+            binding.edStartDateInput.text = Editable.Factory.getInstance()
+                .newEditable(TimeUtils.convertLongToDate(startDate))
+            binding.edEndDateInput.text =
+                Editable.Factory.getInstance().newEditable(TimeUtils.convertLongToDate(endDate))
+        }
 
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        binding.edStartDateInput.setOnClickListener(1000L) {
+            showDateRangePicker(dateRangePickerCallback)
+        }
 
-        override fun afterTextChanged(s: Editable?) {
-            // Check if all input fields are filled
-            val type = binding.actvAddType.text.toString()
-            val dateStart = binding.edStartDateInput.text.toString()
-            val dateEnd = binding.edEndDateInput.text.toString()
-            val description = binding.edAddDescription.text.toString()
-            val isFormFilled = type.isNotEmpty() && dateStart.isNotEmpty() && dateEnd.isNotEmpty() && description.isNotEmpty()
+        binding.edEndDateInput.setOnClickListener(1000L) {
+            showDateRangePicker(dateRangePickerCallback)
+        }
 
-            // Enable or disable the submit button based on form validity
-            binding.btnRequestLeave.isEnabled = isFormFilled
+        binding.tilStartDate.setOnClickListener(1000L) {
+            showDateRangePicker(dateRangePickerCallback)
+        }
+
+        binding.tilEndDate.setOnClickListener(1000L) {
+            showDateRangePicker(dateRangePickerCallback)
         }
     }
 
-     */
+    private fun showDateRangePicker(callback: (Long, Long) -> Unit) {
+        TimeUtils.showDateRangePicker(this, supportFragmentManager, callback)
+    }
 }

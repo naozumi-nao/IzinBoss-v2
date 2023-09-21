@@ -54,13 +54,11 @@ object ViewUtils {
         containerId: Int,
         fragment: Fragment,
         fragmentTag: String,
-        title: String
     ) {
         val fragmentManager = activity.supportFragmentManager
         fragmentManager.commit {
             replace(containerId, fragment, fragmentTag)
         }
-        activity.title = title
     }
 
     fun addFragment(
