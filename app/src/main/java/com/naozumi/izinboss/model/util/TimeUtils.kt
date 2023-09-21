@@ -12,7 +12,7 @@ import java.util.Locale
 object TimeUtils {
     fun getCurrentDateAndTime():String{
         val timeDate = SimpleDateFormat(
-            "HH:mm dd-MMM-yyyy",
+            "HH:mm dd-MM-yyyy",
             Locale.getDefault()
         )
         return timeDate.format(Date())
@@ -30,7 +30,7 @@ object TimeUtils {
     fun convertLongToDate(time: Long): String {
         val date = Date(time)
         val format = SimpleDateFormat (
-            "dd-MMM-yyyy",
+            "dd-MM-yyyy",
             Locale.getDefault()
         )
         return format.format(date)

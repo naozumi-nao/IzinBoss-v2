@@ -45,12 +45,12 @@ class JoinCompanyFragment : DialogFragment() {
 
         val textWatcher = TextInputUtils.createTextWatcherWithButton(
             binding?.btnJoinCompany,
-            binding?.edRegisterCompanyName
+            binding?.edCompanyIdInput
         )
 
         binding?.progressBar?.visibility = View.GONE
         binding?.btnJoinCompany?.isEnabled = false
-        binding?.edRegisterCompanyName?.addTextChangedListener(textWatcher)
+        binding?.edCompanyIdInput?.addTextChangedListener(textWatcher)
 
         binding?.btnJoinCompany?.setOnClickListener(3000L) {
             lifecycleScope.launch {
@@ -70,8 +70,8 @@ class JoinCompanyFragment : DialogFragment() {
     }
 
     private suspend fun joinCompany() {
-        val companyName = binding?.edRegisterCompanyName?.text.toString()
-        viewModel.addUserToCompany(companyName, user, user?.role)
+        val companyId = binding?.edCompanyIdInput?.text.toString()
+        viewModel.addUserToCompany(companyId, user, user?.role)
             .observe(this) { result ->
                 if (result != null) {
                     when (result) {

@@ -73,8 +73,7 @@ class CreateCompanyFragment : Fragment() {
         }
 
         binding?.btnJoinCompany?.setOnClickListener {
-            val joinCompanyFragment = JoinCompanyFragment()
-            joinCompanyFragment.show(requireFragmentManager(), "JoinCompanyDialog")
+            JoinCompanyFragment().show(parentFragmentManager, "JoinCompanyDialog")
         }
     }
 

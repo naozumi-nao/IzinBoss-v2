@@ -87,11 +87,8 @@ class HomeFragment : Fragment() {
 
         leaveListAdapter.setOnItemClickCallback(object: LeaveListAdapter.OnItemClickCallback {
             override fun onItemClicked(data: LeaveRequest) {
-                ViewUtils.moveActivity(
-                    requireActivity(),
-                    LeaveDetailsActivity::class.java,
-                    user?.companyId
-                )
+                val detailsFragment = LeaveRequestDetailsFragment.newInstance(data)
+                detailsFragment.show(parentFragmentManager, "leaveRequest")
             }
         })
 

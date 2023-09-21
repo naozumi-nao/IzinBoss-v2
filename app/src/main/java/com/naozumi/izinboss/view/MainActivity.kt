@@ -14,19 +14,29 @@ import com.naozumi.izinboss.databinding.NavHeaderMainBinding
 import com.naozumi.izinboss.model.datamodel.User
 import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.view.company.CompanyProfileFragment
+import com.naozumi.izinboss.view.company.CreateCompanyFragment
 import com.naozumi.izinboss.view.entry.LoginActivity
 import com.naozumi.izinboss.viewmodel.MainViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
+    private var user: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val factory: ViewModelFactory =
+            ViewModelFactory.getInstance(this)
+        viewModel = ViewModelProvider(this, factory)[MainViewModel::class.java]
+        lifecycleScope.launch {
+            user = viewModel.getUser().first()
+        }
 
         binding.bottomNavigation.setOnItemSelectedListener { menuItem ->
             when(menuItem.itemId) {
@@ -39,11 +49,19 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.bottom_nav_company -> {
-                    ViewUtils.replaceFragment(this,
-                        R.id.nav_main_content_container,
-                        CompanyProfileFragment(),
-                        CompanyProfileFragment::class.java.simpleName
-                    )
+                    if (user?.companyId.isNullOrEmpty()) {
+                        ViewUtils.replaceFragment(this,
+                            R.id.nav_main_content_container,
+                            CreateCompanyFragment(),
+                            CreateCompanyFragment::class.java.simpleName
+                        )
+                    } else {
+                        ViewUtils.replaceFragment(this,
+                            R.id.nav_main_content_container,
+                            CompanyProfileFragment(),
+                            CompanyProfileFragment::class.java.simpleName
+                        )
+                    }
                     true
                 }
                 R.id.bottom_nav_profile -> {
@@ -89,11 +107,19 @@ class MainActivity : AppCompatActivity() {
                     )
                 }
                 R.id.nav_company -> {
-                    ViewUtils.replaceFragment(this,
-                        R.id.nav_main_content_container,
-                        CompanyProfileFragment(),
-                        CompanyProfileFragment::class.java.simpleName
-                    )
+                    if (user?.companyId.isNullOrEmpty()) {
+                        ViewUtils.replaceFragment(this,
+                            R.id.nav_main_content_container,
+                            CreateCompanyFragment(),
+                            CreateCompanyFragment::class.java.simpleName
+                        )
+                    } else {
+                        ViewUtils.replaceFragment(this,
+                            R.id.nav_main_content_container,
+                            CompanyProfileFragment(),
+                            CompanyProfileFragment::class.java.simpleName
+                        )
+                    }
                 }
                 R.id.nav_logout -> {
                     viewModel.signOut()
@@ -134,10 +160,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
         onBackPressedDispatcher.addCallback(this, backPressedCallback)
-
-        val factory: ViewModelFactory =
-            ViewModelFactory.getInstance(this)
-        viewModel = ViewModelProvider(this, factory)[MainViewModel::class.java]
 
         //DEBUG FOR STUCK LOGINS
         if (viewModel.getCurrentUser().isNullOrEmpty()) {

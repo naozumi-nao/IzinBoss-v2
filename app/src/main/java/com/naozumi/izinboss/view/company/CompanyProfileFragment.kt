@@ -47,16 +47,8 @@ class CompanyProfileFragment : Fragment() {
 
         lifecycleScope.launch {
             user = viewModel.getUser().first()
-            if(user?.companyId.isNullOrEmpty()) {
-                ViewUtils.addFragment(requireActivity() as AppCompatActivity,
-                    R.id.nav_main_content_container,
-                    CreateCompanyFragment(),
-                    CreateCompanyFragment::class.java.simpleName
-                )
-            } else {
-                setCompanyData(user?.companyId.toString())
-                getCompanyMembers()
-            }
+            setCompanyData(user?.companyId.toString())
+            getCompanyMembers()
         }
     }
 

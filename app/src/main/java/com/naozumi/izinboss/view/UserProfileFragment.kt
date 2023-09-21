@@ -50,14 +50,32 @@ class UserProfileFragment : Fragment() {
             setUserData(user)
         }
 
+        if (user?.companyId.isNullOrEmpty()) {
+            binding?.btnLeaveCurrentCompany?.visibility = View.GONE
+        }
+
+        binding?.btnLeaveCurrentCompany?.setOnClickListener(2000L) {
+            AlertDialog.Builder(requireActivity()).apply {
+                setTitle("Warning")
+                setMessage("Are you sure you want to leave your company?")
+                setPositiveButton("Yes") { _, _ ->
+                    lifecycleScope.launch {
+                        leaveCurrentCompany(user?.uid)
+                    }
+                }
+                setNegativeButton("No") { _, _ -> }
+                create()
+                show()
+            }
+        }
+
         binding?.btnDeleteAccount?.setOnClickListener(2000L) {
             AlertDialog.Builder(requireActivity()).apply {
                 setTitle("Warning")
-                setMessage("Are you sure you want to delete your account?")
+                setMessage("Are you sure you want to leave your company?")
                 setPositiveButton("Yes") { _, _ ->
                     lifecycleScope.launch {
-                        deleteUserData(user?.uid)
-                        viewModel.deleteCurrentUserDataStore()
+                        deleteUserAccount(user?.uid)
                     }
                 }
                 setNegativeButton("No") { _, _ -> }
@@ -87,7 +105,44 @@ class UserProfileFragment : Fragment() {
         }
     }
 
-    private suspend fun deleteUserData(userId: String?) {
+    private suspend fun leaveCurrentCompany(userId: String?) {
+        viewModel.leaveCurrentCompany(userId).observe(viewLifecycleOwner) { result ->
+            when(result) {
+                is Result.Loading -> {
+                    binding?.progressBar?.visibility = View.VISIBLE
+                }
+                is Result.Success -> {
+                    binding?.progressBar?.visibility = View.GONE
+                    AlertDialog.Builder(requireActivity()).apply {
+                        setTitle(getString(R.string.success))
+                        setMessage("You Have Left From Your Company")
+                        setPositiveButton(getString(R.string.continue_on)) { _, _ ->
+                            ViewUtils.moveActivityNoHistory(requireActivity(), MainActivity::class.java)
+                        }
+                        create()
+                        show()
+                    }.apply {
+                        setOnCancelListener { // Set an OnCancelListener to handle the case when the user clicks outside of the dialog
+                            ViewUtils.moveActivityNoHistory(requireActivity(), MainActivity::class.java)
+                        }
+                        show()
+                    }
+                }
+                is Result.Error -> {
+                    binding?.progressBar?.visibility = View.GONE
+                    AlertDialog.Builder(requireActivity()).apply {
+                        setTitle(getString(R.string.error))
+                        setMessage(result.error)
+                        setPositiveButton(getString(R.string.continue_on)) { _, _ -> }
+                        create()
+                        show()
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun deleteUserAccount(userId: String?) {
         viewModel.deleteAccount(userId).observe(viewLifecycleOwner) { result ->
             when(result){
                 is Result.Loading -> {

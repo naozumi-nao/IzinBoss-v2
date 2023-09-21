@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
@@ -60,18 +61,36 @@ object ViewUtils {
             replace(containerId, fragment, fragmentTag)
         }
     }
-
     fun addFragment(
         activity: AppCompatActivity,
         containerId: Int,
         fragment: Fragment,
         fragmentTag: String,
-        title: String? = null
     ) {
         val fragmentManager = activity.supportFragmentManager
         fragmentManager.commit {
             replace(containerId, fragment, fragmentTag)
         }
-        activity.title = title
     }
+
+    fun addFragmentWithParcelable(
+        activity: AppCompatActivity,
+        containerId: Int,
+        fragment: Fragment,
+        fragmentTag: String,
+        parcelableData: Parcelable? = null // Add this parameter
+    ) {
+        val fragmentManager = activity.supportFragmentManager
+        val transaction = fragmentManager.beginTransaction()
+        val args = Bundle()
+
+        // Put the Parcelable data in the arguments bundle if it's not null
+        parcelableData?.let { args.putParcelable("parcelableData", it) }
+
+        fragment.arguments = args
+        transaction.replace(containerId, fragment, fragmentTag)
+        transaction.commit()
+    }
+
+
 }

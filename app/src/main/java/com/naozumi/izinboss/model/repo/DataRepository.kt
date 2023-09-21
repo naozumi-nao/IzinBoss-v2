@@ -126,6 +126,7 @@ class DataRepository (
                         "role" to user.role
                     )
                     userDocumentRef.update(userUpdate).await()
+                    saveUserToPreferences(user)
 
                     emit(Result.Success(company))
                 } else {
@@ -152,11 +153,13 @@ class DataRepository (
                     if (companyDocument.exists()) {
                         val userDocumentRef = firestore.collection("Users").document(user.uid.toString())
 
+                        //Update User Locally
                         user.role = when (position) {
                             User.UserRole.MANAGER -> User.UserRole.MANAGER
                             User.UserRole.EMPLOYEE -> User.UserRole.EMPLOYEE
                             else -> User.UserRole.EMPLOYEE
                         }
+                        user.companyId = companyId
 
                         val userUpdate = mapOf(
                             "companyId" to companyId,
@@ -206,14 +209,47 @@ class DataRepository (
         }
     }
 
+    suspend fun kickUserFromCompany(userId: String?): LiveData<Result<Unit>> = liveData {
+        emit(Result.Loading)
+        wrapEspressoIdlingResource {
+            try {
+                val user = getUserData(userId)
+                if (user != null) {
+                    val userDocumentRef = firestore.collection("Users").document(user.uid.toString())
+
+                    user.companyId = null
+                    user.role = null
+
+                    val userUpdate = mapOf(
+                        "companyId" to null,
+                        "role" to null
+                    )
+                    userDocumentRef.update(userUpdate).await()
+                    saveUserToPreferences(user)
+
+                    emit(Result.Success(Unit))
+                } else {
+                    emit(Result.Error("Error: User is Null"))
+                }
+            } catch (e: FirebaseException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: FirebaseFirestoreException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: Exception) {
+                emit(Result.Error(e.message.toString()))
+            }
+        }
+    }
+
     suspend fun addLeaveRequestToDatabase(companyId: String, leaveRequest: LeaveRequest): LiveData<Result<Unit>> = liveData {
         emit(Result.Loading)
         wrapEspressoIdlingResource {
             try {
-                val companyDocumentRef = firestore.collection("Companies").document(companyId)
+                val leaveRequestCollection = firestore.collection("Companies").document(companyId).collection("leaveRequests")
+                val leaveRequestId = leaveRequestCollection.document().id // Generate a unique ID
+                leaveRequest.id = leaveRequestId
 
-                companyDocumentRef.collection("leaveRequests")
-                    .add(leaveRequest).await()
+                leaveRequestCollection.document(leaveRequestId).set(leaveRequest).await() // Create the document with the specified ID
 
                 emit(Result.Success(Unit))
 
@@ -230,9 +266,6 @@ class DataRepository (
     suspend fun getAllLeaveRequests(companyId: String): LiveData<Result<List<LeaveRequest>>> = liveData {
         emit(Result.Loading)
         wrapEspressoIdlingResource {
-            if(companyId.isNotBlank()) {
-
-            }
             try {
                 val leaveRequestList = mutableListOf<LeaveRequest>()
                 val leaveRequestCollection = firestore.collection("Companies").document(companyId).collection("leaveRequests")
@@ -250,11 +283,11 @@ class DataRepository (
                     emit(Result.Success(leaveRequestList))
                 }
             } catch (e: FirebaseException) {
-                emit(Result.Error("getAllLeaveRequests: " + e.message.toString()))
+                emit(Result.Error(e.message.toString()))
             } catch (e: FirebaseFirestoreException) {
-                emit(Result.Error("getAllLeaveRequests: " + e.message.toString()))
+                emit(Result.Error(e.message.toString()))
             } catch (e: Exception) {
-                emit(Result.Error("getAllLeaveRequests: " + e.message.toString()))
+                emit(Result.Error(e.message.toString()))
             }
         }
     }
@@ -276,6 +309,7 @@ class DataRepository (
 
                     firebaseUser.delete().await()
                     signOut()
+                    deleteCurrentUserFromPreferences()
 
                     emit(Result.Success(Unit))
                 } else {
@@ -354,6 +388,10 @@ class DataRepository (
 
     private suspend fun saveUserToPreferences(user: User) {
         userPreferences.saveUser(user)
+    }
+
+    private suspend fun deleteCurrentUserFromPreferences() {
+        userPreferences.deleteCurrentUserDataStore()
     }
 
     companion object {
