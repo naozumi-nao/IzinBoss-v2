@@ -52,6 +52,9 @@ class HomeFragment : Fragment() {
                 binding?.swipeToRefresh?.visibility = View.GONE
                 binding?.fabAddLeave?.visibility = View.GONE
             } else {
+                if (user?.role == User.UserRole.MANAGER) {
+                    binding?.fabAddLeave?.visibility = View.GONE
+                }
                 setupLeaveList()
                 binding?.swipeToRefresh?.setOnRefreshListener {
                     lifecycleScope.launch {

@@ -2,6 +2,7 @@ package com.naozumi.izinboss.viewmodel.company
 
 import androidx.lifecycle.ViewModel
 import com.naozumi.izinboss.model.datamodel.Company
+import com.naozumi.izinboss.model.datamodel.LeaveRequest
 import com.naozumi.izinboss.model.datamodel.User
 import com.naozumi.izinboss.model.repo.DataRepository
 import com.naozumi.izinboss.model.repo.UserPreferences
@@ -17,6 +18,9 @@ class CompanyViewModel(private val dataRepository: DataRepository, private val u
     fun getUser(): Flow<User?> {
         return userPreferences.getUser()
     }
+
+    suspend fun changeLeaveRequestStatus(leaveRequest: LeaveRequest, isApproved: Boolean) =
+        dataRepository.changeLeaveRequestStatus(leaveRequest, isApproved)
     suspend fun getUserData(userId: String) = dataRepository.getUserData(userId)
     suspend fun getCompanyData(companyId: String) = dataRepository.getCompanyData(companyId)
     suspend fun getCompanyMembers(companyId: String?) =

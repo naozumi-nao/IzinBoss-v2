@@ -21,9 +21,6 @@
         <action
             android:id="@+id/action_homeFragment_to_addLeaveActivity"
             app:destination="@id/addLeaveActivity" />
-        <action
-            android:id="@+id/action_homeFragment_to_leaveDetailsActivity"
-            app:destination="@id/leaveDetailsActivity" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -55,11 +52,6 @@
         android:name="com.naozumi.izinboss.view.RequestLeaveActivity"
         android:label="activity_add_leave"
         tools:layout="@layout/activity_request_leave" />
-    <activity
-        android:id="@+id/leaveDetailsActivity"
-        android:name="com.naozumi.izinboss.view.LeaveDetailsActivity"
-        android:label="activity_leave_details"
-        tools:layout="@layout/activity_leave_details" />
     <activity
         android:id="@+id/onboardingActivity"
         android:name="com.naozumi.izinboss.view.entry.OnboardingActivity"

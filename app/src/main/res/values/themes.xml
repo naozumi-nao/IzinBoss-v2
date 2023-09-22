@@ -22,4 +22,8 @@
     </style>
 
     <style name="Theme.IzinBoss" parent="Base.Theme.IzinBoss" />
+
+    <style name="RoundedCornersDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="dialogCornerRadius">16dp</item>
+    </style>
 </resources>

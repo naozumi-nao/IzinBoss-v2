@@ -245,9 +245,10 @@ class DataRepository (
         emit(Result.Loading)
         wrapEspressoIdlingResource {
             try {
-                val leaveRequestCollection = firestore.collection("Companies").document(companyId).collection("leaveRequests")
+                val leaveRequestCollection = firestore.collection("Companies").document(companyId).collection("Leave Requests")
                 val leaveRequestId = leaveRequestCollection.document().id // Generate a unique ID
                 leaveRequest.id = leaveRequestId
+                leaveRequest.companyId = companyId
 
                 leaveRequestCollection.document(leaveRequestId).set(leaveRequest).await() // Create the document with the specified ID
 
@@ -268,7 +269,7 @@ class DataRepository (
         wrapEspressoIdlingResource {
             try {
                 val leaveRequestList = mutableListOf<LeaveRequest>()
-                val leaveRequestCollection = firestore.collection("Companies").document(companyId).collection("leaveRequests")
+                val leaveRequestCollection = firestore.collection("Companies").document(companyId).collection("Leave Requests")
                 val leaveRequestQuery = leaveRequestCollection.get().await()
 
                 if (leaveRequestQuery.isEmpty) {
@@ -281,6 +282,42 @@ class DataRepository (
                     }
 
                     emit(Result.Success(leaveRequestList))
+                }
+            } catch (e: FirebaseException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: FirebaseFirestoreException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: Exception) {
+                emit(Result.Error(e.message.toString()))
+            }
+        }
+    }
+
+    suspend fun changeLeaveRequestStatus(leaveRequest: LeaveRequest?, isApproved: Boolean): LiveData<Result<Unit>> = liveData {
+        emit(Result.Loading)
+        wrapEspressoIdlingResource {
+            try {
+                if(leaveRequest != null) {
+                    val leaveRequestCollection =
+                        firestore.collection("Companies")
+                            .document(leaveRequest.companyId.toString())
+                            .collection("Leave Requests")
+
+                    if(isApproved) {
+                        leaveRequest.status = LeaveRequest.Status.APPROVED
+                    } else {
+                        leaveRequest.status = LeaveRequest.Status.REJECTED
+                    }
+
+                    val leaveRequestUpdate = mapOf(
+                        "status" to leaveRequest.status
+                    )
+
+                    leaveRequestCollection.document(leaveRequest.id.toString()).update(leaveRequestUpdate).await()
+
+                    emit(Result.Success(Unit))
+                } else {
+                    emit(Result.Error("ERROR: Leave Request is Null"))
                 }
             } catch (e: FirebaseException) {
                 emit(Result.Error(e.message.toString()))

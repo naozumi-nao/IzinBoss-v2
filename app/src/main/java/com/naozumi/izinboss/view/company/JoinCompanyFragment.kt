@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -15,6 +16,7 @@ import com.naozumi.izinboss.model.helper.Result
 import com.naozumi.izinboss.model.helper.setOnClickListener
 import com.naozumi.izinboss.model.util.TextInputUtils
 import com.naozumi.izinboss.model.util.ViewUtils
+import com.naozumi.izinboss.view.HomeFragment
 import com.naozumi.izinboss.view.MainActivity
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import com.naozumi.izinboss.viewmodel.company.CompanyViewModel
@@ -27,6 +29,7 @@ class JoinCompanyFragment : DialogFragment() {
     private lateinit var viewModel: CompanyViewModel
     private var user: User? = null
 
+    override fun getTheme() = R.style.RoundedCornersDialog
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -84,18 +87,24 @@ class JoinCompanyFragment : DialogFragment() {
                                 setTitle(getString(R.string.success))
                                 setMessage("Successfully Joined a Company!")
                                 setPositiveButton(getString(R.string.continue_on)) { _, _ ->
-                                    ViewUtils.moveActivityNoHistory(
-                                        requireActivity(),
-                                        MainActivity::class.java
+                                    dismiss()
+                                    ViewUtils.replaceFragment(
+                                        requireActivity() as AppCompatActivity,
+                                        R.id.nav_main_content_container,
+                                        CompanyProfileFragment(),
+                                        CompanyProfileFragment::class.java.simpleName
                                     )
                                 }
                                 create()
                                 show()
                             }.apply {
                                 setOnCancelListener { // Set an OnCancelListener to handle the case when the user clicks outside of the dialog
-                                    ViewUtils.moveActivityNoHistory(
-                                        requireActivity(),
-                                        MainActivity::class.java
+                                    dismiss()
+                                    ViewUtils.replaceFragment(
+                                        requireActivity() as AppCompatActivity,
+                                        R.id.nav_main_content_container,
+                                        CompanyProfileFragment(),
+                                        CompanyProfileFragment::class.java.simpleName
                                     )
                                 }
                                 show()
