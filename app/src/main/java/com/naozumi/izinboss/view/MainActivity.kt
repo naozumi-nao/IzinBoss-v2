@@ -80,15 +80,7 @@ class MainActivity : AppCompatActivity() {
             binding.drawerLayout.open()
         }
 
-        binding.appBar.setOnMenuItemClickListener { menuItem ->
-            when(menuItem.itemId) {
-                R.id.action_settings -> {
-                    ViewUtils.moveActivity(this@MainActivity, SettingsActivity::class.java)
-                    true
-                }
-                else -> false
-            }
-        }
+        // binding.appBar.setOnMenuItemClickListener { menuItem -> }
 
         binding.navigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {

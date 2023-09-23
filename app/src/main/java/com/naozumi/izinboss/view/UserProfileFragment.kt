@@ -72,7 +72,7 @@ class UserProfileFragment : Fragment() {
         binding?.btnDeleteAccount?.setOnClickListener(2000L) {
             AlertDialog.Builder(requireActivity()).apply {
                 setTitle("Warning")
-                setMessage("Are you sure you want to leave your company?")
+                setMessage("Are you sure you want to delete your account?")
                 setPositiveButton("Yes") { _, _ ->
                     lifecycleScope.launch {
                         deleteUserAccount(user?.uid)

@@ -11,15 +11,11 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.naozumi.izinboss.R
-import com.naozumi.izinboss.model.repo.SettingsPreferences
 import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.view.MainActivity
 import com.naozumi.izinboss.viewmodel.UserProfileViewModel
-import com.naozumi.izinboss.viewmodel.SettingsViewModel
-import com.naozumi.izinboss.viewmodel.SettingsViewModelFactory
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
@@ -28,7 +24,6 @@ import kotlinx.coroutines.runBlocking
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
@@ -38,20 +33,6 @@ class SplashActivity : AppCompatActivity() {
         @Suppress("UNUSED_EXPRESSION")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             content.viewTreeObserver.addOnDrawListener { false }
-        }
-
-        val pref = SettingsPreferences.getInstance(dataStore)
-        val settingsViewModel = ViewModelProvider(
-            this,
-            SettingsViewModelFactory(pref)
-        )[SettingsViewModel::class.java]
-
-        settingsViewModel.getThemeSettings().observe(this) { isDarkModeActive: Boolean ->
-            if (isDarkModeActive) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
         }
 
         val factory: ViewModelFactory =

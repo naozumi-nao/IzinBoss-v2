@@ -17,6 +17,7 @@ import com.naozumi.izinboss.model.helper.wrapEspressoIdlingResource
 import com.naozumi.izinboss.model.datamodel.Company
 import com.naozumi.izinboss.model.datamodel.LeaveRequest
 import com.naozumi.izinboss.model.datamodel.User
+import com.naozumi.izinboss.model.helper.NetworkDebounce
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
@@ -28,7 +29,6 @@ class DataRepository (
     private val firestore: FirebaseFirestore,
     private val userPreferences: UserPreferences
     ) {
-
     suspend fun signInWithGoogle(idToken: String): LiveData<Result<FirebaseUser>> = liveData {
         emit(Result.Loading)
         wrapEspressoIdlingResource {

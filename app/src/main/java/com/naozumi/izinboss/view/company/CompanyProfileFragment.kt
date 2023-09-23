@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.divider.MaterialDividerItemDecoration
 import com.naozumi.izinboss.R
 import com.naozumi.izinboss.databinding.FragmentCompanyProfileBinding
 import com.naozumi.izinboss.model.adapter.UserListAdapter
@@ -103,6 +104,8 @@ class CompanyProfileFragment : Fragment() {
         }
         binding?.rvMembersList?.apply {
             layoutManager = LinearLayoutManager(requireContext())
+            val divider = MaterialDividerItemDecoration(context, LinearLayoutManager.VERTICAL)
+            addItemDecoration(divider)
             setHasFixedSize(true)
             adapter = userListAdapter
         }
