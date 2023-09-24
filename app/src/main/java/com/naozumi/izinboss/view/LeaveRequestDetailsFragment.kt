@@ -139,5 +139,4 @@ class LeaveRequestDetailsFragment : DialogFragment() {
         }
     }
 
-
 }

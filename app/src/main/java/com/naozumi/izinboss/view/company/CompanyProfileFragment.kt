@@ -16,6 +16,7 @@ import com.naozumi.izinboss.databinding.FragmentCompanyProfileBinding
 import com.naozumi.izinboss.model.adapter.UserListAdapter
 import com.naozumi.izinboss.model.datamodel.User
 import com.naozumi.izinboss.model.helper.Result
+import com.naozumi.izinboss.model.helper.setOnClickListener
 import com.naozumi.izinboss.model.util.StringUtils
 import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.viewmodel.company.CompanyViewModel
@@ -50,6 +51,14 @@ class CompanyProfileFragment : Fragment() {
             user = viewModel.getUser().first()
             setCompanyData(user?.companyId.toString())
             getCompanyMembers()
+        }
+
+        if(user?.role == User.UserRole.MANAGER) {
+            binding?.btnCompanyMembers?.setOnClickListener(3000L) {
+                val addUserFragment =
+                    AddUserToCompanyFragment.newInstance(user?.companyId.toString())
+                addUserFragment.show(parentFragmentManager, "companyId")
+            }
         }
     }
 

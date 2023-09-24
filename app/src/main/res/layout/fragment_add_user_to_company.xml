@@ -5,36 +5,57 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="16dp"
-    tools:context=".view.company.JoinCompanyFragment">
+    tools:context=".view.company.AddUserToCompanyFragment">
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_company_id"
+        android:id="@+id/til_user_id"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:hint="Company ID"
+        android:hint="User ID"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/ed_company_id_input"
+            android:id="@+id/ed_user_id_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:id="@+id/til_choose_user_role"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:helperTextTextColor="@color/red"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/til_user_id">
+
+        <AutoCompleteTextView
+            android:id="@+id/actv_choose_user_role"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:hint="Job Role"
+            android:inputType="none"
+            android:maxLines="1" />
+    </com.google.android.material.textfield.TextInputLayout>
+
     <Button
-        android:id="@+id/btn_join_company"
+        android:id="@+id/btn_add_user"
         android:layout_width="0dp"
         android:layout_height="64dp"
         android:layout_margin="16dp"
-        android:text="Join Company"
+        android:text="Add User To Company"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/til_company_id" />
+        app:layout_constraintTop_toBottomOf="@id/til_choose_user_role" />
 
     <ProgressBar
         android:id="@+id/progress_bar"

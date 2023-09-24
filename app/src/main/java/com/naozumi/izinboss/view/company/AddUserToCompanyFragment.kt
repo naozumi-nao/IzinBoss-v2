@@ -4,30 +4,30 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.naozumi.izinboss.R
-import com.naozumi.izinboss.databinding.FragmentJoinCompanyBinding
+import com.naozumi.izinboss.databinding.FragmentAddUserToCompanyBinding
 import com.naozumi.izinboss.model.datamodel.User
 import com.naozumi.izinboss.model.helper.Result
 import com.naozumi.izinboss.model.helper.setOnClickListener
 import com.naozumi.izinboss.model.util.TextInputUtils
 import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.view.HomeFragment
-import com.naozumi.izinboss.view.MainActivity
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import com.naozumi.izinboss.viewmodel.company.CompanyViewModel
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class JoinCompanyFragment : DialogFragment() {
-    private var _binding: FragmentJoinCompanyBinding? = null
+class AddUserToCompanyFragment : DialogFragment() {
+    private var _binding: FragmentAddUserToCompanyBinding? = null
     private val binding get() = _binding
     private lateinit var viewModel: CompanyViewModel
     private var user: User? = null
+    private lateinit var companyId: String
 
     override fun getTheme() = R.style.RoundedCornersDialog
     override fun onCreateView(
@@ -35,7 +35,10 @@ class JoinCompanyFragment : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentJoinCompanyBinding.inflate(layoutInflater, container, false)
+
+        companyId = arguments?.getString("companyId").toString()
+
+        _binding = FragmentAddUserToCompanyBinding.inflate(layoutInflater, container, false)
         return binding?.root
     }
 
@@ -46,21 +49,29 @@ class JoinCompanyFragment : DialogFragment() {
             ViewModelFactory.getInstance(requireActivity())
         viewModel = ViewModelProvider(this, factory)[CompanyViewModel::class.java]
 
+        val userRoleList: List<String> = User.UserRole.values().map { it.name }
+        val roleAdapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_dropdown_item,
+            userRoleList
+        )
+        binding?.actvChooseUserRole?.setAdapter(roleAdapter)
+
         val textWatcher = TextInputUtils.createTextWatcherWithButton(
-            binding?.btnJoinCompany,
-            binding?.edCompanyIdInput
+            binding?.btnAddUser,
+            binding?.edUserIdInput,
+            binding?.actvChooseUserRole
         )
 
         binding?.progressBar?.visibility = View.GONE
-        binding?.btnJoinCompany?.isEnabled = false
-        binding?.edCompanyIdInput?.addTextChangedListener(textWatcher)
+        binding?.btnAddUser?.isEnabled = false
+        binding?.edUserIdInput?.addTextChangedListener(textWatcher)
+        binding?.actvChooseUserRole?.addTextChangedListener(textWatcher)
 
-        binding?.btnJoinCompany?.setOnClickListener(3000L) {
+        binding?.btnAddUser?.setOnClickListener(3000L) {
             lifecycleScope.launch {
-                user =  viewModel.getUser().first()
-                joinCompany()
+                addUserToCompany()
             }
-            // Handle button click
         }
     }
 
@@ -72,9 +83,15 @@ class JoinCompanyFragment : DialogFragment() {
         )
     }
 
-    private suspend fun joinCompany() {
-        val companyId = binding?.edCompanyIdInput?.text.toString()
-        viewModel.addUserToCompany(companyId, user, user?.role)
+    private suspend fun addUserToCompany() {
+        val userId = binding?.edUserIdInput?.text.toString()
+        val userRole = when (binding?.actvChooseUserRole?.text.toString()) {
+            "MANAGER" -> User.UserRole.MANAGER
+            "EMPLOYEE" -> User.UserRole.EMPLOYEE
+            else -> User.UserRole.EMPLOYEE
+        }
+        user = viewModel.getUserData(userId)
+        viewModel.addUserToCompany(companyId, user, userRole)
             .observe(this) { result ->
                 if (result != null) {
                     when (result) {
@@ -85,14 +102,14 @@ class JoinCompanyFragment : DialogFragment() {
                             binding?.progressBar?.visibility = View.GONE
                             AlertDialog.Builder(requireActivity()).apply {
                                 setTitle(getString(R.string.success))
-                                setMessage("Successfully Joined a Company!")
+                                setMessage("Successfully Added User to Company!")
                                 setPositiveButton(getString(R.string.continue_on)) { _, _ ->
                                     dismiss()
                                     ViewUtils.replaceFragment(
                                         requireActivity() as AppCompatActivity,
                                         R.id.nav_main_content_container,
-                                        CompanyProfileFragment(),
-                                        CompanyProfileFragment::class.java.simpleName
+                                        HomeFragment(),
+                                        HomeFragment::class.java.simpleName
                                     )
                                 }
                                 create()
@@ -103,8 +120,8 @@ class JoinCompanyFragment : DialogFragment() {
                                     ViewUtils.replaceFragment(
                                         requireActivity() as AppCompatActivity,
                                         R.id.nav_main_content_container,
-                                        CompanyProfileFragment(),
-                                        CompanyProfileFragment::class.java.simpleName
+                                        HomeFragment(),
+                                        HomeFragment::class.java.simpleName
                                     )
                                 }
                                 show()
@@ -123,5 +140,15 @@ class JoinCompanyFragment : DialogFragment() {
                     }
                 }
             }
+    }
+
+    companion object {
+        fun newInstance(companyId: String): AddUserToCompanyFragment {
+            val fragment = AddUserToCompanyFragment()
+            val args = Bundle()
+            args.putString("companyId", companyId)
+            fragment.arguments = args
+            return fragment
+        }
     }
 }
