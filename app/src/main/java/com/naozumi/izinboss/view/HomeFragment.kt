@@ -58,7 +58,7 @@ class HomeFragment : Fragment() {
                 setupLeaveList()
                 binding?.swipeToRefresh?.setOnRefreshListener {
                     lifecycleScope.launch {
-                        setupLeaveList()
+                        setupLeaveList(true)
                     }
                 }
             }
@@ -79,7 +79,7 @@ class HomeFragment : Fragment() {
         return false
     }
 
-    private suspend fun setupLeaveList() {
+    private suspend fun setupLeaveList(refresh: Boolean = false) {
         val leaveListAdapter = LeaveListAdapter()
         val user = runBlocking { viewModel.getUser().first() }
         binding?.rvLeaves?.apply {
@@ -95,7 +95,7 @@ class HomeFragment : Fragment() {
             }
         })
 
-        viewModel.getAllLeaveRequests(user?.companyId.toString()).observe(viewLifecycleOwner) { result ->
+        viewModel.getAllLeaveRequests(user?.companyId.toString(), refresh).observe(viewLifecycleOwner) { result ->
             if (result != null) {
                 when (result) {
                     is Result.Loading -> {

@@ -19,6 +19,8 @@ import com.naozumi.izinboss.model.datamodel.LeaveRequest
 import com.naozumi.izinboss.model.datamodel.User
 import com.naozumi.izinboss.model.helper.NetworkDebounce
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -29,6 +31,7 @@ class DataRepository (
     private val firestore: FirebaseFirestore,
     private val userPreferences: UserPreferences
     ) {
+
     suspend fun signInWithGoogle(idToken: String): LiveData<Result<FirebaseUser>> = liveData {
         emit(Result.Loading)
         wrapEspressoIdlingResource {
@@ -264,25 +267,42 @@ class DataRepository (
         }
     }
 
-    suspend fun getAllLeaveRequests(companyId: String): LiveData<Result<List<LeaveRequest>>> = liveData {
+    // Mutex to make writes to cached values thread-safe.
+    private val leaveRequestsMutex = Mutex()
+    // Cache of leave requests.
+    private var cachedLeaveRequests: List<LeaveRequest>? = null
+    suspend fun getAllLeaveRequests(companyId: String, refresh: Boolean = false): LiveData<Result<List<LeaveRequest>>> = liveData {
         emit(Result.Loading)
         wrapEspressoIdlingResource {
             try {
-                val leaveRequestList = mutableListOf<LeaveRequest>()
-                val leaveRequestCollection = firestore.collection("Companies").document(companyId).collection("Leave Requests")
-                val leaveRequestQuery = leaveRequestCollection.get().await()
 
-                if (leaveRequestQuery.isEmpty) {
-                    // If the collection is empty, return an empty list
-                    emit(Result.Success(emptyList()))
-                } else {
-                    for (document in leaveRequestQuery) {
-                        val leaveRequest = document.toObject(LeaveRequest::class.java)
-                        leaveRequestList.add(leaveRequest)
+                if (refresh || cachedLeaveRequests == null) {
+                    val leaveRequestList = mutableListOf<LeaveRequest>()
+                    val leaveRequestCollection = firestore.collection("Companies").document(companyId).collection("Leave Requests")
+                    val leaveRequestQuery = leaveRequestCollection.get().await()
+
+                    if (leaveRequestQuery.isEmpty) {
+                        leaveRequestsMutex.withLock { // If the collection is empty, return an empty list
+                            cachedLeaveRequests = emptyList()
+                        }
+                    } else {
+                        for (document in leaveRequestQuery) {
+                            val leaveRequest = document.toObject(LeaveRequest::class.java)
+                            leaveRequestList.add(leaveRequest)
+                        }
+
+                        leaveRequestsMutex.withLock {
+                            cachedLeaveRequests = leaveRequestList
+                        }
                     }
-
-                    emit(Result.Success(leaveRequestList))
                 }
+
+                // Use cachedLeaveRequests with Mutex
+                val leaveRequests = leaveRequestsMutex.withLock {
+                    cachedLeaveRequests ?: emptyList()
+                }
+
+                emit(Result.Success(leaveRequests))
             } catch (e: FirebaseException) {
                 emit(Result.Error(e.message.toString()))
             } catch (e: FirebaseFirestoreException) {
@@ -292,6 +312,7 @@ class DataRepository (
             }
         }
     }
+
 
     suspend fun changeLeaveRequestStatus(leaveRequest: LeaveRequest?, isApproved: Boolean): LiveData<Result<Unit>> = liveData {
         emit(Result.Loading)

@@ -11,7 +11,8 @@ import kotlinx.coroutines.launch
 class MainViewModel(private val dataRepository: DataRepository, private val userPreferences: UserPreferences) : ViewModel() {
 
     fun signOut() = dataRepository.signOut()
-    suspend fun getAllLeaveRequests(companyId: String) = dataRepository.getAllLeaveRequests(companyId)
+    suspend fun getAllLeaveRequests(companyId: String, refresh: Boolean = false) =
+        dataRepository.getAllLeaveRequests(companyId, refresh)
     suspend fun getUserData(userId: String) = dataRepository.getUserData(userId)
     fun getCurrentUser() = dataRepository.getUserId()
 
