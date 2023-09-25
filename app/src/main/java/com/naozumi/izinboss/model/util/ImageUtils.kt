@@ -16,7 +16,7 @@ import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-object CameraUtils {
+object ImageUtils {
     private const val FILENAME_FORMAT = "dd-MM-yyyy"
     private const val MAXIMUM_SIZE = 1000000
     private val timeStamp: String = SimpleDateFormat(
@@ -62,7 +62,7 @@ object CameraUtils {
         return myFile
     }
 
-    fun reduceFileImage(file: File): File {
+    fun reduceFileImageSize(file: File): File {
         val bitmap = BitmapFactory.decodeFile(file.path)
         var compressQuality = 100
         var streamLength: Int
@@ -76,4 +76,5 @@ object CameraUtils {
         bitmap.compress(Bitmap.CompressFormat.JPEG, compressQuality, FileOutputStream(file))
         return file
     }
+
 }

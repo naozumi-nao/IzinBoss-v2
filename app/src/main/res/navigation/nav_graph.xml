@@ -24,7 +24,7 @@
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.naozumi.izinboss.view.UserProfileFragment"
+        android:name="com.naozumi.izinboss.view.user.UserProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
     <activity

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.UserProfileFragment">
+    tools:context=".view.user.UserProfileFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -24,7 +24,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btn_change_profile_picture"
+            android:id="@+id/fab_change_profile_picture"
             style="?attr/floatingActionButtonSmallSurfaceStyle"
             android:backgroundTint="@color/blue"
             android:layout_width="wrap_content"

@@ -1,10 +1,15 @@
-package com.naozumi.izinboss.view
+package com.naozumi.izinboss.view.user
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -14,19 +19,25 @@ import com.naozumi.izinboss.model.helper.Result
 import com.naozumi.izinboss.model.helper.setOnClickListener
 import com.naozumi.izinboss.databinding.FragmentProfileBinding
 import com.naozumi.izinboss.model.datamodel.User
+import com.naozumi.izinboss.model.util.ImageUtils
 import com.naozumi.izinboss.model.util.StringUtils
 import com.naozumi.izinboss.model.util.ViewUtils
+import com.naozumi.izinboss.view.MainActivity
 import com.naozumi.izinboss.view.entry.LoginActivity
 import com.naozumi.izinboss.viewmodel.UserProfileViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import java.io.File
 
 class UserProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding
     private lateinit var viewModel: UserProfileViewModel
     private var user: User? = null
+
+    private var imageUri: Uri? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,7 +65,14 @@ class UserProfileFragment : Fragment() {
             binding?.btnLeaveCurrentCompany?.visibility = View.GONE
         }
 
-        binding?.btnLeaveCurrentCompany?.setOnClickListener(2000L) {
+        binding?.fabChangeProfilePicture?.setOnClickListener(3000L) {
+            runBlocking {
+                launcherGallery.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                changeProfilePicture()
+            }
+        }
+
+        binding?.btnLeaveCurrentCompany?.setOnClickListener(3000L) {
             AlertDialog.Builder(requireActivity()).apply {
                 setTitle("Warning")
                 setMessage("Are you sure you want to leave your company?")
@@ -69,7 +87,7 @@ class UserProfileFragment : Fragment() {
             }
         }
 
-        binding?.btnDeleteAccount?.setOnClickListener(2000L) {
+        binding?.btnDeleteAccount?.setOnClickListener(3000L) {
             AlertDialog.Builder(requireActivity()).apply {
                 setTitle("Warning")
                 setMessage("Are you sure you want to delete your account?")
@@ -81,6 +99,41 @@ class UserProfileFragment : Fragment() {
                 setNegativeButton("No") { _, _ -> }
                 create()
                 show()
+            }
+        }
+    }
+
+    private val launcherGallery = registerForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            val flag = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            context?.contentResolver?.takePersistableUriPermission(uri, flag)
+            imageUri = uri
+        } else {
+            Toast.makeText(requireContext(), "No Media Selected", Toast.LENGTH_SHORT)
+        }
+    }
+
+    private suspend fun changeProfilePicture() {
+        viewModel.changeProfilePicture(imageUri).observe(viewLifecycleOwner) { result ->
+            when(result) {
+                is Result.Loading -> {
+                    binding?.progressBar?.visibility = View.VISIBLE
+                }
+                is Result.Success -> {
+                    binding?.progressBar?.visibility = View.GONE
+                }
+                is Result.Error -> {
+                    binding?.progressBar?.visibility = View.GONE
+                    AlertDialog.Builder(requireActivity()).apply {
+                        setTitle(getString(R.string.error))
+                        setMessage(result.error)
+                        setPositiveButton(getString(R.string.continue_on)) { _, _ -> }
+                        create()
+                        show()
+                    }
+                }
             }
         }
     }

@@ -16,6 +16,7 @@ import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.view.company.CompanyProfileFragment
 import com.naozumi.izinboss.view.company.CreateCompanyFragment
 import com.naozumi.izinboss.view.entry.LoginActivity
+import com.naozumi.izinboss.view.user.UserProfileFragment
 import com.naozumi.izinboss.viewmodel.MainViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import kotlinx.coroutines.flow.first
@@ -160,23 +161,18 @@ class MainActivity : AppCompatActivity() {
             ViewUtils.moveActivityNoHistory(this@MainActivity, LoginActivity::class.java)
         }
 
-        lifecycleScope.launch {
-            setUserData(viewModel.getCurrentUser().toString())
-        }
+        setUserData()
     }
 
-    private suspend fun setUserData(userId: String) {
+    private fun setUserData() {
         val headerBinding = NavHeaderMainBinding.bind(binding.navigationView.getHeaderView(0))
-        val user: User? = viewModel.getUserData(userId)
-        if (user != null) {
-            headerBinding.apply {
-                tvFullName.text = user.name
-                tvEmail.text = user.email
-                Glide.with(this@MainActivity)
-                    .load(user.profilePicture)
-                    .error(R.drawable.baseline_person_24)
-                    .into(ivProfilePhoto)
-            }
+        headerBinding.apply {
+            tvFullName.text = user?.name
+            tvEmail.text = user?.email
+            Glide.with(this@MainActivity)
+                .load(user?.profilePicture)
+                .error(R.drawable.baseline_person_24)
+                .into(ivProfilePhoto)
         }
     }
 }
