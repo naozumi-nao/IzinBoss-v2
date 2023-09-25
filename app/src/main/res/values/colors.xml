@@ -9,6 +9,10 @@
     <color name="gray">#757575</color>
     <color name="light_gray">#BDBDBD</color>
     <color name="transparent_gray">#88000000</color>
+    <color name="background_green">#E8F5E9</color>
+    <color name="green">#00C853</color>
+    <color name="background_red">#FBE9E7</color>
     <color name="red">#C31010</color>
+    <color name="background_yellow">#FFF8E1</color>
     <color name="yellowish_orange">#F9A825</color>
 </resources>

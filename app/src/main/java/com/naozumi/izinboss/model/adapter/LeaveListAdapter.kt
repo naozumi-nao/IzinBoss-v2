@@ -1,7 +1,9 @@
 package com.naozumi.izinboss.model.adapter
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -32,20 +34,30 @@ class LeaveListAdapter : ListAdapter<LeaveRequest, LeaveListAdapter.ListViewHold
                 tvItemName.text = leaveRequest.employeeName
                 tvItemDescription.text = leaveRequest.reason
                 tvItemDate.text = leaveRequest.timeStamp
+                btnItemStatus.isClickable = false
                 when (leaveRequest.status) {
                     LeaveRequest.Status.APPROVED -> {
-                        tvItemStatus.text = itemView.context.getString(R.string.approved)
-                        ivItemPhoto.setImageResource(R.drawable.baseline_check_24)
+                        btnItemStatus.text = itemView.context.getString(R.string.approved)
+                        btnItemStatus.setTextColor(ContextCompat.getColor(itemView.context, R.color.green))
+                        btnItemStatus.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.background_green))
+                        ivItemPhoto.setImageResource(R.drawable.baseline_check_circle_outline_24)
+                        ivItemPhoto.setColorFilter(ContextCompat.getColor(itemView.context, R.color.green))
                     }
 
                     LeaveRequest.Status.PENDING -> {
-                        tvItemStatus.text = itemView.context.getString(R.string.pending)
-                        ivItemPhoto.setImageResource(R.drawable.outline_pending_24)
+                        btnItemStatus.text = itemView.context.getString(R.string.pending)
+                        btnItemStatus.setTextColor(ContextCompat.getColor(itemView.context, R.color.yellowish_orange))
+                        btnItemStatus.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.background_yellow))
+                        ivItemPhoto.setImageResource(R.drawable.baseline_access_time_24)
+                        ivItemPhoto.setColorFilter(ContextCompat.getColor(itemView.context, R.color.yellowish_orange))
                     }
 
                     LeaveRequest.Status.REJECTED -> {
-                        tvItemStatus.text = itemView.context.getString(R.string.rejected)
+                        btnItemStatus.text = itemView.context.getString(R.string.rejected)
+                        btnItemStatus.setTextColor(ContextCompat.getColor(itemView.context, R.color.red))
+                        btnItemStatus.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.background_red))
                         ivItemPhoto.setImageResource(R.drawable.baseline_close_24)
+                        ivItemPhoto.setColorFilter(ContextCompat.getColor(itemView.context, R.color.red))
                     }
                 }
                 itemView.setOnClickListener {
