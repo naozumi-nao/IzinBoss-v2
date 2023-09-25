@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
@@ -100,42 +101,26 @@ class AddUserToCompanyFragment : DialogFragment() {
                         }
                         is Result.Success -> {
                             binding?.progressBar?.visibility = View.GONE
-                            AlertDialog.Builder(requireActivity()).apply {
-                                setTitle(getString(R.string.success))
-                                setMessage("Successfully Added User to Company!")
-                                setPositiveButton(getString(R.string.continue_on)) { _, _ ->
-                                    dismiss()
-                                    ViewUtils.replaceFragment(
-                                        requireActivity() as AppCompatActivity,
-                                        R.id.nav_main_content_container,
-                                        HomeFragment(),
-                                        HomeFragment::class.java.simpleName
-                                    )
-                                }
-                                create()
-                                show()
-                            }.apply {
-                                setOnCancelListener { // Set an OnCancelListener to handle the case when the user clicks outside of the dialog
-                                    dismiss()
-                                    ViewUtils.replaceFragment(
-                                        requireActivity() as AppCompatActivity,
-                                        R.id.nav_main_content_container,
-                                        HomeFragment(),
-                                        HomeFragment::class.java.simpleName
-                                    )
-                                }
-                                show()
-                            }
+                            Toast.makeText(
+                                requireActivity(),
+                                "Successfully added user to company",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            dismiss()
+                            ViewUtils.replaceFragment(
+                                requireActivity() as AppCompatActivity,
+                                R.id.nav_main_content_container,
+                                CompanyProfileFragment(),
+                                CompanyProfileFragment::class.java.simpleName
+                            )
                         }
                         is Result.Error -> {
                             binding?.progressBar?.visibility = View.GONE
-                            AlertDialog.Builder(requireActivity()).apply {
-                                setTitle(getString(R.string.error))
-                                setMessage(result.error)
-                                setPositiveButton(getString(R.string.continue_on)) { _, _ -> }
-                                create()
-                                show()
-                            }
+                            Toast.makeText(
+                                requireActivity(),
+                                "Error: " + result.error,
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     }
                 }

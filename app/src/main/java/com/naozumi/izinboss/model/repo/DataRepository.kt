@@ -357,6 +357,37 @@ class DataRepository (
         }
     }
 
+    suspend fun changeFullName(newName: String, user: User?): LiveData<Result<Unit>> = liveData {
+        emit(Result.Loading)
+        wrapEspressoIdlingResource {
+            try {
+                if(user != null) {
+                    val userDocumentRef = firestore.collection("Users").document(user.uid.toString())
+
+                    user.name = newName
+
+                    val userUpdate = mapOf(
+                        "name" to user.name
+                    )
+                    userDocumentRef.update(userUpdate).await()
+                    saveUserToPreferences(user)
+
+                    emit(Result.Success(Unit))
+                } else {
+                    emit(Result.Error("ERROR: User is Null"))
+                }
+            } catch (e: FirebaseException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: StorageException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: FirebaseFirestoreException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: Exception) {
+                emit(Result.Error(e.message.toString()))
+            }
+        }
+    }
+
     suspend fun changeProfilePicture(file: Uri?): LiveData<Result<Unit>> = liveData {
         emit(Result.Loading)
         wrapEspressoIdlingResource {

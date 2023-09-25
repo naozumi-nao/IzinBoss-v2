@@ -17,6 +17,7 @@ class UserProfileViewModel(private val dataRepository: DataRepository, private v
     }
     suspend fun getCompanyData(companyId: String) = dataRepository.getCompanyData(companyId)
     suspend fun changeProfilePicture(file: Uri?) = dataRepository.changeProfilePicture(file)
+    suspend fun changeFullName(newName: String, user: User?) = dataRepository.changeFullName(newName, user)
     suspend fun leaveCurrentCompany(userId: String?) = dataRepository.kickUserFromCompany(userId)
     suspend fun deleteAccount(userId: String?) = dataRepository.deleteAccount(userId)
     fun deleteCurrentUserDataStore() {
