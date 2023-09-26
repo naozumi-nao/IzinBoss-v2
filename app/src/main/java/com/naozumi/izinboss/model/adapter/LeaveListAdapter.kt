@@ -1,6 +1,5 @@
 package com.naozumi.izinboss.model.adapter
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -32,8 +31,11 @@ class LeaveListAdapter : ListAdapter<LeaveRequest, LeaveListAdapter.ListViewHold
         fun bind(leaveRequest: LeaveRequest) {
             with(binding) {
                 tvItemName.text = leaveRequest.employeeName
-                tvItemDescription.text = leaveRequest.reason
                 tvItemDate.text = leaveRequest.timeStamp
+                tvItemType.text = leaveRequest.type.toString()
+                tvItemStartDate.text = leaveRequest.startDate
+                tvItemEndDate.text = leaveRequest.endDate
+                tvItemReason.text = leaveRequest.reason
                 btnItemStatus.isClickable = false
                 when (leaveRequest.status) {
                     LeaveRequest.Status.APPROVED -> {

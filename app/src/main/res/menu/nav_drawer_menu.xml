@@ -18,23 +18,6 @@
         android:icon="@drawable/baseline_company_24"
         android:title="@string/company" />
 
-    <item android:title="Category">
-        <menu>
-            <item
-                android:id="@+id/nav_sick_leave"
-                android:icon="@drawable/baseline_calendar_month_24"
-                android:title="Sick" />
-            <item
-                android:id="@+id/nav_vacation_leave"
-                android:icon="@drawable/baseline_person_24"
-                android:title="Vacation" />
-            <item
-                android:id="@+id/nav_personal_leave"
-                android:icon="@drawable/baseline_person_24"
-                android:title="Personal" />
-        </menu>
-    </item>
-
     <item android:title="Account">
         <menu>
             <item
