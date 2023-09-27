@@ -19,8 +19,8 @@ class CompanyViewModel(private val dataRepository: DataRepository, private val u
         return userPreferences.getUser()
     }
 
-    suspend fun changeLeaveRequestStatus(leaveRequest: LeaveRequest, isApproved: Boolean) =
-        dataRepository.changeLeaveRequestStatus(leaveRequest, isApproved)
+    suspend fun changeLeaveRequestStatus(leaveRequest: LeaveRequest, isApproved: Boolean, managerName: String) =
+        dataRepository.changeLeaveRequestStatus(leaveRequest, isApproved, managerName)
     suspend fun getUserData(userId: String) = dataRepository.getUserData(userId)
     suspend fun getCompanyData(companyId: String) = dataRepository.getCompanyData(companyId)
     suspend fun getCompanyMembers(companyId: String?) =

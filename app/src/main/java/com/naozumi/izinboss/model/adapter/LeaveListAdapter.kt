@@ -1,6 +1,7 @@
 package com.naozumi.izinboss.model.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
@@ -31,7 +32,7 @@ class LeaveListAdapter : ListAdapter<LeaveRequest, LeaveListAdapter.ListViewHold
         fun bind(leaveRequest: LeaveRequest) {
             with(binding) {
                 tvItemName.text = leaveRequest.employeeName
-                tvItemDate.text = leaveRequest.timeStamp
+                tvItemCreatedAt.text = leaveRequest.createdAt
                 tvItemType.text = leaveRequest.type.toString()
                 tvItemStartDate.text = leaveRequest.startDate
                 tvItemEndDate.text = leaveRequest.endDate
@@ -42,24 +43,36 @@ class LeaveListAdapter : ListAdapter<LeaveRequest, LeaveListAdapter.ListViewHold
                         btnItemStatus.text = itemView.context.getString(R.string.approved)
                         btnItemStatus.setTextColor(ContextCompat.getColor(itemView.context, R.color.green))
                         btnItemStatus.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.background_green))
-                        ivItemPhoto.setImageResource(R.drawable.baseline_check_circle_outline_24)
-                        ivItemPhoto.setColorFilter(ContextCompat.getColor(itemView.context, R.color.green))
+
+                        tvReviewedBy.text = "Approved by: "
+                        tvItemReviewedBy.text = leaveRequest.reviewedBy
+
+                        ivItemStatusIcon.setImageResource(R.drawable.baseline_check_circle_outline_24)
+                        ivItemStatusIcon.setColorFilter(ContextCompat.getColor(itemView.context, R.color.green))
                     }
 
                     LeaveRequest.Status.PENDING -> {
                         btnItemStatus.text = itemView.context.getString(R.string.pending)
                         btnItemStatus.setTextColor(ContextCompat.getColor(itemView.context, R.color.yellowish_orange))
                         btnItemStatus.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.background_yellow))
-                        ivItemPhoto.setImageResource(R.drawable.baseline_access_time_24)
-                        ivItemPhoto.setColorFilter(ContextCompat.getColor(itemView.context, R.color.yellowish_orange))
+
+                        tvReviewedBy.text = "Awaiting Approval"
+                        tvItemReviewedBy.visibility = View.GONE
+
+                        ivItemStatusIcon.setImageResource(R.drawable.baseline_access_time_24)
+                        ivItemStatusIcon.setColorFilter(ContextCompat.getColor(itemView.context, R.color.yellowish_orange))
                     }
 
                     LeaveRequest.Status.REJECTED -> {
                         btnItemStatus.text = itemView.context.getString(R.string.rejected)
                         btnItemStatus.setTextColor(ContextCompat.getColor(itemView.context, R.color.red))
                         btnItemStatus.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.background_red))
-                        ivItemPhoto.setImageResource(R.drawable.baseline_close_24)
-                        ivItemPhoto.setColorFilter(ContextCompat.getColor(itemView.context, R.color.red))
+
+                        tvReviewedBy.text = "Rejected by: "
+                        tvItemReviewedBy.text = leaveRequest.reviewedBy
+
+                        ivItemStatusIcon.setImageResource(R.drawable.baseline_close_24)
+                        ivItemStatusIcon.setColorFilter(ContextCompat.getColor(itemView.context, R.color.red))
                     }
                 }
                 itemView.setOnClickListener {

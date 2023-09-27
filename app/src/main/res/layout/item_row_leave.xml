@@ -20,17 +20,19 @@
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
             android:text="@string/name"
+            android:textColor="@color/dark_blue"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tv_item_date"
+            android:id="@+id/tv_item_created_at"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
-            android:text="Date Submitted"
+            android:text="dd-MM-yyyy, HH:mm"
+            android:textColor="@color/blue"
             app:layout_constraintTop_toBottomOf="@id/tv_item_name"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -39,7 +41,7 @@
             style="@style/Widget.Material3.Button.TonalButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Approved/Rejected/Pending"
+            android:text="Approval Status"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -50,7 +52,7 @@
             android:layout_margin="4dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_item_date" />
+            app:layout_constraintTop_toBottomOf="@id/tv_item_created_at" />
 
         <TextView
             android:id="@+id/tv_type"
@@ -67,28 +69,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:text="Sick/Vacation/Personal"
+            android:text="leave type"
             app:layout_constraintStart_toEndOf="@id/tv_type"
             app:layout_constraintTop_toTopOf="@id/tv_type" />
-
-        <TextView
-            android:id="@+id/tv_reason"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:text="Reason: "
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_type"/>
-
-        <TextView
-            android:id="@+id/tv_item_reason"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:text="reasoning"
-            app:layout_constraintStart_toEndOf="@id/tv_reason"
-            app:layout_constraintTop_toTopOf="@id/tv_reason"/>
 
         <TextView
             android:id="@+id/tv_start_date"
@@ -98,14 +81,14 @@
             android:text="Start Date: "
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_reason"/>
+            app:layout_constraintTop_toBottomOf="@id/tv_type"/>
 
         <TextView
             android:id="@+id/tv_item_start_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:text="--/--/----"
+            android:text="dd-MM-yyyy"
             app:layout_constraintStart_toEndOf="@id/tv_start_date"
             app:layout_constraintTop_toTopOf="@id/tv_start_date" />
 
@@ -125,17 +108,62 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:text="--/--/----"
+            android:text="dd-MM-yyyy"
             app:layout_constraintStart_toEndOf="@id/tv_end_date"
             app:layout_constraintTop_toTopOf="@id/tv_end_date" />
 
         <ImageView
-            android:id="@+id/iv_item_photo"
+            android:id="@+id/iv_item_status_icon"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:src="@drawable/baseline_access_time_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv_reason"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:text="Reason: "
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_end_date"/>
+
+        <TextView
+            android:id="@+id/tv_item_reason"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="reasoning"
+            android:maxLines="1"
+            android:ems="10"
+            android:ellipsize="end"
+            app:layout_constraintStart_toEndOf="@id/tv_reason"
+            app:layout_constraintTop_toTopOf="@id/tv_reason"/>
+
+        <TextView
+            android:id="@+id/tv_reviewed_by"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:text="Reviewed By: "
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/divider"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_item_reviewed_by"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:text="Manager name"
+            android:textAlignment="textEnd"
+            android:maxLines="1"
+            android:ems="9"
+            android:ellipsize="end"
+            app:layout_constraintTop_toBottomOf="@id/tv_reviewed_by"
+            app:layout_constraintEnd_toEndOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -57,4 +57,19 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:lottie_rawRes="@raw/empty" />
 
+    <TextView
+        android:id="@+id/tv_no_leave_requests"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No Leave Requests Yet"
+        android:textAlignment="center"
+        android:textColor="@color/dark_blue"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginTop="300dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

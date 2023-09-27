@@ -38,8 +38,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            app:helperText="@string/required"
-            app:helperTextTextColor="@color/red"
+            app:helperText="Double Tap to show calendar"
+            app:helperTextTextColor="@color/dark_blue"
             app:endIconDrawable="@drawable/baseline_calendar_month_24"
             app:endIconMode="custom"
             app:layout_constraintEnd_toEndOf="parent"
@@ -60,8 +60,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            app:helperText="@string/required"
-            app:helperTextTextColor="@color/red"
+            app:helperText="Double Tap to show calendar"
+            app:helperTextTextColor="@color/dark_blue"
             app:endIconDrawable="@drawable/baseline_calendar_month_24"
             app:endIconMode="custom"
             app:layout_constraintEnd_toEndOf="parent"
@@ -77,24 +77,25 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_add_description"
+            android:id="@+id/til_add_reason"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            app:helperText="@string/required"
-            app:helperTextTextColor="@color/red"
+            app:helperText="Max Character Limit: 100"
+            app:helperTextTextColor="@color/yellowish_orange"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/til_end_date">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/ed_add_description"
+                android:id="@+id/ed_add_reason"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="top"
-                android:hint="@string/add_description"
+                android:hint="Add reason"
                 android:inputType="textMultiLine"
+                android:maxLength="100"
                 android:overScrollMode="ifContentScrolls"
                 android:padding="15dp"
                 tools:ignore="SpeakableTextPresentCheck" />
@@ -106,7 +107,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:text="@string/request_leave"
-            app:layout_constraintTop_toBottomOf="@id/til_add_description"
+            app:layout_constraintTop_toBottomOf="@id/til_add_reason"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:layout_editor_absoluteY="339dp" />

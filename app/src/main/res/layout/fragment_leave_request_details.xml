@@ -8,20 +8,31 @@
     tools:context=".view.LeaveRequestDetailsFragment">
 
     <Button
-        android:id="@+id/btn_leave_request_details"
+        android:id="@+id/btn_leave_request"
         style="@style/Widget.Material3.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Leave Request Details"
+        android:text="Leave Request"
         android:textSize="20sp"
         app:iconGravity="end"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/btn_approval_status"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:text="Approval Status"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
     <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/btn_leave_request_details"/>
+        android:layout_marginTop="4dp"
+        app:layout_constraintTop_toBottomOf="@id/btn_leave_request"/>
 
     <TextView
         android:id="@+id/tv_full_name"
@@ -33,7 +44,7 @@
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="@id/guideline"
-        app:layout_constraintTop_toBottomOf="@id/btn_leave_request_details" />
+        app:layout_constraintTop_toBottomOf="@id/btn_leave_request" />
 
     <TextView
         android:id="@+id/tv_company"
@@ -107,6 +118,49 @@
         app:layout_constraintEnd_toEndOf="@id/guideline"
         app:layout_constraintTop_toBottomOf="@id/tv_start_date" />
 
+    <TextView
+        android:id="@+id/tv_reason"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Reason"
+        android:textStyle="bold"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guideline"
+        app:layout_constraintTop_toBottomOf="@id/tv_end_date" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_reason_input"/>
+
+    <TextView
+        android:id="@+id/tv_reviewed_by"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Reviewed By"
+        android:textStyle="bold"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guideline"
+        app:layout_constraintTop_toBottomOf="@id/divider"/>
+
+    <TextView
+        android:id="@+id/tv_reviewed_on"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Reviewed On"
+        android:textStyle="bold"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guideline"
+        app:layout_constraintTop_toBottomOf="@id/tv_reviewed_by" />
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
         android:layout_width="wrap_content"
@@ -123,7 +177,7 @@
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="@id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_leave_request_details" />
+        app:layout_constraintTop_toBottomOf="@id/btn_leave_request" />
 
     <TextView
         android:id="@+id/tv_user_id_input"
@@ -144,7 +198,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Date"
+        android:text="dd-MM-yyyy, HH:mm"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="@id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
@@ -180,7 +234,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Date"
+        android:text="dd-MM-yyyy"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="@id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
@@ -191,45 +245,80 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Date"
+        android:text="dd-MM-yyyy"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="@id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_start_date_input" />
 
+    <TextView
+        android:id="@+id/tv_reason_input"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Reasoning"
+        android:textSize="12sp"
+        android:maxLines="3"
+        app:layout_constraintStart_toStartOf="@id/guideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_end_date_input" />
+
+    <TextView
+        android:id="@+id/tv_reviewed_by_input"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Manager's Name"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@id/guideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider" />
+
+    <TextView
+        android:id="@+id/tv_reviewed_on_input"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="dd-MM-yyyy, HH:mm"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@id/guideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_reviewed_by_input" />
+
     <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/divider2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_end_date"/>
+        app:layout_constraintTop_toBottomOf="@id/tv_reviewed_on"/>
 
     <Button
         android:id="@+id/btn_approve"
         android:backgroundTint="@color/green"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="16dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:text="Approve"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btn_reject"
-        app:layout_constraintTop_toBottomOf="@id/tv_end_date_input" />
+        app:layout_constraintTop_toBottomOf="@id/divider2" />
 
     <Button
         android:id="@+id/btn_reject"
         android:backgroundTint="@color/red"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="16dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:text="Reject"
         android:textSize="14sp"
         app:layout_constraintStart_toEndOf="@id/btn_approve"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_end_date_input" />
+        app:layout_constraintTop_toBottomOf="@id/divider2" />
 
     <ProgressBar
         android:id="@+id/progress_bar"

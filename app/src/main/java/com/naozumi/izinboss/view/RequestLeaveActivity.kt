@@ -51,14 +51,14 @@ class RequestLeaveActivity : AppCompatActivity() {
             binding.actvAddType,
             binding.edStartDateInput,
             binding.edEndDateInput,
-            binding.edAddDescription
+            binding.edAddReason
         )
 
         binding.btnRequestLeave.isEnabled = false
         binding.actvAddType.addTextChangedListener(textWatcher)
         binding.edStartDateInput.addTextChangedListener(textWatcher)
         binding.edEndDateInput.addTextChangedListener(textWatcher)
-        binding.edAddDescription.addTextChangedListener(textWatcher)
+        binding.edAddReason.addTextChangedListener(textWatcher)
 
         binding.btnRequestLeave.setOnClickListener(2000L) {
             lifecycleScope.launch {
@@ -80,12 +80,12 @@ class RequestLeaveActivity : AppCompatActivity() {
         val type = typeMap[typeString]
         val startDate = binding.edStartDateInput.text.toString().trim()
         val endDate = binding.edEndDateInput.text.toString().trim()
-        val description = binding.edAddDescription.text.toString().trim()
+        val description = binding.edAddReason.text.toString().trim()
 
         val leaveRequest = LeaveRequest(
             employeeId = user?.uid,
             employeeName = user?.name,
-            timeStamp = timeStamp,
+            createdAt = timeStamp,
             startDate = startDate,
             endDate = endDate,
             reason = description,

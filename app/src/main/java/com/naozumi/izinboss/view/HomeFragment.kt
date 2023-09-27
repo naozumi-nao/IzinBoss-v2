@@ -58,28 +58,17 @@ class HomeFragment : Fragment() {
                 setupLeaveList()
                 binding?.swipeToRefresh?.setOnRefreshListener {
                     lifecycleScope.launch {
-                        setupLeaveList(true)
+                        setupLeaveList()
                     }
                 }
             }
-            binding?.fabAddLeave?.setOnClickListener(1000L) {
+            binding?.fabAddLeave?.setOnClickListener(3000L) {
                 ViewUtils.moveActivity(requireActivity(), RequestLeaveActivity::class.java)
             }
         }
     }
 
-    private suspend fun checkIfUserHasCompany(userId: String): Boolean {
-        val user: User? = viewModel.getUserData(userId)
-        if (user != null) {
-            viewModel.saveUser(user)
-            if (user.companyId != null) {
-                return true
-            }
-        }
-        return false
-    }
-
-    private suspend fun setupLeaveList(refresh: Boolean = false) {
+    private suspend fun setupLeaveList() {
         val leaveListAdapter = LeaveListAdapter()
         val user = runBlocking { viewModel.getUser().first() }
         binding?.rvLeaves?.apply {
@@ -95,26 +84,30 @@ class HomeFragment : Fragment() {
             }
         })
 
-        viewModel.getAllLeaveRequests(user?.companyId.toString(), refresh).observe(viewLifecycleOwner) { result ->
+        viewModel.getAllLeaveRequests(user?.companyId.toString()).observe(viewLifecycleOwner) { result ->
             if (result != null) {
                 when (result) {
                     is Result.Loading -> {
                         binding?.progressBar?.visibility = View.VISIBLE
+                        binding?.tvNoLeaveRequests?.visibility = View.GONE
                     }
                     is Result.Success -> {
                         binding?.progressBar?.visibility = View.GONE
                         val leaveData = result.data
                         if (leaveData.isEmpty()) {
                             binding?.animEmptyList?.playAnimation()
+                            binding?.tvNoLeaveRequests?.visibility = View.VISIBLE
                             binding?.swipeToRefresh?.isRefreshing = false
                         } else {
                             binding?.animEmptyList?.visibility = View.GONE
+                            binding?.tvNoLeaveRequests?.visibility = View.GONE
                             leaveListAdapter.submitList(leaveData)
                             binding?.swipeToRefresh?.isRefreshing = false
                         }
                     }
                     is Result.Error -> {
                         binding?.progressBar?.visibility = View.GONE
+                        binding?.tvNoLeaveRequests?.visibility = View.GONE
                         Toast.makeText(
                             requireActivity(),
                             "Error: " + result.error,
