@@ -2,6 +2,7 @@ package com.naozumi.izinboss.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.naozumi.izinboss.model.datamodel.LeaveRequest
 import com.naozumi.izinboss.model.repo.DataRepository
 import com.naozumi.izinboss.model.repo.UserPreferences
 import com.naozumi.izinboss.model.datamodel.User
@@ -13,6 +14,7 @@ class MainViewModel(private val dataRepository: DataRepository, private val user
     fun signOut() = dataRepository.signOut()
     suspend fun getAllLeaveRequests(companyId: String) =
         dataRepository.getAllLeaveRequests(companyId)
+
     suspend fun getUserData(userId: String) = dataRepository.getUserData(userId)
     fun getCurrentUser() = dataRepository.getUserId()
 

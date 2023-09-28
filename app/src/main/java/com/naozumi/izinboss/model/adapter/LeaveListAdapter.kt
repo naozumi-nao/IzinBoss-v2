@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.naozumi.izinboss.R
 import com.naozumi.izinboss.databinding.ItemRowLeaveBinding
 import com.naozumi.izinboss.model.datamodel.LeaveRequest
+import com.naozumi.izinboss.model.helper.setOnClickListener
 
 class LeaveListAdapter : ListAdapter<LeaveRequest, LeaveListAdapter.ListViewHolder>(DIFF_CALLBACK) {
     private lateinit var onItemClickCallback: OnItemClickCallback
@@ -75,7 +76,7 @@ class LeaveListAdapter : ListAdapter<LeaveRequest, LeaveListAdapter.ListViewHold
                         ivItemStatusIcon.setColorFilter(ContextCompat.getColor(itemView.context, R.color.red))
                     }
                 }
-                itemView.setOnClickListener {
+                itemView.setOnClickListener(1500L) {
                     onItemClickCallback.onItemClicked(leaveRequest)
                 }
             }

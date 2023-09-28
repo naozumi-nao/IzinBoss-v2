@@ -75,6 +75,16 @@ class LeaveRequestDetailsFragment : DialogFragment() {
         } else {
             binding?.btnApprove?.visibility = View.GONE
             binding?.btnReject?.visibility = View.GONE
+            binding?.btnDeleteLeaveRequest?.visibility = View.GONE
+        }
+
+        if (user?.uid == leaveRequest?.employeeId) {
+            binding?.btnDeleteLeaveRequest?.visibility = View.VISIBLE
+            binding?.btnDeleteLeaveRequest?.setOnClickListener(3000L) {
+                lifecycleScope.launch {
+                    deleteLeaveRequest(leaveRequest)
+                }
+            }
         }
 
         when(leaveRequest?.status) {
@@ -160,6 +170,36 @@ class LeaveRequestDetailsFragment : DialogFragment() {
                                 Toast.LENGTH_LONG
                             ).show()
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun deleteLeaveRequest(leaveRequest: LeaveRequest?) {
+        viewModel.deleteLeaveRequest(leaveRequest).observe(viewLifecycleOwner) { result ->
+            if (result != null) {
+                when (result) {
+                    is Result.Loading -> {
+                        binding?.progressBar?.visibility = View.VISIBLE
+                    }
+                    is Result.Success -> {
+                        binding?.progressBar?.visibility = View.GONE
+                        dismiss()
+                        ViewUtils.replaceFragment(
+                            requireActivity() as AppCompatActivity,
+                            R.id.nav_main_content_container,
+                            HomeFragment(),
+                            HomeFragment::class.java.simpleName
+                        )
+                    }
+                    is Result.Error -> {
+                        binding?.progressBar?.visibility = View.GONE
+                        Toast.makeText(
+                            requireActivity(),
+                            "Error: " + result.error,
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
             }

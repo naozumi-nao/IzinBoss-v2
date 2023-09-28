@@ -337,6 +337,31 @@ class DataRepository (
         }
     }
 
+    suspend fun deleteLeaveRequest(leaveRequest: LeaveRequest?): LiveData<Result<Unit>> = liveData {
+        emit(Result.Loading)
+        wrapEspressoIdlingResource {
+            try {
+                if(leaveRequest != null) {
+                    val leaveRequestRef =
+                        firestore.collection("Companies")
+                            .document(leaveRequest.companyId.toString())
+                            .collection("Leave Requests")
+                            .document(leaveRequest.id.toString())
+                    leaveRequestRef.delete().await()
+                    emit(Result.Success(Unit))
+                } else {
+                    emit(Result.Error("ERROR: Leave Request is null"))
+                }
+            } catch (e: FirebaseException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: FirebaseFirestoreException) {
+                emit(Result.Error(e.message.toString()))
+            } catch (e: Exception) {
+                emit(Result.Error(e.message.toString()))
+            }
+        }
+    }
+
     suspend fun changeFullName(newName: String, user: User?): LiveData<Result<Unit>> = liveData {
         emit(Result.Loading)
         wrapEspressoIdlingResource {

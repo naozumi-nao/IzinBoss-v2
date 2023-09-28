@@ -1,6 +1,5 @@
 package com.naozumi.izinboss.model.adapter
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -10,6 +9,7 @@ import com.bumptech.glide.Glide
 import com.naozumi.izinboss.R
 import com.naozumi.izinboss.databinding.ItemRowUserBinding
 import com.naozumi.izinboss.model.datamodel.User
+import com.naozumi.izinboss.model.helper.setOnClickListener
 
 class UserListAdapter : ListAdapter<User, UserListAdapter.ListViewHolder>(DIFF_CALLBACK) {
 
@@ -35,7 +35,7 @@ class UserListAdapter : ListAdapter<User, UserListAdapter.ListViewHolder>(DIFF_C
                     .load(user.profilePicture)
                     .error(R.drawable.baseline_person_24)
                     .into(ivItemProfilePicture)
-                itemView.setOnClickListener {
+                itemView.setOnClickListener(1500L) {
                     onItemClickCallback.onItemClicked(user)
                 }
             }
