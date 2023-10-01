@@ -1,4 +1,4 @@
-package com.naozumi.izinboss.viewmodel
+package com.naozumi.izinboss.viewmodel.user
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel

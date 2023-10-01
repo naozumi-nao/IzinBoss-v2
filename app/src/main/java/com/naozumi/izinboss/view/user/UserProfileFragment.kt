@@ -19,18 +19,15 @@ import com.naozumi.izinboss.model.helper.Result
 import com.naozumi.izinboss.model.helper.setOnClickListener
 import com.naozumi.izinboss.databinding.FragmentProfileBinding
 import com.naozumi.izinboss.model.datamodel.User
-import com.naozumi.izinboss.model.util.ImageUtils
 import com.naozumi.izinboss.model.util.StringUtils
 import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.view.MainActivity
-import com.naozumi.izinboss.view.company.JoinCompanyFragment
 import com.naozumi.izinboss.view.entry.LoginActivity
-import com.naozumi.izinboss.viewmodel.UserProfileViewModel
+import com.naozumi.izinboss.viewmodel.user.UserProfileViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.io.File
 
 class UserProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null

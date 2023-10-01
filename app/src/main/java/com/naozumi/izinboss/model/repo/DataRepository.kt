@@ -21,8 +21,6 @@ import com.naozumi.izinboss.model.datamodel.Company
 import com.naozumi.izinboss.model.datamodel.LeaveRequest
 import com.naozumi.izinboss.model.datamodel.User
 import com.naozumi.izinboss.model.util.TimeUtils
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -231,7 +229,9 @@ class DataRepository (
                         "role" to null
                     )
                     userDocumentRef.update(userUpdate).await()
-                    saveUserToPreferences(user)
+                    if (user.uid == getCurrentUserID()) {
+                        saveUserToPreferences(user)
+                    }
 
                     emit(Result.Success(Unit))
                 } else {
@@ -398,7 +398,7 @@ class DataRepository (
         wrapEspressoIdlingResource {
             try {
                 if(file != null) {
-                    val userId = getUserId()
+                    val userId = getCurrentUserID()
                     if(userId != null) {
                         val storageReference = storage.reference
                             .child("profile_pictures")
@@ -526,7 +526,7 @@ class DataRepository (
         }
     }
 
-    fun getUserId(): String? {
+    fun getCurrentUserID(): String? {
         val currentUser = firebaseAuth.currentUser
         return currentUser?.uid
     }

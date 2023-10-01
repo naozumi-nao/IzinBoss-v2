@@ -19,6 +19,7 @@ class CompanyViewModel(private val dataRepository: DataRepository, private val u
         return userPreferences.getUser()
     }
 
+    suspend fun kickUserFromCompany(userId: String?) = dataRepository.kickUserFromCompany(userId)
     suspend fun changeLeaveRequestStatus(leaveRequest: LeaveRequest, isApproved: Boolean, managerName: String) =
         dataRepository.changeLeaveRequestStatus(leaveRequest, isApproved, managerName)
     suspend fun deleteLeaveRequest(leaveRequest: LeaveRequest?) = dataRepository.deleteLeaveRequest(leaveRequest)

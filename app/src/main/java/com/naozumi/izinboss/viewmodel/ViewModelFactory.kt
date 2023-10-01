@@ -1,9 +1,6 @@
 package com.naozumi.izinboss.viewmodel
 
 import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.naozumi.izinboss.model.repo.DataRepository
@@ -12,6 +9,7 @@ import com.naozumi.izinboss.model.di.Injection
 import com.naozumi.izinboss.viewmodel.company.CompanyViewModel
 import com.naozumi.izinboss.viewmodel.entry.LoginViewModel
 import com.naozumi.izinboss.viewmodel.entry.RegisterViewModel
+import com.naozumi.izinboss.viewmodel.user.UserProfileViewModel
 
 class ViewModelFactory private constructor(
     private val dataRepository: DataRepository,
