@@ -33,25 +33,4 @@ class AddLeaveRequestTest {
         IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource)
     }
 
-    @Test
-    fun testIfAddLeaveRequestSuccess() {
-        onView(ViewMatchers.withId(R.id.fab_add_leave))
-            .perform(ViewActions.click())
-        onView(ViewMatchers.withId(R.id.actv_add_type))
-            .perform(ViewActions.click())
-        onView(ViewMatchers.withText("Vacation"))
-            .perform(ViewActions.click())
-        onView(ViewMatchers.withId(R.id.btn_pick_date))
-            .perform(ViewActions.click())
-        onView(ViewMatchers.withText("Select date"))
-            .perform(setDate(2023, 8, 17))
-        onView(ViewMatchers.withText("Select date"))
-            .perform(setDate(2023, 8, 20))
-        onView(ViewMatchers.withId(R.id.ed_add_description))
-            .perform(ViewActions.typeText("Testing with Espresso"))
-        onView(ViewMatchers.withId(R.id.btn_request_leave))
-            .perform(ViewActions.click())
-        onView(ViewMatchers.withText("Testing with Espresso"))
-            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-    }
 }

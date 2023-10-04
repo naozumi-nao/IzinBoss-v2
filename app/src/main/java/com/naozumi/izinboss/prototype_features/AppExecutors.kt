@@ -1,4 +1,4 @@
-package com.naozumi.izinboss.model.helper
+package com.naozumi.izinboss.prototype_features
 
 import android.os.Handler
 import android.os.Looper

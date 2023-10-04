@@ -31,7 +31,7 @@ class DataRepository (
     private val firestore: FirebaseFirestore,
     private val storage: FirebaseStorage,
     private val userPreferences: UserPreferences
-    ) {
+    )/*: IDataRepository*/ {
 
     suspend fun signInWithGoogle(idToken: String): LiveData<Result<FirebaseUser>> = liveData {
         emit(Result.Loading)

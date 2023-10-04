@@ -1,4 +1,4 @@
-package com.naozumi.izinboss.model.helper
+package com.naozumi.izinboss.prototype_features
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
@@ -17,7 +17,7 @@ object NetworkDebounce {
         debounceMutex.withLock {
             job?.cancel() // Cancel the previous job if it exists
 
-            // Create a new coroutine scope tied to the lifecycle of your component
+            // coroutine scope tied to the lifecycle of component
             val scope = CoroutineScope(Dispatchers.Main)
 
             // Start a new coroutine with a delay of 2 seconds

@@ -18,9 +18,11 @@ import com.naozumi.izinboss.model.datamodel.User
 import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.viewmodel.MainViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null

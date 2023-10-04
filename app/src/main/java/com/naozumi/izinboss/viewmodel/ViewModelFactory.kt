@@ -3,9 +3,9 @@ package com.naozumi.izinboss.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.naozumi.izinboss.model.di.Injection
 import com.naozumi.izinboss.model.repo.DataRepository
 import com.naozumi.izinboss.model.repo.UserPreferences
-import com.naozumi.izinboss.model.di.Injection
 import com.naozumi.izinboss.viewmodel.company.CompanyViewModel
 import com.naozumi.izinboss.viewmodel.entry.LoginViewModel
 import com.naozumi.izinboss.viewmodel.entry.RegisterViewModel
@@ -43,7 +43,29 @@ class ViewModelFactory private constructor(
 
         fun getInstance(context: Context): ViewModelFactory =
             instance ?: synchronized(this) {
-                instance ?: ViewModelFactory(Injection.provideRepository(context), Injection.provideDataStore(context))
+                instance ?: ViewModelFactory(
+                    Injection.provideRepository(context),
+                    Injection.provideDataStore(context))
             }.also { instance = it }
     }
+
+    /*
+        companion object {
+            @Volatile
+            private var INSTANCE: ClassSingleton? = null
+            private val lock = Any()
+            val instance: ClassSingleton?
+                get() {
+                    if (INSTANCE == null) {
+                        synchronized(lock) {
+                            if (INSTANCE == null) {
+                                INSTANCE = ClassSingleton()
+                            }
+                        }
+                    }
+                    return INSTANCE
+                } // getters and setters
+        }
+    }
+     */
 }

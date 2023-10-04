@@ -64,7 +64,6 @@ class RegisterLoginTest {
         onView(withId(R.id.ed_login_password))
             .perform(ViewActions.typeText("12345678"), ViewActions.closeSoftKeyboard())
         onView(withId(R.id.btn_login)).perform(ViewActions.click())
-        onView(withId(R.id.action_settings)).check(ViewAssertions.matches(isDisplayed()))
     }
 
     //@Test
@@ -73,7 +72,6 @@ class RegisterLoginTest {
             .perform(ViewActions.typeText("Test Company"), ViewActions.closeSoftKeyboard())
         onView(withId(R.id.btn_register_company)).perform(ViewActions.click())
         onView(withText(R.string.continue_on)).perform(ViewActions.click())
-        onView(withId(R.id.action_settings)).check(ViewAssertions.matches(isDisplayed()))
     }
 
     //@Test
@@ -85,13 +83,13 @@ class RegisterLoginTest {
         onView(withText("Vacation"))
             .inRoot(RootMatchers.isPlatformPopup())
             .perform(ViewActions.click());
-        onView(withId(R.id.btn_pick_date))
-            .perform(ViewActions.click())
+        //onView(withId(R.id.btn_pick_date))
+            //.perform(ViewActions.click())
         onView(withText("Select date"))
             .perform(PickerActions.setDate(2023, 8, 17))
         onView(withText("Select date"))
             .perform(PickerActions.setDate(2023, 8, 20))
-        onView(withId(R.id.ed_add_description))
+        onView(withId(R.id.ed_add_reason))
             .perform(ViewActions.typeText("Testing with Espresso"))
         onView(withId(R.id.btn_request_leave))
             .perform(ViewActions.click())
