@@ -15,7 +15,7 @@
         android:theme="@style/Theme.IzinBoss"
         tools:targetApi="33">
         <activity
-            android:name=".view.RequestLeaveActivity"
+            android:name=".view.leaverequest.RequestLeaveActivity"
             android:exported="true"
             android:parentActivityName=".view.MainActivity" />
         <activity

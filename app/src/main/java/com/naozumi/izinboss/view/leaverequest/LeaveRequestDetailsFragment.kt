@@ -1,4 +1,4 @@
-package com.naozumi.izinboss.view
+package com.naozumi.izinboss.view.leaverequest
 
 import android.os.Build
 import android.os.Bundle
@@ -18,9 +18,9 @@ import com.naozumi.izinboss.model.datamodel.User
 import com.naozumi.izinboss.model.helper.Result
 import com.naozumi.izinboss.model.helper.setOnClickListener
 import com.naozumi.izinboss.model.util.ViewUtils
+import com.naozumi.izinboss.view.HomeFragment
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import com.naozumi.izinboss.viewmodel.company.CompanyViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 

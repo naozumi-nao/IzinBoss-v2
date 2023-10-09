@@ -16,13 +16,14 @@ import com.naozumi.izinboss.model.helper.setOnClickListener
 import com.naozumi.izinboss.model.datamodel.LeaveRequest
 import com.naozumi.izinboss.model.datamodel.User
 import com.naozumi.izinboss.model.util.ViewUtils
+import com.naozumi.izinboss.view.leaverequest.LeaveRequestDetailsFragment
+import com.naozumi.izinboss.view.leaverequest.RequestLeaveActivity
+import com.naozumi.izinboss.view.leaverequest.RequestLeaveFragment
 import com.naozumi.izinboss.viewmodel.MainViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
@@ -64,8 +65,9 @@ class HomeFragment : Fragment() {
                     }
                 }
             }
-            binding?.fabAddLeave?.setOnClickListener(3000L) {
+            binding?.fabAddLeave?.setOnClickListener(1000L) {
                 ViewUtils.moveActivity(requireActivity(), RequestLeaveActivity::class.java)
+                //RequestLeaveFragment().show(parentFragmentManager, "leaveRequest")
             }
         }
     }

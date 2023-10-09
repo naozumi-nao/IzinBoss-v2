@@ -4,10 +4,15 @@ import android.app.AlertDialog
 import android.content.Context
 import androidx.core.util.Pair
 import androidx.fragment.app.FragmentManager
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
+import java.util.concurrent.TimeUnit
 
 object TimeUtils {
     fun getCurrentDateAndTime():String{
@@ -38,11 +43,22 @@ object TimeUtils {
 
     fun showDateRangePicker(context: Context, fragmentManager: FragmentManager, onDatePicked: (Long, Long) -> Unit) {
         val today = MaterialDatePicker.todayInUtcMilliseconds()
+        val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+
+        calendar.timeInMillis = today
+        val oneYearForward = today + TimeUnit.DAYS.toMillis(365)
+
+        val constraintsBuilder =
+            CalendarConstraints.Builder()
+                .setStart(today)
+                .setEnd(oneYearForward)
+                .setValidator(DateValidatorPointForward.now())
 
         val dateRangePicker = MaterialDatePicker.Builder
             .dateRangePicker()
-            .setTitleText("Select date")
+            .setTitleText("Select dates")
             .setSelection(Pair(today,today))
+            .setCalendarConstraints(constraintsBuilder.build())
             .build()
 
         dateRangePicker.show(
@@ -53,17 +69,7 @@ object TimeUtils {
         dateRangePicker.addOnPositiveButtonClickListener { datePicked ->
             val startDate = datePicked.first
             val endDate = datePicked.second
-
-            if(startDate != null && endDate != null && startDate >= today && endDate >= today) {
-                onDatePicked(startDate, endDate)
-            } else {
-                AlertDialog.Builder(context)
-                    .setTitle("Invalid Date Selection")
-                    .setMessage("Please select dates starting from today.")
-                    .setPositiveButton("OK", null)
-                    .show()
-            }
+            onDatePicked(startDate, endDate)
         }
     }
-
 }

@@ -34,7 +34,7 @@
         tools:layout="@layout/fragment_join_company" />
     <activity
         android:id="@+id/addLeaveActivity"
-        android:name="com.naozumi.izinboss.view.RequestLeaveActivity"
+        android:name="com.naozumi.izinboss.view.leaverequest.RequestLeaveActivity"
         android:label="activity_add_leave"
         tools:layout="@layout/activity_request_leave" />
 

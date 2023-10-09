@@ -1,4 +1,4 @@
-package com.naozumi.izinboss.view
+package com.naozumi.izinboss.view.leaverequest
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -17,6 +17,7 @@ import com.naozumi.izinboss.model.datamodel.LeaveRequest
 import com.naozumi.izinboss.model.util.TextInputUtils
 import com.naozumi.izinboss.model.util.TimeUtils
 import com.naozumi.izinboss.model.util.ViewUtils
+import com.naozumi.izinboss.view.MainActivity
 import com.naozumi.izinboss.viewmodel.AddLeaveViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import kotlinx.coroutines.flow.first
