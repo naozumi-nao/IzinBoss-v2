@@ -23,17 +23,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_change_profile_picture"
-            style="?attr/floatingActionButtonSmallSurfaceStyle"
-            android:backgroundTint="@color/blue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/baseline_edit_24"
-            app:tint="@color/white"
-            app:layout_constraintBottom_toBottomOf="@id/iv_profile_photo"
-            app:layout_constraintEnd_toEndOf="@id/iv_profile_photo" />
-
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

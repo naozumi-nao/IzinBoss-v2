@@ -27,14 +27,12 @@ object Injection {
         val firebaseAuth = FirebaseAuth.getInstance()
 
         val firestore = Firebase.firestore
-        val storage = Firebase.storage("gs://izinboss-app.appspot.com")
 
         return DataRepository.getInstance(
             firebaseAuth,
             googleSignInClient,
             firestore,
-            storage,
-            provideDataStore(context),
+            provideDataStore(context)
         )
     }
 

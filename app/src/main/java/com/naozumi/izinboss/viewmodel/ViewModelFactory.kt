@@ -50,6 +50,28 @@ class ViewModelFactory private constructor(
     }
 
     /*
+        object ASingleton {
+        @Volatile
+        var instance: ASingleton? = null
+            get() {
+                var result = field
+                if (result == null) {
+                    synchronized(mutex) {
+                        result = field
+                        if (result == null) {
+                            result = ASingleton()
+                            field = result
+                        }
+                    }
+                }
+                return result
+            }
+            private set
+        private val mutex = Any()
+    }
+     */
+
+    /*
         companion object {
             @Volatile
             private var INSTANCE: ClassSingleton? = null

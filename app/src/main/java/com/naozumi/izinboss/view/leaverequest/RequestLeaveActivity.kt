@@ -149,6 +149,6 @@ class RequestLeaveActivity : AppCompatActivity() {
     }
 
     private fun showDateRangePicker(callback: (Long, Long) -> Unit) {
-        TimeUtils.showDateRangePicker(this, supportFragmentManager, callback)
+        TimeUtils.showMaterialDateRangePicker(supportFragmentManager, callback)
     }
 }

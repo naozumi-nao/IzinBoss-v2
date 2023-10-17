@@ -1,6 +1,6 @@
 package com.naozumi.izinboss.model.util
 
-import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.content.Context
 import androidx.core.util.Pair
 import androidx.fragment.app.FragmentManager
@@ -41,7 +41,7 @@ object TimeUtils {
         return format.format(date)
     }
 
-    fun showDateRangePicker(context: Context, fragmentManager: FragmentManager, onDatePicked: (Long, Long) -> Unit) {
+    fun showMaterialDateRangePicker(fragmentManager: FragmentManager, onDatePicked: (Long, Long) -> Unit) {
         val today = MaterialDatePicker.todayInUtcMilliseconds()
         val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
 
@@ -72,4 +72,33 @@ object TimeUtils {
             onDatePicked(startDate, endDate)
         }
     }
+
+    fun showDatePicker(context: Context, onDatePicked: (Long) -> Unit) {
+        val today = Calendar.getInstance()
+        val oneYearForward = Calendar.getInstance()
+        oneYearForward.add(Calendar.YEAR, 1) // Add 1 year to the current date
+
+        val datePickerDialog = DatePickerDialog(
+            context,
+            { _, year, month, dayOfMonth ->
+                val calendar = Calendar.getInstance()
+                calendar.set(year, month, dayOfMonth)
+                val startDate = calendar.timeInMillis
+
+                onDatePicked(startDate)
+            },
+            today.get(Calendar.YEAR),
+            today.get(Calendar.MONTH),
+            today.get(Calendar.DAY_OF_MONTH)
+        )
+
+        // Set the minimum date to today
+        datePickerDialog.datePicker.minDate = today.timeInMillis
+
+        // Set the maximum date to one year forward
+        datePickerDialog.datePicker.maxDate = oneYearForward.timeInMillis
+
+        datePickerDialog.show()
+    }
+
 }

@@ -162,6 +162,6 @@ class RequestLeaveFragment : DialogFragment() {
     }
 
     private fun showDateRangePicker(callback: (Long, Long) -> Unit) {
-        TimeUtils.showDateRangePicker(requireActivity(), childFragmentManager, callback)
+        TimeUtils.showMaterialDateRangePicker(childFragmentManager, callback)
     }
 }

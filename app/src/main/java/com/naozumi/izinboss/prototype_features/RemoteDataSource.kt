@@ -27,7 +27,6 @@ class RemoteDataSource private constructor(private val firestore: FirebaseFirest
     }
 
     suspend fun getLeaveRequests(companyId: String): Flow<ApiResponse<List<LeaveRequest>>> {
-        //get data from remote api
         return flow {
             try {
                 val leaveRequestList = mutableListOf<LeaveRequest>()
@@ -53,7 +52,7 @@ class RemoteDataSource private constructor(private val firestore: FirebaseFirest
             } catch (e: Exception) {
                 emit(ApiResponse.Error(e.message.toString()))
             }
-        }.flowOn(Dispatchers.IO) // Put work on IO-specific Threads
+        }.flowOn(Dispatchers.IO)
     }
 
     /*

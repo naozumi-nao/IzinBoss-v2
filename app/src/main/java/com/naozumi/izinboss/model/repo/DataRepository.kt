@@ -29,7 +29,6 @@ class DataRepository (
     private val firebaseAuth: FirebaseAuth,
     private var googleSignInClient: GoogleSignInClient,
     private val firestore: FirebaseFirestore,
-    private val storage: FirebaseStorage,
     private val userPreferences: UserPreferences
     )/*: IDataRepository*/ {
 
@@ -393,52 +392,6 @@ class DataRepository (
         }
     }
 
-    suspend fun changeProfilePicture(file: Uri?): LiveData<Result<Unit>> = liveData {
-        emit(Result.Loading)
-        wrapEspressoIdlingResource {
-            try {
-                if(file != null) {
-                    val userId = getCurrentUserID()
-                    if(userId != null) {
-                        val storageReference = storage.reference
-                            .child("profile_pictures")
-                            .child("$userId.jpg")
-
-                        // Delete the previous image (if it exists)
-                        try {
-                            storageReference.delete().await()
-                        } catch (e: Exception) {
-                            // Handle any errors during deletion (e.g., image doesn't exist)
-                        }
-
-                        val uploadTask = storageReference.putFile(file)
-                        uploadTask.await()
-
-                        val downloadUrl = storageReference.downloadUrl.await()
-                        val newProfilePictureUrl = downloadUrl.toString()
-
-                        val userRef = firestore.collection("Users").document(userId)
-                        val userUpdate = mapOf(
-                            "profilePicture" to newProfilePictureUrl
-                        )
-                        userRef.update(userUpdate).await()
-
-                        emit(Result.Success(Unit))
-                    }
-
-                }
-            } catch (e: FirebaseException) {
-                emit(Result.Error(e.message.toString()))
-            } catch (e: StorageException) {
-                emit(Result.Error(e.message.toString()))
-            } catch (e: FirebaseFirestoreException) {
-                emit(Result.Error(e.message.toString()))
-            } catch (e: Exception) {
-                emit(Result.Error(e.message.toString()))
-            }
-        }
-    }
-
     // TODO: This deleteAccount deletes both account and company, use with caution. Need to separate it later
     suspend fun deleteAccount(userId: String?): LiveData<Result<Unit>> = liveData {
         emit(Result.Loading)
@@ -448,18 +401,6 @@ class DataRepository (
                 val databaseUser = getUserData(userId)
 
                 if (firebaseUser != null && databaseUser != null && userId != null) {
-
-                    val storageReference = storage.reference
-                        .child("profile_pictures")
-                        .child("$userId.jpg")
-
-                    // Delete profile image (if it exists)
-                    try {
-                        storageReference.delete().await()
-                    } catch (e: Exception) {
-                        // Handle any errors during deletion (e.g., image doesn't exist)
-                    }
-
                     firestore.collection("Users").document(userId).delete().await()
 
                     val companyId = databaseUser.companyId.toString()
@@ -565,11 +506,10 @@ class DataRepository (
             firebaseAuth: FirebaseAuth,
             googleSignInClient: GoogleSignInClient,
             firestore: FirebaseFirestore,
-            storage: FirebaseStorage,
             userPreferences: UserPreferences
         ): DataRepository {
             return instance ?: synchronized(this) {
-                instance ?: DataRepository(firebaseAuth, googleSignInClient, firestore, storage, userPreferences)
+                instance ?: DataRepository(firebaseAuth, googleSignInClient, firestore, userPreferences)
             }.also { instance = it }
         }
     }
