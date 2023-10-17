@@ -1,14 +1,14 @@
-package com.naozumi.izinboss.prototype_features
+package com.naozumi.izinboss.prototype_features.source.remote
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import com.naozumi.izinboss.model.helper.Result
+import com.naozumi.izinboss.prototype_features.ApiResponse
 import kotlinx.coroutines.flow.emitAll
 
 abstract class NetworkBoundResource<ResultType, RequestType> {
-
     private var result: Flow<Result<ResultType>> = flow {
         emit(Result.Loading)
         val dbSource = loadFromDB().first()
@@ -36,7 +36,7 @@ abstract class NetworkBoundResource<ResultType, RequestType> {
 
     protected abstract fun loadFromDB(): Flow<ResultType>
 
-    protected abstract fun shouldFetch(data: ResultType?): Boolean
+    protected abstract suspend fun shouldFetch(data: ResultType?): Boolean
 
     protected abstract suspend fun createCall(): Flow<ApiResponse<RequestType>>
 

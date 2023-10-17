@@ -1,6 +1,5 @@
 package com.naozumi.izinboss.viewmodel.user
 
-import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naozumi.izinboss.model.datamodel.User
@@ -8,7 +7,6 @@ import com.naozumi.izinboss.model.repo.DataRepository
 import com.naozumi.izinboss.model.repo.UserPreferences
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import java.io.File
 
 class UserProfileViewModel(private val dataRepository: DataRepository, private val userPreferences: UserPreferences): ViewModel() {
     suspend fun getUserData(userId: String) = dataRepository.getUserData(userId)

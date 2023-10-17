@@ -22,7 +22,6 @@ import com.naozumi.izinboss.viewmodel.user.UserProfileViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 class UserProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null

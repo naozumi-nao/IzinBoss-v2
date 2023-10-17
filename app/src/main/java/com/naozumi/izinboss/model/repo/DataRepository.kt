@@ -1,7 +1,6 @@
 package com.naozumi.izinboss.model.repo
 
 import android.content.Intent
-import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -13,7 +12,6 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
-import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageException
 import com.naozumi.izinboss.model.helper.Result
 import com.naozumi.izinboss.model.helper.wrapEspressoIdlingResource
@@ -30,7 +28,7 @@ class DataRepository (
     private var googleSignInClient: GoogleSignInClient,
     private val firestore: FirebaseFirestore,
     private val userPreferences: UserPreferences
-    )/*: IDataRepository*/ {
+    ) {
 
     suspend fun signInWithGoogle(idToken: String): LiveData<Result<FirebaseUser>> = liveData {
         emit(Result.Loading)
@@ -285,7 +283,6 @@ class DataRepository (
                         val leaveRequest = document.toObject(LeaveRequest::class.java)
                         leaveRequestList.add(leaveRequest)
                     }
-
                     emit(Result.Success(leaveRequestList))
                 }
             } catch (e: FirebaseException) {

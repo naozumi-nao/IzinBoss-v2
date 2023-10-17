@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
@@ -18,7 +17,6 @@ import com.naozumi.izinboss.model.helper.Result
 import com.naozumi.izinboss.model.helper.setOnClickListener
 import com.naozumi.izinboss.model.util.TextInputUtils
 import com.naozumi.izinboss.model.util.ViewUtils
-import com.naozumi.izinboss.view.HomeFragment
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import com.naozumi.izinboss.viewmodel.company.CompanyViewModel
 import kotlinx.coroutines.launch

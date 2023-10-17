@@ -10,6 +10,10 @@ import com.naozumi.izinboss.viewmodel.company.CompanyViewModel
 import com.naozumi.izinboss.viewmodel.entry.LoginViewModel
 import com.naozumi.izinboss.viewmodel.entry.RegisterViewModel
 import com.naozumi.izinboss.viewmodel.user.UserProfileViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 
 class ViewModelFactory private constructor(
     private val dataRepository: DataRepository,
@@ -40,7 +44,6 @@ class ViewModelFactory private constructor(
 
     companion object {
         private var instance: ViewModelFactory? = null
-
         fun getInstance(context: Context): ViewModelFactory =
             instance ?: synchronized(this) {
                 instance ?: ViewModelFactory(
@@ -48,6 +51,22 @@ class ViewModelFactory private constructor(
                     Injection.provideDataStore(context))
             }.also { instance = it }
     }
+
+/*
+    companion object {
+        private val mutex = Mutex()
+        private var instance: ViewModelFactory? = null
+        suspend fun getInstance(context: Context): ViewModelFactory =
+            instance ?: mutex.withLock {
+                instance ?: withContext(Dispatchers.IO) {
+                    ViewModelFactory(
+                        Injection.provideRepository(context),
+                        Injection.provideDataStore(context)
+                    )
+                }.also { instance = it }
+            }
+    }
+ */
 
     /*
         object ASingleton {

@@ -13,7 +13,6 @@ import com.google.firebase.storage.ktx.storage
 import com.naozumi.izinboss.R
 import com.naozumi.izinboss.model.repo.DataRepository
 import com.naozumi.izinboss.model.repo.UserPreferences
-
 object Injection {
 
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_prefs")
