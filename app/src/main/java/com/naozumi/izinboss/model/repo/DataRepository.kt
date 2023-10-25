@@ -14,7 +14,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.storage.StorageException
 import com.naozumi.izinboss.model.helper.Result
-import com.naozumi.izinboss.model.helper.wrapEspressoIdlingResource
 import com.naozumi.izinboss.model.datamodel.Company
 import com.naozumi.izinboss.model.datamodel.LeaveRequest
 import com.naozumi.izinboss.model.datamodel.User
@@ -28,11 +27,11 @@ class DataRepository (
     private var googleSignInClient: GoogleSignInClient,
     private val firestore: FirebaseFirestore,
     private val userPreferences: UserPreferences
-    ) {
+    ): CompanyRepository, LeaveRequestRepository, UserRepository {
 
-    suspend fun signInWithGoogle(idToken: String): LiveData<Result<FirebaseUser>> = liveData {
+    override suspend fun signInWithGoogle(idToken: String): LiveData<Result<FirebaseUser>> = liveData {
         emit(Result.Loading)
-        wrapEspressoIdlingResource {
+
             try {
                 val credential = GoogleAuthProvider.getCredential(idToken, null)
                 val authResult = firebaseAuth.signInWithCredential(credential).await()
@@ -51,12 +50,12 @@ class DataRepository (
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
             }
-        }
+
     }
 
-    suspend fun registerWithEmail(name: String, email: String, password: String): LiveData<Result<FirebaseUser>> = liveData {
+    override suspend fun registerWithEmail(name: String, email: String, password: String): LiveData<Result<FirebaseUser>> = liveData {
         emit(Result.Loading)
-        wrapEspressoIdlingResource {
+
             try {
                 firebaseAuth.createUserWithEmailAndPassword(email, password).await()
                 val user = firebaseAuth.currentUser
@@ -77,12 +76,11 @@ class DataRepository (
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
             }
-        }
     }
 
-    suspend fun loginWithEmail(email: String, password: String): LiveData<Result<Unit>> = liveData {
+    override suspend fun loginWithEmail(email: String, password: String): LiveData<Result<Unit>> = liveData {
         emit(Result.Loading)
-        wrapEspressoIdlingResource {
+
             try {
                 firebaseAuth.signInWithEmailAndPassword(email, password).await()
                 val user = getUserData(firebaseAuth.currentUser?.uid.toString())
@@ -99,12 +97,12 @@ class DataRepository (
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
             }
-        }
+
     }
 
-    suspend fun createCompany(companyName: String, industrySector: Company.IndustrySector?, user: User?): LiveData<Result<Company>> = liveData {
+    override suspend fun createCompany(companyName: String, industrySector: Company.IndustrySector?, user: User?): LiveData<Result<Company>> = liveData {
         emit(Result.Loading)
-        wrapEspressoIdlingResource {
+
             try {
                 val companyId = firestore.collection("Companies").document().id // Generate a unique ID
                 if (user != null) {
@@ -140,13 +138,13 @@ class DataRepository (
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
             }
-        }
+
     }
 
 
-    suspend fun addUserToCompany(companyId: String, user: User?, position: User.UserRole?): LiveData<Result<Unit>> = liveData {
+    override suspend fun addUserToCompany(companyId: String, user: User?, position: User.UserRole?): LiveData<Result<Unit>> = liveData {
         emit(Result.Loading)
-        wrapEspressoIdlingResource {
+
             try {
                 if (user != null) {
                     // Check if the company with the specified companyId exists
@@ -183,12 +181,12 @@ class DataRepository (
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
             }
-        }
+
     }
 
-    suspend fun getCompanyMembers(companyId: String?): LiveData<Result<List<User>>> = liveData {
+    override suspend fun getCompanyMembers(companyId: String?): LiveData<Result<List<User>>> = liveData {
         emit(Result.Loading)
-        wrapEspressoIdlingResource {
+
             try {
                 val companyMembersList = mutableListOf<User>()
                 val usersCollection = firestore.collection("Users")
@@ -207,12 +205,12 @@ class DataRepository (
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
             }
-        }
+
     }
 
-    suspend fun kickUserFromCompany(userId: String?): LiveData<Result<Unit>> = liveData {
+    override suspend fun removeUserFromCompany(userId: String?): LiveData<Result<Unit>> = liveData {
         emit(Result.Loading)
-        wrapEspressoIdlingResource {
+
             try {
                 val user = getUserData(userId)
                 if (user != null) {
@@ -241,12 +239,12 @@ class DataRepository (
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
             }
-        }
+
     }
 
-    suspend fun addLeaveRequestToDatabase(companyId: String, leaveRequest: LeaveRequest): LiveData<Result<Unit>> = liveData {
+    override suspend fun addLeaveRequestToDatabase(companyId: String, leaveRequest: LeaveRequest): LiveData<Result<Unit>> = liveData {
         emit(Result.Loading)
-        wrapEspressoIdlingResource {
+
             try {
                 val leaveRequestCollection = firestore.collection("Companies").document(companyId).collection("Leave Requests")
                 val leaveRequestId = leaveRequestCollection.document().id // Generate a unique ID
@@ -264,12 +262,12 @@ class DataRepository (
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
             }
-        }
+
     }
 
-    suspend fun getAllLeaveRequests(companyId: String): LiveData<Result<List<LeaveRequest>>> = liveData {
+    override suspend fun getAllLeaveRequests(companyId: String): LiveData<Result<List<LeaveRequest>>> = liveData {
         emit(Result.Loading)
-        wrapEspressoIdlingResource {
+
             try {
                 val leaveRequestList = mutableListOf<LeaveRequest>()
                 val leaveRequestCollection = firestore.collection("Companies").document(companyId).collection("Leave Requests")
@@ -292,12 +290,12 @@ class DataRepository (
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
             }
-        }
+
     }
 
-    suspend fun changeLeaveRequestStatus(leaveRequest: LeaveRequest?, isApproved: Boolean, managerName: String): LiveData<Result<Unit>> = liveData {
+    override suspend fun changeLeaveRequestStatus(leaveRequest: LeaveRequest?, isApproved: Boolean, managerName: String): LiveData<Result<Unit>> = liveData {
         emit(Result.Loading)
-        wrapEspressoIdlingResource {
+
             try {
                 if(leaveRequest != null) {
                     val leaveRequestCollection =
@@ -330,12 +328,12 @@ class DataRepository (
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
             }
-        }
+
     }
 
-    suspend fun deleteLeaveRequest(leaveRequest: LeaveRequest?): LiveData<Result<Unit>> = liveData {
+    override suspend fun deleteLeaveRequest(leaveRequest: LeaveRequest?): LiveData<Result<Unit>> = liveData {
         emit(Result.Loading)
-        wrapEspressoIdlingResource {
+
             try {
                 if(leaveRequest != null) {
                     val leaveRequestRef =
@@ -355,12 +353,12 @@ class DataRepository (
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
             }
-        }
+
     }
 
-    suspend fun changeFullName(newName: String, user: User?): LiveData<Result<Unit>> = liveData {
+    override suspend fun changeFullName(newName: String, user: User?): LiveData<Result<Unit>> = liveData {
         emit(Result.Loading)
-        wrapEspressoIdlingResource {
+
             try {
                 if(user != null) {
                     val userDocumentRef = firestore.collection("Users").document(user.uid.toString())
@@ -386,13 +384,13 @@ class DataRepository (
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
             }
-        }
+
     }
 
     // TODO: This deleteAccount deletes both account and company, use with caution. Need to separate it later
-    suspend fun deleteAccount(userId: String?): LiveData<Result<Unit>> = liveData {
+    override suspend fun deleteAccount(userId: String?): LiveData<Result<Unit>> = liveData {
         emit(Result.Loading)
-        wrapEspressoIdlingResource {
+
             try {
                 val firebaseUser = firebaseAuth.currentUser
                 val databaseUser = getUserData(userId)
@@ -423,19 +421,19 @@ class DataRepository (
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
             }
-        }
+
     }
 
-    fun signOut() {
+    override fun signOut() {
         googleSignInClient.signOut()
         firebaseAuth.signOut()
     }
 
-    fun getSignInIntent(): Intent {
+    override fun getSignInIntent(): Intent {
         return googleSignInClient.signInIntent
     }
 
-    private suspend fun convertFirebaseUserToUser(firebaseUser: FirebaseUser) {
+    override suspend fun convertFirebaseUserToUser(firebaseUser: FirebaseUser) {
         val userRef = firestore.collection("Users").document(firebaseUser.uid)
 
         val documentSnapshot = suspendCoroutine { continuation ->
@@ -464,12 +462,12 @@ class DataRepository (
         }
     }
 
-    fun getCurrentUserID(): String? {
+    override fun getCurrentUserID(): String? {
         val currentUser = firebaseAuth.currentUser
         return currentUser?.uid
     }
 
-    suspend fun getUserData(userId: String?): User? {
+    override suspend fun getUserData(userId: String?): User? {
         val userDocument = firestore.collection("Users").document(userId.toString()).get().await()
         if (userDocument.exists()) {
             return userDocument.toObject(User::class.java)
@@ -477,7 +475,7 @@ class DataRepository (
         return null
     }
 
-    suspend fun getCompanyData(companyId: String): Company? {
+    override suspend fun getCompanyData(companyId: String): Company? {
         if(companyId.isNotBlank()) {
             val companyDocument = firestore.collection("Companies").document(companyId).get().await()
             if (companyDocument.exists()) {

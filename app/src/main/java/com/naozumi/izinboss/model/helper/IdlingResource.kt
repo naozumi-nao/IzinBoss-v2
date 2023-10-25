@@ -19,7 +19,7 @@ object EspressoIdlingResource {
     }
 }
 
-inline fun <T> wrapEspressoIdlingResource(function: () -> T): T {
+inline fun <T> wrapIdlingResource(function: () -> T): T {
     EspressoIdlingResource.increment() // Set app as busy
     return try {
         function()

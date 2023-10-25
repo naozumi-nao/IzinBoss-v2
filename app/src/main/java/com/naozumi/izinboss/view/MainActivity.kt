@@ -115,8 +115,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 R.id.nav_logout -> {
-                    viewModel.signOut()
-                    viewModel.deleteCurrentUserDataStore()
+                    logout()
                     ViewUtils.moveActivityNoHistory(this@MainActivity, LoginActivity::class.java)
                 }
             }
@@ -174,5 +173,10 @@ class MainActivity : AppCompatActivity() {
                 .error(R.drawable.baseline_person_24)
                 .into(ivProfilePhoto)
         }
+    }
+
+    private fun logout() {
+        viewModel.signOut()
+        viewModel.deleteCurrentUserDataStore()
     }
 }
