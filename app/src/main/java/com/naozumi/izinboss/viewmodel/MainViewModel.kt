@@ -17,19 +17,13 @@ class MainViewModel(private val dataRepository: DataRepository, private val user
     suspend fun getUserData(userId: String) = dataRepository.getUserData(userId)
     fun getCurrentUser() = dataRepository.getCurrentUserID()
 
-    fun saveUser(user: User) {
-        viewModelScope.launch {
-            userPreferences.saveUser(user)
-        }
-    }
-
     fun getUser(): Flow<User?> {
         return userPreferences.getUser()
     }
 
-    fun deleteCurrentUserDataStore() {
+    fun deleteCurrentUserPref() {
         viewModelScope.launch {
-            userPreferences.deleteCurrentUserDataStore()
+            userPreferences.deleteCurrentUserPref()
         }
     }
 }

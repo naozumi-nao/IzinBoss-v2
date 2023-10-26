@@ -18,14 +18,14 @@ import com.naozumi.izinboss.model.util.TextInputUtils
 import com.naozumi.izinboss.model.util.TimeUtils
 import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.view.MainActivity
-import com.naozumi.izinboss.viewmodel.AddLeaveViewModel
+import com.naozumi.izinboss.viewmodel.RequestLeaveViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class RequestLeaveActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRequestLeaveBinding
-    private lateinit var viewModel: AddLeaveViewModel
+    private lateinit var viewModel: RequestLeaveViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +34,7 @@ class RequestLeaveActivity : AppCompatActivity() {
 
         val factory: ViewModelFactory =
             ViewModelFactory.getInstance(this)
-        viewModel = ViewModelProvider(this, factory)[AddLeaveViewModel::class.java]
+        viewModel = ViewModelProvider(this, factory)[RequestLeaveViewModel::class.java]
 
         binding.progressBar.visibility = View.GONE
 
@@ -92,7 +92,7 @@ class RequestLeaveActivity : AppCompatActivity() {
             reason = description,
             type = type ?: LeaveRequest.Type.SICK
         )
-        viewModel.addLeaveRequestToDatabase(user?.companyId.toString(), leaveRequest)
+        viewModel.addLeaveRequest(user?.companyId.toString(), leaveRequest)
             .observe(this) { result ->
                 when (result) {
                     is Result.Loading -> {

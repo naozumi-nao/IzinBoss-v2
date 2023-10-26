@@ -96,7 +96,11 @@ class UserProfileFragment : Fragment() {
             if (user != null) {
                 tvFullNameInput.text = user.name
                 tvCompanyInput.text = company?.name
-                tvRoleInput.text = user.role.toString().lowercase().replaceFirstChar { it.uppercase() }
+                if (user.role != null) {
+                    tvRoleInput.text = user.role.toString().lowercase().replaceFirstChar { it.uppercase() }
+                } else {
+                    tvRoleInput.text = ""
+                }
                 tvUidInput.text = user.uid
                 tvUidInput.setOnClickListener {
                     StringUtils.copyTextToClipboard(requireActivity(), tvUidInput.text)

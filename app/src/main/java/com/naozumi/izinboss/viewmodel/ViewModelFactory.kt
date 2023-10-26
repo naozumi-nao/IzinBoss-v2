@@ -10,10 +10,6 @@ import com.naozumi.izinboss.viewmodel.company.CompanyViewModel
 import com.naozumi.izinboss.viewmodel.entry.LoginViewModel
 import com.naozumi.izinboss.viewmodel.entry.RegisterViewModel
 import com.naozumi.izinboss.viewmodel.user.UserProfileViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
 
 class ViewModelFactory private constructor(
     private val dataRepository: DataRepository,
@@ -30,8 +26,8 @@ class ViewModelFactory private constructor(
         if (modelClass.isAssignableFrom(RegisterViewModel::class.java)) {
             return RegisterViewModel(dataRepository) as T
         }
-        if (modelClass.isAssignableFrom(AddLeaveViewModel::class.java)) {
-            return AddLeaveViewModel(dataRepository, userPreferences) as T
+        if (modelClass.isAssignableFrom(RequestLeaveViewModel::class.java)) {
+            return RequestLeaveViewModel(dataRepository, userPreferences) as T
         }
         if (modelClass.isAssignableFrom(UserProfileViewModel::class.java)) {
             return UserProfileViewModel(dataRepository, userPreferences) as T

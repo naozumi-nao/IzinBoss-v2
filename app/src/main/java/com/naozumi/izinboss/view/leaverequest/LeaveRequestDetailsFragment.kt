@@ -61,6 +61,8 @@ class LeaveRequestDetailsFragment : DialogFragment() {
             user = viewModel.getUser().first()
         }
 
+        binding?.btnDeleteLeaveRequest?.visibility = View.GONE
+
         if (user?.role == User.UserRole.MANAGER) {
             binding?.btnApprove?.setOnClickListener(3000L) {
                 lifecycleScope.launch {
@@ -79,7 +81,7 @@ class LeaveRequestDetailsFragment : DialogFragment() {
         }
 
         if (user?.uid == leaveRequest?.employeeId) {
-            binding?.btnDeleteLeaveRequest?.visibility = View.VISIBLE
+            //binding?.btnDeleteLeaveRequest?.visibility = View.VISIBLE
             binding?.btnDeleteLeaveRequest?.setOnClickListener(3000L) {
                 lifecycleScope.launch {
                     deleteLeaveRequest(leaveRequest)

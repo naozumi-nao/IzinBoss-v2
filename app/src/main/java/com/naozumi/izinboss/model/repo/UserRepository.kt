@@ -12,8 +12,8 @@ interface UserRepository {
     suspend fun loginWithEmail(email: String, password: String): LiveData<Result<Unit>>
     suspend fun changeFullName(newName: String, user: User?): LiveData<Result<Unit>>
     suspend fun deleteAccount(userId: String?): LiveData<Result<Unit>>
-    suspend fun convertFirebaseUserToUser(firebaseUser: FirebaseUser)
     fun signOut()
+    suspend fun convertFirebaseUserToUser(firebaseUser: FirebaseUser)
     fun getSignInIntent(): Intent
     fun getCurrentUserID(): String?
     suspend fun getUserData(userId: String?): User?

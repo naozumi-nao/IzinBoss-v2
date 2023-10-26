@@ -18,6 +18,7 @@ import com.naozumi.izinboss.model.datamodel.User
 import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.view.leaverequest.LeaveRequestDetailsFragment
 import com.naozumi.izinboss.view.leaverequest.RequestLeaveActivity
+import com.naozumi.izinboss.view.leaverequest.RequestLeaveFragment
 import com.naozumi.izinboss.viewmodel.MainViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import kotlinx.coroutines.flow.first
@@ -65,8 +66,8 @@ class HomeFragment : Fragment() {
                 }
             }
             binding?.fabAddLeave?.setOnClickListener(1000L) {
-                ViewUtils.moveActivity(requireActivity(), RequestLeaveActivity::class.java)
-                //RequestLeaveFragment().show(parentFragmentManager, "leaveRequest")
+                //ViewUtils.moveActivity(requireActivity(), RequestLeaveActivity::class.java)
+                RequestLeaveFragment().show(parentFragmentManager, "leaveRequest")
             }
         }
     }

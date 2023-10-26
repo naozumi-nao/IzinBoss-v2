@@ -17,7 +17,11 @@ class UserPreferences private constructor (private val dataStore: DataStore<Pref
             val email = preferences[EMAIL_KEY] ?: ""
             val profilePicture = preferences[PROFILE_PICTURE_KEY] ?: ""
             val companyId = preferences[COMPANY_ID_KEY] ?: ""
-            val role = preferences[ROLE_KEY]?.let { User.UserRole.valueOf(it) }
+            val role = if (preferences[ROLE_KEY]?.isNotBlank() == true) {
+                User.UserRole.valueOf(preferences[ROLE_KEY].toString())
+            } else {
+                null
+            }
             User(uid, name, email, profilePicture, companyId, role)
         }
     }
@@ -29,11 +33,11 @@ class UserPreferences private constructor (private val dataStore: DataStore<Pref
             preferences[EMAIL_KEY] = user.email ?: ""
             preferences[PROFILE_PICTURE_KEY] = user.profilePicture ?: ""
             preferences[COMPANY_ID_KEY] = user.companyId ?: ""
-            preferences[ROLE_KEY] = (user.role?.name ?: User.UserRole.EMPLOYEE).toString()
+            preferences[ROLE_KEY] = user.role?.name ?: ""
         }
     }
 
-    suspend fun deleteCurrentUserDataStore() {
+    suspend fun deleteCurrentUserPref() {
         dataStore.edit {
             it.clear()
         }

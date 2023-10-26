@@ -21,7 +21,7 @@ import com.naozumi.izinboss.model.util.TextInputUtils
 import com.naozumi.izinboss.model.util.TimeUtils
 import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.view.MainActivity
-import com.naozumi.izinboss.viewmodel.AddLeaveViewModel
+import com.naozumi.izinboss.viewmodel.RequestLeaveViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -30,7 +30,7 @@ class RequestLeaveFragment : DialogFragment() {
 
     private var _binding: FragmentRequestLeaveBinding? = null
     private val binding get() = _binding
-    private lateinit var viewModel: AddLeaveViewModel
+    private lateinit var viewModel: RequestLeaveViewModel
     override fun getTheme() = R.style.RoundedCornersDialog
 
     override fun onCreateView(
@@ -45,7 +45,7 @@ class RequestLeaveFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val factory: ViewModelFactory = ViewModelFactory.getInstance(requireActivity())
-        viewModel = ViewModelProvider(requireActivity(), factory)[AddLeaveViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity(), factory)[RequestLeaveViewModel::class.java]
 
         binding?.progressBar?.visibility = View.GONE
 
@@ -104,7 +104,7 @@ class RequestLeaveFragment : DialogFragment() {
             reason = description,
             type = type ?: LeaveRequest.Type.SICK
         )
-        viewModel.addLeaveRequestToDatabase(user?.companyId.toString(), leaveRequest)
+        viewModel.addLeaveRequest(user?.companyId.toString(), leaveRequest)
             .observe(viewLifecycleOwner) { result ->
                 when (result) {
                     is Result.Loading -> {

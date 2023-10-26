@@ -35,11 +35,11 @@
 
     <!-- Onboarding -->
     <string name="skip_this"><![CDATA[Skip This >]]></string>
-    <string name="onboarding_title_1">IzinBoss v2 is here</string>
+    <string name="onboarding_title_1">IzinBoss app is here</string>
     <string name="onboarding_desc_1">You can now manage Leave Requests easier than ever using this app.</string>
     <string name="onboarding_title_2">Re-design with Material 3 Components</string>
     <string name="onboarding_desc_2">Now the app adheres to M3 Design Standards</string>
-    <string name="onboarding_title_3">Firebase Realtime Database</string>
+    <string name="onboarding_title_3">Authenticate with Firebase and Google</string>
     <string name="onboarding_desc_3">Your data is secure, we do not store your passwords, ever</string>
     <string name="onboarding_title_4">Fast and Reliable</string>
     <string name="onboarding_desc_4">It just works. No ads, no bloatwares.</string>

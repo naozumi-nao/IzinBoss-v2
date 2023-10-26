@@ -242,7 +242,7 @@ class DataRepository (
 
     }
 
-    override suspend fun addLeaveRequestToDatabase(companyId: String, leaveRequest: LeaveRequest): LiveData<Result<Unit>> = liveData {
+    override suspend fun addLeaveRequest(companyId: String, leaveRequest: LeaveRequest): LiveData<Result<Unit>> = liveData {
         emit(Result.Loading)
 
             try {
@@ -490,7 +490,7 @@ class DataRepository (
     }
 
     private suspend fun deleteCurrentUserFromPreferences() {
-        userPreferences.deleteCurrentUserDataStore()
+        userPreferences.deleteCurrentUserPref()
     }
 
     companion object {

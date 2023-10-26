@@ -156,7 +156,7 @@ class MainActivity : AppCompatActivity() {
         //DEBUG FOR STUCK LOGINS
         if (viewModel.getCurrentUser().isNullOrEmpty()) {
             viewModel.signOut()
-            viewModel.deleteCurrentUserDataStore()
+            viewModel.deleteCurrentUserPref()
             ViewUtils.moveActivityNoHistory(this@MainActivity, LoginActivity::class.java)
         }
 
@@ -177,6 +177,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun logout() {
         viewModel.signOut()
-        viewModel.deleteCurrentUserDataStore()
+        viewModel.deleteCurrentUserPref()
     }
 }
