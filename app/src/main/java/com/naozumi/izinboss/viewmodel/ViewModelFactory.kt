@@ -5,10 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.naozumi.izinboss.model.di.Injection
 import com.naozumi.izinboss.model.repo.DataRepository
+import com.naozumi.izinboss.model.repo.LeaveRequestRepository
 import com.naozumi.izinboss.model.repo.UserPreferences
 import com.naozumi.izinboss.viewmodel.company.CompanyViewModel
 import com.naozumi.izinboss.viewmodel.entry.LoginViewModel
 import com.naozumi.izinboss.viewmodel.entry.RegisterViewModel
+import com.naozumi.izinboss.viewmodel.leavereq.LeaveRequestDetailsViewModel
 import com.naozumi.izinboss.viewmodel.user.UserProfileViewModel
 
 class ViewModelFactory private constructor(
@@ -34,6 +36,9 @@ class ViewModelFactory private constructor(
         }
         if (modelClass.isAssignableFrom(CompanyViewModel::class.java)) {
             return CompanyViewModel(dataRepository, userPreferences) as T
+        }
+        if (modelClass.isAssignableFrom(LeaveRequestDetailsViewModel::class.java)) {
+            return LeaveRequestDetailsViewModel(dataRepository, userPreferences) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }

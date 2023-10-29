@@ -23,15 +23,6 @@ object TimeUtils {
         return timeDate.format(Date())
     }
 
-    fun convertLongToDateAndTime(time: Long): String {
-        val date = Date(time)
-        val format = SimpleDateFormat (
-            "dd-MM-yyyy, HH:mm",
-            Locale.getDefault()
-        )
-        return format.format(date)
-    }
-
     fun convertLongToDate(time: Long): String {
         val date = Date(time)
         val format = SimpleDateFormat (
@@ -99,6 +90,15 @@ object TimeUtils {
         datePickerDialog.datePicker.maxDate = oneYearForward.timeInMillis
 
         datePickerDialog.show()
+    }
+
+    fun convertLongToDateAndTime(time: Long): String {
+        val date = Date(time)
+        val format = SimpleDateFormat (
+            "dd-MM-yyyy, HH:mm",
+            Locale.getDefault()
+        )
+        return format.format(date)
     }
 
 }

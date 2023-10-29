@@ -21,13 +21,14 @@ import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.view.HomeFragment
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import com.naozumi.izinboss.viewmodel.company.CompanyViewModel
+import com.naozumi.izinboss.viewmodel.leavereq.LeaveRequestDetailsViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class LeaveRequestDetailsFragment : DialogFragment() {
     private var _binding: FragmentLeaveRequestDetailsBinding? = null
     private val binding get() = _binding
-    private lateinit var viewModel: CompanyViewModel
+    private lateinit var viewModel: LeaveRequestDetailsViewModel
     private var leaveRequest: LeaveRequest? = null
     private var user: User? = null
 
@@ -56,7 +57,7 @@ class LeaveRequestDetailsFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val factory: ViewModelFactory = ViewModelFactory.getInstance(requireContext())
-        viewModel = ViewModelProvider(this, factory)[CompanyViewModel::class.java]
+        viewModel = ViewModelProvider(this, factory)[LeaveRequestDetailsViewModel::class.java]
         lifecycleScope.launch {
             user = viewModel.getUser().first()
         }

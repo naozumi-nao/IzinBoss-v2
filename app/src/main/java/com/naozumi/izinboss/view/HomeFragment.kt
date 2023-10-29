@@ -98,10 +98,23 @@ class HomeFragment : Fragment() {
                     is Result.Success -> {
                         binding?.progressBar?.visibility = View.GONE
                         val leaveData = result.data
+
                         if (leaveData.isEmpty()) {
                             binding?.animEmptyList?.playAnimation()
                             binding?.tvNoLeaveRequests?.visibility = View.VISIBLE
                             binding?.swipeToRefresh?.isRefreshing = false
+                        } else if(user?.role == User.UserRole.EMPLOYEE) {
+                            val filteredLeaveData = leaveData.filter { it.employeeId == user.uid }
+                            if (filteredLeaveData.isEmpty()) {
+                                binding?.animEmptyList?.playAnimation()
+                                binding?.tvNoLeaveRequests?.visibility = View.VISIBLE
+                                binding?.swipeToRefresh?.isRefreshing = false
+                            } else {
+                                binding?.animEmptyList?.visibility = View.GONE
+                                binding?.tvNoLeaveRequests?.visibility = View.GONE
+                                leaveListAdapter.submitList(filteredLeaveData)
+                                binding?.swipeToRefresh?.isRefreshing = false
+                            }
                         } else {
                             binding?.animEmptyList?.visibility = View.GONE
                             binding?.tvNoLeaveRequests?.visibility = View.GONE
