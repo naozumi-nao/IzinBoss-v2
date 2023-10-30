@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -79,7 +80,7 @@ class DataRepository (
         wrapIdlingResource {
             try {
                 firebaseAuth.signInWithEmailAndPassword(email, password).await()
-                val user = getUserData(firebaseAuth.currentUser?.uid.toString())
+                val user = getUserData(getCurrentUserID())
                 if (user != null) {
                     saveUserToPreferences(user)
                     emit(Result.Success(Unit))
@@ -101,6 +102,7 @@ class DataRepository (
                     // Update user's role and companyId locally
                     user.role = User.UserRole.MANAGER
                     user.companyId = companyId
+                    user.companyName = companyName
 
                     val company = Company(
                         companyId,
@@ -114,6 +116,7 @@ class DataRepository (
                     val userDocumentRef = firestore.collection("Users").document(user.uid.toString())
                     val userUpdate = mapOf(
                         "companyId" to companyId,
+                        "companyName" to companyName,
                         "role" to user.role
                     )
                     userDocumentRef.update(userUpdate).await()
@@ -157,6 +160,7 @@ class DataRepository (
                     // Check if the company with the specified companyId exists
                     val companyDocument = firestore.collection("Companies").document(companyId).get().await()
                     if (companyDocument.exists()) {
+                        val company = companyDocument.toObject(Company::class.java)
                         val userDocumentRef = firestore.collection("Users").document(user.uid.toString())
 
                         //Update User Locally
@@ -169,6 +173,7 @@ class DataRepository (
 
                         val userUpdate = mapOf(
                             "companyId" to companyId,
+                            "companyName" to company?.name,
                             "role" to user.role
                         )
                         userDocumentRef.update(userUpdate).await()
@@ -216,10 +221,12 @@ class DataRepository (
                     val userDocumentRef = firestore.collection("Users").document(user.uid.toString())
 
                     user.companyId = null
+                    user.companyName = null
                     user.role = null
 
                     val userUpdate = mapOf(
                         "companyId" to null,
+                        "companyName" to null,
                         "role" to null
                     )
                     userDocumentRef.update(userUpdate).await()
@@ -255,19 +262,30 @@ class DataRepository (
         }
     }.flowOn(Dispatchers.IO)
 
-    override fun getAllLeaveRequests(companyId: String): Flow<Result<List<LeaveRequest>>> = flow {
+    // val filteredLeaveData = leaveData.filter { it.employeeId == user?.uid }
+    override fun getAllLeaveRequests(user: User?): Flow<Result<List<LeaveRequest>>> = flow {
         emit(Result.Loading)
         wrapIdlingResource {
             try {
-                val leaveRequestList = mutableListOf<LeaveRequest>()
-                val leaveRequestCollection = firestore.collection("Companies").document(companyId).collection("Leave Requests")
-                val leaveRequestQuery = leaveRequestCollection.get().await()
+                if (user != null) {
+                    val leaveRequestList = mutableListOf<LeaveRequest>()
+                    val leaveRequestCollection = firestore.collection("Companies")
+                        .document(user.companyId.toString())
+                        .collection("Leave Requests")
 
-                for (document in leaveRequestQuery) {
-                    val leaveRequest = document.toObject(LeaveRequest::class.java)
-                    leaveRequestList.add(leaveRequest)
+                    val leaveRequestQuery = if (user.role == User.UserRole.MANAGER) {
+                        leaveRequestCollection.get().await()
+                    } else {
+                        leaveRequestCollection.whereEqualTo("employeeId", user.uid).get().await()
+                    }
+
+                    for (document in leaveRequestQuery) {
+                        val leaveRequest = document.toObject(LeaveRequest::class.java)
+
+                        leaveRequestList.add(leaveRequest)
+                    }
+                    emit(Result.Success(leaveRequestList))
                 }
-                emit(Result.Success(leaveRequestList))
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
             }
@@ -295,9 +313,7 @@ class DataRepository (
                         "reviewedBy" to managerName,
                         "reviewedOn" to TimeUtils.getCurrentDateAndTime()
                     )
-
                     leaveRequestCollection.document(leaveRequest.id.toString()).update(leaveRequestUpdate).await()
-
                     emit(Result.Success(Unit))
                 } else {
                     emit(Result.Error("ERROR: Leave Request is Null"))
@@ -422,8 +438,9 @@ class DataRepository (
     }
 
     override suspend fun getUserData(userId: String?): User? {
-        val userDocument =
-            firestore.collection("Users").document(userId.toString()).get().await()
+        val userDocument = withContext(Dispatchers.IO) {
+                firestore.collection("Users").document(userId.toString()).get().await()
+            }
         if (userDocument.exists()) {
             return userDocument.toObject(User::class.java)
         }
@@ -434,7 +451,7 @@ class DataRepository (
         userPreferences.saveUser(user)
     }
 
-    fun getUser(): User {
+    fun getUser(): User? {
         return runBlocking {
             userPreferences.getUser().first()
         }

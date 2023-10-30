@@ -33,7 +33,7 @@ class HomeFragment : Fragment() {
     private val viewModel by viewModels<MainViewModel> {
         ViewModelFactory.getInstance(requireActivity())
     }
-    private lateinit var user: User
+    private var user: User? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,13 +50,13 @@ class HomeFragment : Fragment() {
         user = viewModel.user
         binding?.progressBar?.visibility = View.GONE
 
-        if(user.companyId.isNullOrBlank()) {
+        if(user?.companyId.isNullOrBlank()) { // if user doesn't have company
             binding?.animEmptyList?.playAnimation()
             binding?.tvNoLeaveRequests?.visibility = View.VISIBLE
             binding?.swipeToRefresh?.visibility = View.GONE
             binding?.fabAddLeave?.visibility = View.GONE
         } else {
-            if (user.role == User.UserRole.MANAGER) {
+            if (user?.role == User.UserRole.MANAGER) {
                 binding?.fabAddLeave?.visibility = View.GONE
             }
             setupLeaveList()
@@ -84,8 +84,7 @@ class HomeFragment : Fragment() {
                 detailsFragment.show(parentFragmentManager, "leaveRequest")
             }
         })
-
-        viewModel.getAllLeaveRequests(user.companyId.toString()).observe(viewLifecycleOwner) { result ->
+        viewModel.getAllLeaveRequests().observe(viewLifecycleOwner) { result ->
             if (result != null) {
                 when (result) {
                     is Result.Loading -> {
@@ -95,23 +94,10 @@ class HomeFragment : Fragment() {
                     is Result.Success -> {
                         binding?.progressBar?.visibility = View.GONE
                         val leaveData = result.data
-
                         if (leaveData.isEmpty()) {
                             binding?.animEmptyList?.playAnimation()
                             binding?.tvNoLeaveRequests?.visibility = View.VISIBLE
                             binding?.swipeToRefresh?.isRefreshing = false
-                        } else if(user.role == User.UserRole.EMPLOYEE) {
-                            val filteredLeaveData = leaveData.filter { it.employeeId == user.uid }
-                            if (filteredLeaveData.isEmpty()) {
-                                binding?.animEmptyList?.playAnimation()
-                                binding?.tvNoLeaveRequests?.visibility = View.VISIBLE
-                                binding?.swipeToRefresh?.isRefreshing = false
-                            } else {
-                                binding?.animEmptyList?.visibility = View.GONE
-                                binding?.tvNoLeaveRequests?.visibility = View.GONE
-                                leaveListAdapter.submitList(filteredLeaveData)
-                                binding?.swipeToRefresh?.isRefreshing = false
-                            }
                         } else {
                             binding?.animEmptyList?.visibility = View.GONE
                             binding?.tvNoLeaveRequests?.visibility = View.GONE

@@ -38,15 +38,15 @@ class AddUserToCompanyFragment : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         companyId = arguments?.getString("companyId").toString()
-
         _binding = FragmentAddUserToCompanyBinding.inflate(layoutInflater, container, false)
         return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        user = viewModel.user
 
         val userRoleList: List<String> = User.UserRole.values().map { it.name }
         val roleAdapter = ArrayAdapter(
@@ -86,9 +86,6 @@ class AddUserToCompanyFragment : DialogFragment() {
             "MANAGER" -> User.UserRole.MANAGER
             "EMPLOYEE" -> User.UserRole.EMPLOYEE
             else -> User.UserRole.EMPLOYEE
-        }
-        runBlocking {
-            user = viewModel.getUserData(userId)
         }
         viewModel.addUserToCompany(companyId, user, userRole)
             .observe(this) { result ->

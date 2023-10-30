@@ -46,10 +46,7 @@ class CompanyProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding?.progressBar?.visibility = View.GONE
-
-        lifecycleScope.launch {
-            user = viewModel.getUser().first()
-        }
+        user = viewModel.user
 
         getCompany(user?.companyId.toString())
         getCompanyMembers()

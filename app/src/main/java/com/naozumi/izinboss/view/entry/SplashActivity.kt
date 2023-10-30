@@ -39,11 +39,7 @@ class SplashActivity : AppCompatActivity() {
         lifecycleScope.launch {
             delay(500.toLong())
 
-            val userLogin = runBlocking {
-                viewModel.getUser().first()
-            }
-
-            if (userLogin != null)
+            if (viewModel.user != null)
                 ViewUtils.moveActivityNoHistory(this@SplashActivity, MainActivity::class.java)
             else
                 ViewUtils.moveActivityNoHistory(this@SplashActivity, OnboardingActivity::class.java)

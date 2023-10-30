@@ -32,7 +32,6 @@ class CompanyMemberFragment : DialogFragment() {
         ViewModelFactory.getInstance(requireActivity())
     }
     private var user: User? = null
-    private var companyName: String? = null
     private var clickedUser: User? = null
 
     override fun getTheme() = R.style.RoundedCornersDialog
@@ -61,10 +60,7 @@ class CompanyMemberFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding?.progressBar?.visibility = View.GONE
-
-        lifecycleScope.launch {
-            user = viewModel.getUser().first()
-        }
+        user = viewModel.user
         setUserData(clickedUser)
 
         if(user?.role == User.UserRole.MANAGER && clickedUser?.uid != user?.uid) {
@@ -82,7 +78,7 @@ class CompanyMemberFragment : DialogFragment() {
         binding?.apply {
             if (user != null) {
                 tvFullNameInput.text = user.name
-                tvCompanyInput.text = companyName
+                tvCompanyInput.text = user.companyName
                 tvRoleInput.text = user.role.toString().lowercase().replaceFirstChar { it.uppercase() }
                 tvUidInput.text = user.uid
                 tvUidInput.setOnClickListener {
@@ -93,28 +89,6 @@ class CompanyMemberFragment : DialogFragment() {
                     .load(user.profilePicture)
                     .error(R.drawable.onboarding_image_1)
                     .into(ivProfilePhoto)
-            }
-        }
-    }
-
-    private fun getCompanyName(companyId: String) {
-        viewModel.getCompanyData(companyId).observe(viewLifecycleOwner) { result ->
-            when(result)  {
-                is Result.Loading -> {
-                    binding?.progressBar?.visibility = View.VISIBLE
-                }
-                is Result.Success -> {
-                    binding?.progressBar?.visibility = View.GONE
-                    companyName = result.data.name
-                }
-                is Result.Error -> {
-                    binding?.progressBar?.visibility = View.GONE
-                    ViewUtils.showContinueDialog(
-                        requireActivity(),
-                        getString(R.string.error),
-                        result.error
-                    )
-                }
             }
         }
     }

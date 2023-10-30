@@ -15,15 +15,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class UserProfileViewModel(private val dataRepository: DataRepository, private val userPreferences: UserPreferences): ViewModel() {
-    fun getUser(): Flow<User?> {
-        return userPreferences.getUser()
-    }
-    fun getCompanyData(companyId: String): LiveData<Result<Company>> {
-        return liveData(Dispatchers.Main) {
-            val result = dataRepository.getCompanyData(companyId)
-            emitSource(result.asLiveData())
-        }
-    }
+    val user = dataRepository.getUser()
+
     fun changeFullName(newName: String, user: User?): LiveData<Result<Unit>> {
         return liveData(Dispatchers.Main) {
             val result = dataRepository.changeFullName(newName, user)
@@ -37,7 +30,7 @@ class UserProfileViewModel(private val dataRepository: DataRepository, private v
         }
     }
 
-    suspend fun deleteAccount(userId: String?): LiveData<Result<Unit>> {
+    fun deleteAccount(userId: String?): LiveData<Result<Unit>> {
         return liveData(Dispatchers.Main) {
             val result = dataRepository.deleteAccount(userId)
             emitSource(result.asLiveData())

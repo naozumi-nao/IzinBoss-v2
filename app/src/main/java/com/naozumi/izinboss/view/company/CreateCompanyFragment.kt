@@ -66,10 +66,8 @@ class CreateCompanyFragment : Fragment() {
         binding?.actvSelectIndustrySector?.addTextChangedListener(textWatcher)
 
         binding?.btnRegisterCompany?.setOnClickListener(3000L) {
-            lifecycleScope.launch {
-                user = viewModel.getUser().first()
-                registerCompany()
-            }
+            user = viewModel.user
+            registerCompany()
         }
 
         binding?.btnJoinCompany?.setOnClickListener {
@@ -77,7 +75,7 @@ class CreateCompanyFragment : Fragment() {
         }
     }
 
-    private suspend fun registerCompany() {
+    private fun registerCompany() {
         val companyName = binding?.edRegisterCompanyName?.text.toString()
         val industrySectorString = binding?.actvSelectIndustrySector?.text.toString().trim()
         val selectedIndustrySector = StringUtils.industrySectorMap[industrySectorString]

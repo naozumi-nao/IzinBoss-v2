@@ -14,6 +14,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 
 class CompanyViewModel(private val dataRepository: DataRepository, private val userPreferences: UserPreferences): ViewModel() {
+
+    val user = dataRepository.getUser()
+
     fun createCompany(companyName: String, industrySector: Company.IndustrySector?, user: User?): LiveData<Result<Company>> {
         return liveData(Dispatchers.Main) {
             val result = dataRepository.createCompany(companyName, industrySector, user)
@@ -26,11 +29,6 @@ class CompanyViewModel(private val dataRepository: DataRepository, private val u
             val result = dataRepository.addUserToCompany(companyId, user, position)
             emitSource(result.asLiveData())
         }
-    }
-
-
-    fun getUser(): Flow<User?> {
-        return userPreferences.getUser()
     }
 
     fun kickUserFromCompany(userId: String?): LiveData<Result<Unit>> {

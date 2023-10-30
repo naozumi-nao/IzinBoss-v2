@@ -34,6 +34,10 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        viewModel.userData.observe(this) { user ->
+            viewModel.saveUserToPreferences(user)
+        }
+
         binding.bottomNavigation.setOnItemSelectedListener { menuItem ->
             when(menuItem.itemId) {
                 R.id.bottom_nav_home -> {
@@ -45,7 +49,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.bottom_nav_company -> {
-                    if (viewModel.user.companyId.isNullOrEmpty()) {
+                    if (viewModel.user?.companyId.isNullOrEmpty()) {
                         ViewUtils.replaceFragment(this,
                             R.id.nav_main_content_container,
                             CreateCompanyFragment(),
@@ -93,7 +97,7 @@ class MainActivity : AppCompatActivity() {
                     )
                 }
                 R.id.nav_company -> {
-                    if (viewModel.user.companyId.isNullOrEmpty()) {
+                    if (viewModel.user?.companyId.isNullOrEmpty()) {
                         ViewUtils.replaceFragment(this,
                             R.id.nav_main_content_container,
                             CreateCompanyFragment(),
@@ -147,7 +151,7 @@ class MainActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this, backPressedCallback)
 
         //DEBUG FOR STUCK LOGINS
-        if (viewModel.getCurrentUser().isEmpty()) {
+        if (viewModel.getCurrentUser().isBlank()) {
             viewModel.signOut()
             viewModel.deleteCurrentUserPref()
             ViewUtils.moveActivityNoHistory(this@MainActivity, LoginActivity::class.java)
@@ -159,10 +163,10 @@ class MainActivity : AppCompatActivity() {
     private fun setUserData() {
         val headerBinding = NavHeaderMainBinding.bind(binding.navigationView.getHeaderView(0))
         headerBinding.apply {
-            tvFullName.text = viewModel.user.name
-            tvEmail.text = viewModel.user.email
+            tvFullName.text = viewModel.user?.name
+            tvEmail.text = viewModel.user?.email
             Glide.with(this@MainActivity)
-                .load(viewModel.user.profilePicture)
+                .load(viewModel.user?.profilePicture)
                 .error(R.drawable.baseline_person_24)
                 .into(ivProfilePhoto)
         }

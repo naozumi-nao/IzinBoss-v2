@@ -6,6 +6,7 @@ import com.naozumi.izinboss.viewmodel.entry.RegisterViewModel
 import com.naozumi.izinboss.model.helper.Result
 import com.naozumi.izinboss.util.MainDispatcherRule
 import com.naozumi.izinboss.util.getOrAwaitValue
+import com.naozumi.izinboss.viewmodel.entry.LoginViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
@@ -29,25 +30,25 @@ class LoginViewModelTest {
 
     @Mock
     private lateinit var dataRepository: DataRepository
-    private lateinit var registerViewModel: RegisterViewModel
+    private lateinit var loginViewModel: LoginViewModel
 
     @Before
     fun setUp() {
-        registerViewModel = RegisterViewModel(dataRepository)
+        loginViewModel = LoginViewModel(dataRepository)
     }
 
     @Test
-    fun `when registerUser is valid should Return Success`() = runBlocking {
+    fun `when loginWithEmail is valid should Return Success`() = runBlocking {
         val expectedData = Unit
         val expectedResult = Result.Success(Unit)
 
-        Mockito.`when`(dataRepository.registerWithEmail("Bima", "test@gmail.com", "12345678"))
+        Mockito.`when`(dataRepository.loginWithEmail("test@gmail.com", "12345678"))
             .thenReturn(flowOf(expectedResult))
 
-        val actualResult = registerViewModel.registerWithEmail("Bima", "test@gmail.com", "12345678")
+        val actualResult = loginViewModel.loginWithEmail("test@gmail.com", "12345678")
             .getOrAwaitValue()
 
-        Mockito.verify(dataRepository).registerWithEmail("Bima", "test@gmail.com", "12345678")
+        Mockito.verify(dataRepository).loginWithEmail("test@gmail.com", "12345678")
         Assert.assertNotNull(actualResult)
         Assert.assertTrue(actualResult is Result.Success)
         if (actualResult is Result.Success) {
@@ -56,18 +57,15 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `when registerUser is invalid should Return Error`() = runBlocking {
+    fun `when loginWithEmail is invalid should Return Error`() = runBlocking {
         val expectedErrorMessage = "Invalid input"
-
-        // Create a Result.Error with the expected error message
         val expectedResult = Result.Error(expectedErrorMessage)
 
-        // Use the 'flowOf' function to create a Flow with the expected result
-        Mockito.`when`(dataRepository.registerWithEmail("InvalidName", "invalidEmail", "invalidPassword"))
+        Mockito.`when`(dataRepository.loginWithEmail("invalidEmail", "invalidPassword"))
             .thenReturn(flowOf(expectedResult))
-        val actualResult = registerViewModel.registerWithEmail("InvalidName", "invalidEmail", "invalidPassword")
+        val actualResult = loginViewModel.loginWithEmail("invalidEmail", "invalidPassword")
             .getOrAwaitValue()
-        Mockito.verify(dataRepository).registerWithEmail("InvalidName", "invalidEmail", "invalidPassword")
+        Mockito.verify(dataRepository).loginWithEmail("invalidEmail", "invalidPassword")
 
         Assert.assertNotNull(actualResult)
         Assert.assertTrue(actualResult is Result.Error)

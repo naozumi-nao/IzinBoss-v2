@@ -10,6 +10,7 @@ data class User(
     val email: String? = null,
     val profilePicture: String? = null,
     var companyId: String? = null,
+    var companyName: String? = null,
     var role: UserRole? = null
 )  : Parcelable {
     enum class UserRole {

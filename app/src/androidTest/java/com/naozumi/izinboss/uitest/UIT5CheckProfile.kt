@@ -20,27 +20,23 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
-class UIT4LogoutTest {
+class UIT5CheckProfile {
     @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
-
     @Before
     fun setUp() {
         IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
     }
-
     @After
     fun tearDown() {
         IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource)
     }
 
     @Test
-    fun testIfLoginSuccess() {
-        onView(ViewMatchers.withId(androidx.transition.R.id.home))
+    fun testIfProfileShowsData() {
+        onView(ViewMatchers.withId(R.id.bottom_nav_profile))
             .perform(ViewActions.click())
-        onView(ViewMatchers.withId(R.id.nav_logout))
-            .perform(ViewActions.click())
-        onView(ViewMatchers.withId(R.id.btn_login))
+        onView(ViewMatchers.withId(R.id.tv_full_name_input))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }
 }

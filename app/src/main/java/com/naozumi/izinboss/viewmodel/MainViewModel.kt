@@ -14,23 +14,36 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
-class MainViewModel(private val dataRepository: DataRepository, private val userPreferences: UserPreferences) : ViewModel() {
+class MainViewModel(private val dataRepository: DataRepository) : ViewModel() {
 
     val user = dataRepository.getUser()
 
+    val userData: LiveData<User> = liveData(Dispatchers.Main) {
+        val user = dataRepository.getUserData(getCurrentUser())
+        if (user != null) {
+            emit(user)
+        }
+    }
+
     fun signOut() = dataRepository.signOut()
-    fun getAllLeaveRequests(companyId: String): LiveData<Result<List<LeaveRequest>>> {
+    fun getAllLeaveRequests(): LiveData<Result<List<LeaveRequest>>> {
         return liveData(Dispatchers.Main) {
-            val result = dataRepository.getAllLeaveRequests(companyId)
+            val result = dataRepository.getAllLeaveRequests(user)
             emitSource(result.asLiveData())
         }
     }
 
     fun getCurrentUser() = dataRepository.getCurrentUserID()
 
+    fun saveUserToPreferences(user: User) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataRepository.saveUserToPreferences(user)
+        }
+    }
+
     fun deleteCurrentUserPref() {
         viewModelScope.launch(Dispatchers.IO) {
-            userPreferences.deleteCurrentUserPref()
+            dataRepository.deleteCurrentUserFromPreferences()
         }
     }
 }

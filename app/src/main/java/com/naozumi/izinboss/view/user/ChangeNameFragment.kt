@@ -53,11 +53,8 @@ class ChangeNameFragment : DialogFragment() {
         binding?.edNewNameInput?.addTextChangedListener(textWatcher)
 
         binding?.btnConfirmNewName?.setOnClickListener(3000L) {
-            lifecycleScope.launch {
-                user =  viewModel.getUser().first()
-                changeFullName()
-            }
-            // Handle button click
+            user =  viewModel.user
+            changeFullName()
         }
     }
 
@@ -69,7 +66,7 @@ class ChangeNameFragment : DialogFragment() {
         )
     }
 
-    private suspend fun changeFullName() {
+    private fun changeFullName() {
         val newName = binding?.edNewNameInput?.text.toString()
         viewModel.changeFullName(newName, user)
             .observe(this) { result ->

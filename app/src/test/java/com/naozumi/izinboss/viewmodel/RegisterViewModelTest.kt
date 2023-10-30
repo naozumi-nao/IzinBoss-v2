@@ -58,11 +58,8 @@ class RegisterViewModelTest {
     @Test
     fun `when registerUser is invalid should Return Error`() = runBlocking {
         val expectedErrorMessage = "Invalid input"
-
-        // Create a Result.Error with the expected error message
         val expectedResult = Result.Error(expectedErrorMessage)
 
-        // Use the 'flowOf' function to create a Flow with the expected result
         Mockito.`when`(dataRepository.registerWithEmail("InvalidName", "invalidEmail", "invalidPassword"))
             .thenReturn(flowOf(expectedResult))
         val actualResult = registerViewModel.registerWithEmail("InvalidName", "invalidEmail", "invalidPassword")

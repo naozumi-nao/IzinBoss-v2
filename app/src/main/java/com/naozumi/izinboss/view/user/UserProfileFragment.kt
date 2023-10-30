@@ -30,7 +30,6 @@ class UserProfileFragment : Fragment() {
         ViewModelFactory.getInstance(requireActivity())
     }
     private var user: User? = null
-    private var companyName: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,10 +44,7 @@ class UserProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding?.progressBar?.visibility = View.GONE
 
-        lifecycleScope.launch {
-            user =  viewModel.getUser().first()
-        }
-        getCompanyName(user?.companyId.toString())
+        user =  viewModel.user
         setUserData(user)
 
         if (user?.companyId.isNullOrEmpty()) {
@@ -79,9 +75,7 @@ class UserProfileFragment : Fragment() {
                 setTitle("Warning")
                 setMessage("Are you sure you want to delete your account?")
                 setPositiveButton("Yes") { _, _ ->
-                    lifecycleScope.launch {
-                        deleteUserAccount(user?.uid)
-                    }
+                    deleteUserAccount(user?.uid)
                 }
                 setNegativeButton("No") { _, _ -> }
                 create()
@@ -94,7 +88,7 @@ class UserProfileFragment : Fragment() {
         binding?.apply {
             if (user != null) {
                 tvFullNameInput.text = user.name
-                tvCompanyInput.text = companyName
+                tvCompanyInput.text = user.companyName
                 if (user.role != null) {
                     tvRoleInput.text = user.role.toString().lowercase().replaceFirstChar { it.uppercase() }
                 } else {
@@ -107,30 +101,8 @@ class UserProfileFragment : Fragment() {
                 tvEmailInput.text = user.email
                 Glide.with(this@UserProfileFragment)
                     .load(user.profilePicture)
-                    .error(R.drawable.onboarding_image_1)
+                    .error(R.drawable.baseline_person_24)
                     .into(ivProfilePhoto)
-            }
-        }
-    }
-
-    private fun getCompanyName(companyId: String) {
-        viewModel.getCompanyData(companyId).observe(viewLifecycleOwner) { result ->
-            when(result)  {
-                is Result.Loading -> {
-                    binding?.progressBar?.visibility = View.VISIBLE
-                }
-                is Result.Success -> {
-                    binding?.progressBar?.visibility = View.GONE
-                    companyName = result.data.name
-                }
-                is Result.Error -> {
-                    binding?.progressBar?.visibility = View.GONE
-                    ViewUtils.showContinueDialog(
-                        requireActivity(),
-                        getString(R.string.error),
-                        result.error
-                    )
-                }
             }
         }
     }
@@ -162,7 +134,7 @@ class UserProfileFragment : Fragment() {
         }
     }
 
-    private suspend fun deleteUserAccount(userId: String?) {
+    private fun deleteUserAccount(userId: String?) {
         viewModel.deleteAccount(userId).observe(viewLifecycleOwner) { result ->
             when(result){
                 is Result.Loading -> {

@@ -55,9 +55,7 @@ class JoinCompanyFragment : DialogFragment() {
         binding?.edCompanyIdInput?.addTextChangedListener(textWatcher)
 
         binding?.btnJoinCompany?.setOnClickListener(3000L) {
-            lifecycleScope.launch {
-                user =  viewModel.getUser().first()
-            }
+            user =  viewModel.user
             joinCompany()
         }
 
