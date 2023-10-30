@@ -134,7 +134,7 @@
         app:layout_constraintTop_toBottomOf="@id/btn_forgot_password" />
 
     <Button
-        android:id="@+id/btn_google_sign_in"
+        android:id="@+id/btn_google_single_sign_on"
         style="@style/Widget.Material3.Button.ElevatedButton"
         android:layout_width="0dp"
         android:layout_height="64dp"
@@ -154,7 +154,7 @@
         android:layout_margin="16dp"
         android:text="Don't have an account yet?"
         android:textSize="12sp"
-        app:layout_constraintTop_toBottomOf="@id/btn_google_sign_in"
+        app:layout_constraintTop_toBottomOf="@id/btn_google_single_sign_on"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 

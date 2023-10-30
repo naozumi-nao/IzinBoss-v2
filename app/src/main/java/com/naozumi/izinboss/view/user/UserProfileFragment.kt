@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.naozumi.izinboss.R
@@ -26,8 +26,11 @@ import kotlinx.coroutines.launch
 class UserProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding
-    private lateinit var viewModel: UserProfileViewModel
+    private val viewModel by viewModels<UserProfileViewModel> {
+        ViewModelFactory.getInstance(requireActivity())
+    }
     private var user: User? = null
+    private var companyName: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,14 +45,11 @@ class UserProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding?.progressBar?.visibility = View.GONE
 
-        val factory: ViewModelFactory =
-            ViewModelFactory.getInstance(requireActivity())
-        viewModel = ViewModelProvider(this, factory)[UserProfileViewModel::class.java]
-
         lifecycleScope.launch {
             user =  viewModel.getUser().first()
-            setUserData(user)
         }
+        getCompanyName(user?.companyId.toString())
+        setUserData(user)
 
         if (user?.companyId.isNullOrEmpty()) {
             binding?.btnLeaveCurrentCompany?.visibility = View.GONE
@@ -90,12 +90,11 @@ class UserProfileFragment : Fragment() {
         }
     }
 
-    private suspend fun setUserData(user: User?) {
-        val company = viewModel.getCompanyData(user?.companyId.toString())
+    private fun setUserData(user: User?) {
         binding?.apply {
             if (user != null) {
                 tvFullNameInput.text = user.name
-                tvCompanyInput.text = company?.name
+                tvCompanyInput.text = companyName
                 if (user.role != null) {
                     tvRoleInput.text = user.role.toString().lowercase().replaceFirstChar { it.uppercase() }
                 } else {
@@ -114,7 +113,29 @@ class UserProfileFragment : Fragment() {
         }
     }
 
-    private suspend fun leaveCurrentCompany(userId: String?) {
+    private fun getCompanyName(companyId: String) {
+        viewModel.getCompanyData(companyId).observe(viewLifecycleOwner) { result ->
+            when(result)  {
+                is Result.Loading -> {
+                    binding?.progressBar?.visibility = View.VISIBLE
+                }
+                is Result.Success -> {
+                    binding?.progressBar?.visibility = View.GONE
+                    companyName = result.data.name
+                }
+                is Result.Error -> {
+                    binding?.progressBar?.visibility = View.GONE
+                    ViewUtils.showContinueDialog(
+                        requireActivity(),
+                        getString(R.string.error),
+                        result.error
+                    )
+                }
+            }
+        }
+    }
+
+    private fun leaveCurrentCompany(userId: String?) {
         viewModel.leaveCurrentCompany(userId).observe(viewLifecycleOwner) { result ->
             when(result) {
                 is Result.Loading -> {
@@ -122,30 +143,20 @@ class UserProfileFragment : Fragment() {
                 }
                 is Result.Success -> {
                     binding?.progressBar?.visibility = View.GONE
-                    AlertDialog.Builder(requireActivity()).apply {
-                        setTitle(getString(R.string.success))
-                        setMessage("You Have Left From Your Company")
-                        setPositiveButton(getString(R.string.continue_on)) { _, _ ->
-                            ViewUtils.moveActivityNoHistory(requireActivity(), MainActivity::class.java)
-                        }
-                        create()
-                        show()
-                    }.apply {
-                        setOnCancelListener { // Set an OnCancelListener to handle the case when the user clicks outside of the dialog
-                            ViewUtils.moveActivityNoHistory(requireActivity(), MainActivity::class.java)
-                        }
-                        show()
-                    }
+                    ViewUtils.showContinueDialog(
+                        requireActivity(),
+                        getString(R.string.success),
+                        "You Have Left From Your Company",
+                        MainActivity::class.java
+                    )
                 }
                 is Result.Error -> {
                     binding?.progressBar?.visibility = View.GONE
-                    AlertDialog.Builder(requireActivity()).apply {
-                        setTitle(getString(R.string.error))
-                        setMessage(result.error)
-                        setPositiveButton(getString(R.string.continue_on)) { _, _ -> }
-                        create()
-                        show()
-                    }
+                    ViewUtils.showContinueDialog(
+                        requireActivity(),
+                        getString(R.string.error),
+                        result.error
+                    )
                 }
             }
         }
@@ -159,30 +170,20 @@ class UserProfileFragment : Fragment() {
                 }
                 is Result.Success -> {
                     binding?.progressBar?.visibility = View.GONE
-                    AlertDialog.Builder(requireActivity()).apply {
-                        setTitle(getString(R.string.success))
-                        setMessage(getString(R.string.account_deleted))
-                        setPositiveButton(getString(R.string.continue_on)) { _, _ ->
-                            ViewUtils.moveActivityNoHistory(requireActivity(), LoginActivity::class.java)
-                        }
-                        create()
-                        show()
-                    }.apply {
-                        setOnCancelListener { // Set an OnCancelListener to handle the case when the user clicks outside of the dialog
-                            ViewUtils.moveActivityNoHistory(requireActivity(), LoginActivity::class.java)
-                        }
-                        show()
-                    }
+                    ViewUtils.showContinueDialog(
+                        requireActivity(),
+                        getString(R.string.success),
+                        "Account Deleted",
+                        LoginActivity::class.java
+                    )
                 }
                 is Result.Error -> {
                     binding?.progressBar?.visibility = View.GONE
-                    AlertDialog.Builder(requireActivity()).apply {
-                        setTitle(getString(R.string.error))
-                        setMessage(result.error)
-                        setPositiveButton(getString(R.string.continue_on)) { _, _ -> }
-                        create()
-                        show()
-                    }
+                    ViewUtils.showContinueDialog(
+                        requireActivity(),
+                        getString(R.string.error),
+                        result.error
+                    )
                 }
             }
         }

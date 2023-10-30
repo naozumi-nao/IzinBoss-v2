@@ -8,11 +8,11 @@ import com.naozumi.izinboss.model.helper.Result
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
-    suspend fun signInWithGoogle(idToken: String): LiveData<Result<FirebaseUser>>
-    suspend fun registerWithEmail(name: String, email: String, password: String): LiveData<Result<FirebaseUser>>
-    suspend fun loginWithEmail(email: String, password: String): LiveData<Result<Unit>>
-    suspend fun changeFullName(newName: String, user: User?): LiveData<Result<Unit>>
-    suspend fun deleteAccount(userId: String?): LiveData<Result<Unit>>
+    fun signInWithGoogle(idToken: String): Flow<Result<Unit>>
+    fun registerWithEmail(name: String, email: String, password: String): Flow<Result<Unit>>
+    fun loginWithEmail(email: String, password: String): Flow<Result<Unit>>
+    fun changeFullName(newName: String, user: User?): Flow<Result<Unit>>
+    fun deleteAccount(userId: String?): Flow<Result<Unit>>
     fun signOut()
     suspend fun convertFirebaseUserToUser(firebaseUser: FirebaseUser)
     fun getSignInIntent(): Intent

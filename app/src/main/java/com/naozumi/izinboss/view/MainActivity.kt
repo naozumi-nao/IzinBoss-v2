@@ -3,6 +3,7 @@ package com.naozumi.izinboss.view
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.ViewModelProvider
@@ -24,20 +25,14 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var viewModel: MainViewModel
-    private var user: User? = null
+    private val viewModel by viewModels<MainViewModel> {
+        ViewModelFactory.getInstance(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        val factory: ViewModelFactory =
-            ViewModelFactory.getInstance(this)
-        viewModel = ViewModelProvider(this, factory)[MainViewModel::class.java]
-        lifecycleScope.launch {
-            user = viewModel.getUser().first()
-        }
 
         binding.bottomNavigation.setOnItemSelectedListener { menuItem ->
             when(menuItem.itemId) {
@@ -50,7 +45,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.bottom_nav_company -> {
-                    if (user?.companyId.isNullOrEmpty()) {
+                    if (viewModel.user.companyId.isNullOrEmpty()) {
                         ViewUtils.replaceFragment(this,
                             R.id.nav_main_content_container,
                             CreateCompanyFragment(),
@@ -81,8 +76,6 @@ class MainActivity : AppCompatActivity() {
             binding.drawerLayout.open()
         }
 
-        // binding.appBar.setOnMenuItemClickListener { menuItem -> }
-
         binding.navigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
@@ -100,7 +93,7 @@ class MainActivity : AppCompatActivity() {
                     )
                 }
                 R.id.nav_company -> {
-                    if (user?.companyId.isNullOrEmpty()) {
+                    if (viewModel.user.companyId.isNullOrEmpty()) {
                         ViewUtils.replaceFragment(this,
                             R.id.nav_main_content_container,
                             CreateCompanyFragment(),
@@ -154,7 +147,7 @@ class MainActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this, backPressedCallback)
 
         //DEBUG FOR STUCK LOGINS
-        if (viewModel.getCurrentUser().isNullOrEmpty()) {
+        if (viewModel.getCurrentUser().isEmpty()) {
             viewModel.signOut()
             viewModel.deleteCurrentUserPref()
             ViewUtils.moveActivityNoHistory(this@MainActivity, LoginActivity::class.java)
@@ -166,10 +159,10 @@ class MainActivity : AppCompatActivity() {
     private fun setUserData() {
         val headerBinding = NavHeaderMainBinding.bind(binding.navigationView.getHeaderView(0))
         headerBinding.apply {
-            tvFullName.text = user?.name
-            tvEmail.text = user?.email
+            tvFullName.text = viewModel.user.name
+            tvEmail.text = viewModel.user.email
             Glide.with(this@MainActivity)
-                .load(user?.profilePicture)
+                .load(viewModel.user.profilePicture)
                 .error(R.drawable.baseline_person_24)
                 .into(ivProfilePhoto)
         }

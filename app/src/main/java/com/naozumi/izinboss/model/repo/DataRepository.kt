@@ -15,6 +15,12 @@ import com.naozumi.izinboss.model.datamodel.LeaveRequest
 import com.naozumi.izinboss.model.datamodel.User
 import com.naozumi.izinboss.model.helper.wrapIdlingResource
 import com.naozumi.izinboss.model.util.TimeUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -26,7 +32,7 @@ class DataRepository (
     private val userPreferences: UserPreferences
     ): CompanyRepository, LeaveRequestRepository, UserRepository {
 
-    override suspend fun signInWithGoogle(idToken: String): LiveData<Result<FirebaseUser>> = liveData {
+    override fun signInWithGoogle(idToken: String): Flow<Result<Unit>> = flow {
         emit(Result.Loading)
         wrapIdlingResource {
             try {
@@ -36,7 +42,7 @@ class DataRepository (
                 if (user != null) {
                     //user.sendEmailVerification()
                     convertFirebaseUserToUser(user)
-                    emit(Result.Success(user))
+                    emit(Result.Success(Unit))
                 } else {
                     emit(Result.Error("Sign-in result does not contain user data"))
                 }
@@ -44,9 +50,9 @@ class DataRepository (
                 emit(Result.Error(e.message.toString()))
             }
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
-    override suspend fun registerWithEmail(name: String, email: String, password: String): LiveData<Result<FirebaseUser>> = liveData {
+    override fun registerWithEmail(name: String, email: String, password: String): Flow<Result<Unit>> = flow {
         emit(Result.Loading)
         wrapIdlingResource {
             try {
@@ -58,7 +64,7 @@ class DataRepository (
                     ).await()
                     //user.sendEmailVerification()
                     convertFirebaseUserToUser(user)
-                    emit(Result.Success(user))
+                    emit(Result.Success(Unit))
                 } else {
                     emit(Result.Error("Sign-in result does not contain user data"))
                 }
@@ -66,9 +72,9 @@ class DataRepository (
                 emit(Result.Error(e.message.toString()))
             }
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
-    override suspend fun loginWithEmail(email: String, password: String): LiveData<Result<Unit>> = liveData {
+    override fun loginWithEmail(email: String, password: String): Flow<Result<Unit>> = flow {
         emit(Result.Loading)
         wrapIdlingResource {
             try {
@@ -84,9 +90,9 @@ class DataRepository (
                 emit(Result.Error(e.message.toString()))
             }
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
-    override suspend fun createCompany(companyName: String, industrySector: Company.IndustrySector?, user: User?): LiveData<Result<Company>> = liveData {
+    override fun createCompany(companyName: String, industrySector: Company.IndustrySector?, user: User?): Flow<Result<Company>> = flow {
         emit(Result.Loading)
         wrapIdlingResource {
             try {
@@ -121,10 +127,29 @@ class DataRepository (
                 emit(Result.Error(e.message.toString()))
             }
         }
-    }
+    }.flowOn(Dispatchers.IO)
+
+    override fun getCompanyData(companyId: String): Flow<Result<Company>> = flow {
+        try {
+            if(companyId.isNotBlank()) {
+                val companyDocument =
+                    firestore.collection("Companies").document(companyId).get().await()
+                if (companyDocument.exists()) {
+                    val company = companyDocument.toObject(Company::class.java)
+                    if (company != null) {
+                        emit(Result.Success(company))
+                    } else {
+                        emit(Result.Error("Error: Company is Null!"))
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            emit(Result.Error(e.message.toString()))
+        }
+    }.flowOn(Dispatchers.IO)
 
 
-    override suspend fun addUserToCompany(companyId: String, user: User?, position: User.UserRole?): LiveData<Result<Unit>> = liveData {
+    override fun addUserToCompany(companyId: String, user: User?, position: User.UserRole?): Flow<Result<Unit>> = flow {
         emit(Result.Loading)
         wrapIdlingResource {
             try {
@@ -160,9 +185,9 @@ class DataRepository (
                 emit(Result.Error(e.message.toString()))
             }
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
-    override suspend fun getCompanyMembers(companyId: String?): LiveData<Result<List<User>>> = liveData {
+    override fun getCompanyMembers(companyId: String?): Flow<Result<List<User>>> = flow {
         emit(Result.Loading)
         wrapIdlingResource {
             try {
@@ -180,9 +205,9 @@ class DataRepository (
                 emit(Result.Error(e.message.toString()))
             }
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
-    override suspend fun removeUserFromCompany(userId: String?): LiveData<Result<Unit>> = liveData {
+    override fun removeUserFromCompany(userId: String?): Flow<Result<Unit>> = flow {
         emit(Result.Loading)
         wrapIdlingResource {
             try {
@@ -210,9 +235,9 @@ class DataRepository (
                 emit(Result.Error(e.message.toString()))
             }
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
-    override suspend fun addLeaveRequest(companyId: String, leaveRequest: LeaveRequest): LiveData<Result<Unit>> = liveData {
+    override fun addLeaveRequest(companyId: String, leaveRequest: LeaveRequest): Flow<Result<Unit>> = flow {
         emit(Result.Loading)
         wrapIdlingResource {
             try {
@@ -228,9 +253,9 @@ class DataRepository (
                 emit(Result.Error(e.message.toString()))
             }
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
-    override suspend fun getAllLeaveRequests(companyId: String): LiveData<Result<List<LeaveRequest>>> = liveData {
+    override fun getAllLeaveRequests(companyId: String): Flow<Result<List<LeaveRequest>>> = flow {
         emit(Result.Loading)
         wrapIdlingResource {
             try {
@@ -238,23 +263,18 @@ class DataRepository (
                 val leaveRequestCollection = firestore.collection("Companies").document(companyId).collection("Leave Requests")
                 val leaveRequestQuery = leaveRequestCollection.get().await()
 
-                if (leaveRequestQuery.isEmpty) {
-                    // If the collection is empty, return an empty list
-                    emit(Result.Success(emptyList()))
-                } else {
-                    for (document in leaveRequestQuery) {
-                        val leaveRequest = document.toObject(LeaveRequest::class.java)
-                        leaveRequestList.add(leaveRequest)
-                    }
-                    emit(Result.Success(leaveRequestList))
+                for (document in leaveRequestQuery) {
+                    val leaveRequest = document.toObject(LeaveRequest::class.java)
+                    leaveRequestList.add(leaveRequest)
                 }
+                emit(Result.Success(leaveRequestList))
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
             }
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
-    override suspend fun changeLeaveRequestStatus(leaveRequest: LeaveRequest?, isApproved: Boolean, managerName: String): LiveData<Result<Unit>> = liveData {
+    override fun changeLeaveRequestStatus(leaveRequest: LeaveRequest?, isApproved: Boolean, managerName: String): Flow<Result<Unit>> = flow {
         emit(Result.Loading)
         wrapIdlingResource {
             try {
@@ -286,9 +306,9 @@ class DataRepository (
                 emit(Result.Error(e.message.toString()))
             }
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
-    override suspend fun deleteLeaveRequest(leaveRequest: LeaveRequest?): LiveData<Result<Unit>> = liveData {
+    override fun deleteLeaveRequest(leaveRequest: LeaveRequest?): Flow<Result<Unit>> = flow {
         emit(Result.Loading)
         wrapIdlingResource {
             try {
@@ -307,9 +327,9 @@ class DataRepository (
                 emit(Result.Error(e.message.toString()))
             }
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
-    override suspend fun changeFullName(newName: String, user: User?): LiveData<Result<Unit>> = liveData {
+    override fun changeFullName(newName: String, user: User?): Flow<Result<Unit>> = flow {
         emit(Result.Loading)
         wrapIdlingResource {
             try {
@@ -332,10 +352,10 @@ class DataRepository (
                 emit(Result.Error(e.message.toString()))
             }
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
     // TODO: This deleteAccount deletes both account and company, use with caution. Need to separate it later
-    override suspend fun deleteAccount(userId: String?): LiveData<Result<Unit>> = liveData {
+    override fun deleteAccount(userId: String?): Flow<Result<Unit>> = flow {
         emit(Result.Loading)
         wrapIdlingResource {
             try {
@@ -361,12 +381,7 @@ class DataRepository (
                 emit(Result.Error(e.message.toString()))
             }
         }
-    }
-
-    override fun signOut() {
-        googleSignInClient.signOut()
-        firebaseAuth.signOut()
-    }
+    }.flowOn(Dispatchers.IO)
 
     override fun getSignInIntent(): Intent {
         return googleSignInClient.signInIntent
@@ -401,9 +416,9 @@ class DataRepository (
         }
     }
 
-    override fun getCurrentUserID(): String? {
+    override fun getCurrentUserID(): String {
         val currentUser = firebaseAuth.currentUser
-        return currentUser?.uid
+        return currentUser?.uid.toString()
     }
 
     override suspend fun getUserData(userId: String?): User? {
@@ -415,21 +430,21 @@ class DataRepository (
         return null
     }
 
-    override suspend fun getCompanyData(companyId: String): Company? {
-        if(companyId.isNotBlank()) {
-            val companyDocument = firestore.collection("Companies").document(companyId).get().await()
-            if (companyDocument.exists()) {
-                return companyDocument.toObject(Company::class.java)
-            }
-        }
-        return null
-    }
-
-    private suspend fun saveUserToPreferences(user: User) {
+    suspend fun saveUserToPreferences(user: User) {
         userPreferences.saveUser(user)
     }
 
-    private suspend fun deleteCurrentUserFromPreferences() {
+    fun getUser(): User {
+        return runBlocking {
+            userPreferences.getUser().first()
+        }
+    }
+    override fun signOut() {
+        googleSignInClient.signOut()
+        firebaseAuth.signOut()
+    }
+
+    suspend fun deleteCurrentUserFromPreferences() {
         userPreferences.deleteCurrentUserPref()
     }
 

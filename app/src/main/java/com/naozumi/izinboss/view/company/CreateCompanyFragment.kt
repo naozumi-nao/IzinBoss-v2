@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.viewModels
 import com.naozumi.izinboss.R
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -27,7 +28,9 @@ import kotlinx.coroutines.launch
 class CreateCompanyFragment : Fragment() {
     private var _binding: FragmentCreateCompanyBinding? = null
     private val binding get() = _binding
-    private lateinit var viewModel: CompanyViewModel
+    private val viewModel by viewModels<CompanyViewModel> {
+        ViewModelFactory.getInstance(requireActivity())
+    }
     private var user: User? = null
 
     override fun onCreateView(
@@ -40,9 +43,6 @@ class CreateCompanyFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val factory: ViewModelFactory = ViewModelFactory.getInstance(requireContext())
-        viewModel = ViewModelProvider(this, factory)[CompanyViewModel::class.java]
 
         val industrySectorList: List<String> = Company.IndustrySector.values().map { type ->
             StringUtils.capitalizeWordsExceptAnd(type.name.lowercase())

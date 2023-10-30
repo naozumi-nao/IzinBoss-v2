@@ -7,7 +7,6 @@ import java.util.Date
 import java.util.Locale
 
 class TimeUtilsTest {
-
     @Test
     fun testGetCurrentDateAndTime() {
         val expectedFormat = SimpleDateFormat("dd-MM-yyyy, HH:mm", Locale.getDefault())

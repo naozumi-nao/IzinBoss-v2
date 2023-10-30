@@ -3,10 +3,11 @@ package com.naozumi.izinboss.model.repo
 import androidx.lifecycle.LiveData
 import com.naozumi.izinboss.model.datamodel.LeaveRequest
 import com.naozumi.izinboss.model.helper.Result
+import kotlinx.coroutines.flow.Flow
 
 interface LeaveRequestRepository {
-    suspend fun addLeaveRequest(companyId: String, leaveRequest: LeaveRequest): LiveData<Result<Unit>>
-    suspend fun getAllLeaveRequests(companyId: String): LiveData<Result<List<LeaveRequest>>>
-    suspend fun changeLeaveRequestStatus(leaveRequest: LeaveRequest?, isApproved: Boolean, managerName: String): LiveData<Result<Unit>>
-    suspend fun deleteLeaveRequest(leaveRequest: LeaveRequest?): LiveData<Result<Unit>>
+    fun addLeaveRequest(companyId: String, leaveRequest: LeaveRequest): Flow<Result<Unit>>
+    fun getAllLeaveRequests(companyId: String): Flow<Result<List<LeaveRequest>>>
+    fun changeLeaveRequestStatus(leaveRequest: LeaveRequest?, isApproved: Boolean, managerName: String): Flow<Result<Unit>>
+    fun deleteLeaveRequest(leaveRequest: LeaveRequest?): Flow<Result<Unit>>
 }

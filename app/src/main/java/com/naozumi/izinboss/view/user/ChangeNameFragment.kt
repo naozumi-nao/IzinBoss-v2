@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.naozumi.izinboss.R
@@ -24,7 +25,9 @@ import kotlinx.coroutines.launch
 class ChangeNameFragment : DialogFragment() {
     private var _binding: FragmentChangeNameBinding? = null
     private val binding get() = _binding
-    private lateinit var viewModel: UserProfileViewModel
+    private val viewModel by viewModels<UserProfileViewModel> {
+        ViewModelFactory.getInstance(requireActivity())
+    }
     private var user: User? = null
 
     override fun getTheme() = R.style.RoundedCornersDialog
@@ -39,10 +42,6 @@ class ChangeNameFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val factory: ViewModelFactory =
-            ViewModelFactory.getInstance(requireActivity())
-        viewModel = ViewModelProvider(this, factory)[UserProfileViewModel::class.java]
 
         val textWatcher = TextInputUtils.createTextWatcherWithButton(
             binding?.btnConfirmNewName,

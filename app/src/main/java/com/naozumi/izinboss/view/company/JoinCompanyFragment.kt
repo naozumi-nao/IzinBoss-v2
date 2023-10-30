@@ -5,8 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.naozumi.izinboss.R
@@ -18,13 +20,16 @@ import com.naozumi.izinboss.model.util.TextInputUtils
 import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import com.naozumi.izinboss.viewmodel.company.CompanyViewModel
+import com.naozumi.izinboss.viewmodel.entry.RegisterViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class JoinCompanyFragment : DialogFragment() {
     private var _binding: FragmentJoinCompanyBinding? = null
     private val binding get() = _binding
-    private lateinit var viewModel: CompanyViewModel
+    private val viewModel by viewModels<CompanyViewModel> {
+        ViewModelFactory.getInstance(requireActivity())
+    }
     private var user: User? = null
 
     override fun getTheme() = R.style.RoundedCornersDialog
@@ -40,10 +45,6 @@ class JoinCompanyFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val factory: ViewModelFactory =
-            ViewModelFactory.getInstance(requireActivity())
-        viewModel = ViewModelProvider(this, factory)[CompanyViewModel::class.java]
-
         val textWatcher = TextInputUtils.createTextWatcherWithButton(
             binding?.btnJoinCompany,
             binding?.edCompanyIdInput
@@ -56,10 +57,10 @@ class JoinCompanyFragment : DialogFragment() {
         binding?.btnJoinCompany?.setOnClickListener(3000L) {
             lifecycleScope.launch {
                 user =  viewModel.getUser().first()
-                joinCompany()
             }
-            // Handle button click
+            joinCompany()
         }
+
     }
 
     override fun onResume() {
@@ -70,7 +71,7 @@ class JoinCompanyFragment : DialogFragment() {
         )
     }
 
-    private suspend fun joinCompany() {
+    private fun joinCompany() {
         val companyId = binding?.edCompanyIdInput?.text.toString()
         viewModel.addUserToCompany(companyId, user, user?.role)
             .observe(this) { result ->

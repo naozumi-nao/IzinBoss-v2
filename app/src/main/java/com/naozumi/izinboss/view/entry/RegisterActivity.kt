@@ -2,8 +2,10 @@ package com.naozumi.izinboss.view.entry
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.naozumi.izinboss.R
@@ -12,11 +14,14 @@ import com.naozumi.izinboss.model.helper.Result
 import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.viewmodel.entry.RegisterViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
+import com.naozumi.izinboss.viewmodel.leavereq.LeaveRequestDetailsViewModel
 import kotlinx.coroutines.launch
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
-    private lateinit var viewModel: RegisterViewModel
+    private val viewModel by viewModels<RegisterViewModel> {
+        ViewModelFactory.getInstance(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,19 +29,13 @@ class RegisterActivity : AppCompatActivity() {
         setContentView(binding.root)
         ViewUtils.setupFullScreen(this)
 
-        val factory: ViewModelFactory =
-            ViewModelFactory.getInstance(this)
-        viewModel = ViewModelProvider(this, factory)[RegisterViewModel::class.java]
-
         binding.progressBar.visibility = View.GONE
         binding.btnRegisterUser.setOnClickListener {
-            lifecycleScope.launch {
-                setupRegister()
-            }
+            setupRegister()
         }
     }
 
-    private suspend fun setupRegister() {
+    private fun setupRegister() {
         val name = binding.edRegisterFullName.text.toString()
         val email = binding.edRegisterEmail.text.toString()
         val password = binding.edRegisterPassword.text.toString()

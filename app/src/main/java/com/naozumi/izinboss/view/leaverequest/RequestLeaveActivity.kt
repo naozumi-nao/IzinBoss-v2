@@ -6,7 +6,9 @@ import android.text.Editable
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.naozumi.izinboss.R
@@ -25,16 +27,14 @@ import kotlinx.coroutines.launch
 
 class RequestLeaveActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRequestLeaveBinding
-    private lateinit var viewModel: RequestLeaveViewModel
+    private val viewModel by viewModels<RequestLeaveViewModel> {
+        ViewModelFactory.getInstance(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRequestLeaveBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        val factory: ViewModelFactory =
-            ViewModelFactory.getInstance(this)
-        viewModel = ViewModelProvider(this, factory)[RequestLeaveViewModel::class.java]
 
         binding.progressBar.visibility = View.GONE
 

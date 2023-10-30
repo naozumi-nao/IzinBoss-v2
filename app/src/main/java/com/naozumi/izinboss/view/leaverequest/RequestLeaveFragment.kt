@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.naozumi.izinboss.R
@@ -23,6 +24,7 @@ import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.view.MainActivity
 import com.naozumi.izinboss.viewmodel.RequestLeaveViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
+import com.naozumi.izinboss.viewmodel.user.UserProfileViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -30,7 +32,9 @@ class RequestLeaveFragment : DialogFragment() {
 
     private var _binding: FragmentRequestLeaveBinding? = null
     private val binding get() = _binding
-    private lateinit var viewModel: RequestLeaveViewModel
+    private val viewModel by viewModels<RequestLeaveViewModel> {
+        ViewModelFactory.getInstance(requireActivity())
+    }
     override fun getTheme() = R.style.RoundedCornersDialog
 
     override fun onCreateView(
@@ -43,9 +47,6 @@ class RequestLeaveFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val factory: ViewModelFactory = ViewModelFactory.getInstance(requireActivity())
-        viewModel = ViewModelProvider(requireActivity(), factory)[RequestLeaveViewModel::class.java]
 
         binding?.progressBar?.visibility = View.GONE
 

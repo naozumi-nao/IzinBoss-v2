@@ -10,18 +10,19 @@ import kotlinx.coroutines.flow.map
 
 class UserPreferences private constructor (private val dataStore: DataStore<Preferences>) {
 
-    fun getUser(): Flow<User?> {
+    fun getUser(): Flow<User> {
         return dataStore.data.map { preferences ->
-            val uid = preferences[UID_KEY] ?: return@map null
+            val uid = preferences[UID_KEY] ?: ""
             val name = preferences[NAME_KEY] ?: ""
             val email = preferences[EMAIL_KEY] ?: ""
             val profilePicture = preferences[PROFILE_PICTURE_KEY] ?: ""
             val companyId = preferences[COMPANY_ID_KEY] ?: ""
-            val role = if (preferences[ROLE_KEY]?.isNotBlank() == true) {
-                User.UserRole.valueOf(preferences[ROLE_KEY].toString())
-            } else {
-                null
-            }
+            val role =
+                if (preferences[ROLE_KEY]?.isNotBlank() == true) {
+                    User.UserRole.valueOf(preferences[ROLE_KEY].toString())
+                } else {
+                    null
+                }
             User(uid, name, email, profilePicture, companyId, role)
         }
     }

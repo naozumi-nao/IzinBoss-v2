@@ -58,6 +58,7 @@
         app:lottie_rawRes="@raw/empty" />
 
     <TextView
+        android:visibility="gone"
         android:id="@+id/tv_no_leave_requests"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

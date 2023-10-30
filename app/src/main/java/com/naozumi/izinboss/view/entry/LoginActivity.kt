@@ -3,6 +3,7 @@ package com.naozumi.izinboss.view.entry
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -16,11 +17,14 @@ import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.view.MainActivity
 import com.naozumi.izinboss.viewmodel.entry.LoginViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
+import com.naozumi.izinboss.viewmodel.entry.RegisterViewModel
 import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
-    private lateinit var viewModel: LoginViewModel
+    private val viewModel by viewModels<LoginViewModel> {
+        ViewModelFactory.getInstance(this)
+    }
 
     private var resultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -28,9 +32,8 @@ class LoginActivity : AppCompatActivity() {
         if (result.resultCode == RESULT_OK) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
             val account = task.getResult(ApiException::class.java)!!
-            lifecycleScope.launch {
-                setupGoogleSignIn(account.idToken.toString())
-            }
+
+            setupGoogleSignIn(account.idToken.toString())
         }
     }
 
@@ -42,17 +45,11 @@ class LoginActivity : AppCompatActivity() {
         ViewUtils.setupFullScreen(this)
         binding.progressBar.visibility = View.GONE
 
-        val factory: ViewModelFactory =
-            ViewModelFactory.getInstance(this)
-        viewModel = ViewModelProvider(this, factory)[LoginViewModel::class.java]
-
         binding.btnLogin.setOnClickListener {
-            lifecycleScope.launch {
-                setupEmailLogin()
-            }
+            setupEmailLogin()
         }
 
-        binding.btnGoogleSignIn.setOnClickListener {
+        binding.btnGoogleSingleSignOn.setOnClickListener {
             resultLauncher.launch(viewModel.getSignInIntent())
         }
 
@@ -65,7 +62,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun setupGoogleSignIn(token: String) {
+    private fun setupGoogleSignIn(token: String) {
         viewModel.signInWithGoogle(token).observe(this) { result ->
             when(result){
                 is Result.Loading -> {
@@ -89,7 +86,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun setupEmailLogin() {
+    private fun setupEmailLogin() {
         val email = binding.edLoginEmail.text.toString()
         val password = binding.edLoginPassword.text.toString()
         when {

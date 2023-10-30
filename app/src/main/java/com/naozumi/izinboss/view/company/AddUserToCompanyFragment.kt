@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.naozumi.izinboss.R
@@ -20,11 +21,14 @@ import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import com.naozumi.izinboss.viewmodel.company.CompanyViewModel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class AddUserToCompanyFragment : DialogFragment() {
     private var _binding: FragmentAddUserToCompanyBinding? = null
     private val binding get() = _binding
-    private lateinit var viewModel: CompanyViewModel
+    private val viewModel by viewModels<CompanyViewModel> {
+        ViewModelFactory.getInstance(requireActivity())
+    }
     private var user: User? = null
     private lateinit var companyId: String
 
@@ -43,10 +47,6 @@ class AddUserToCompanyFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val factory: ViewModelFactory =
-            ViewModelFactory.getInstance(requireActivity())
-        viewModel = ViewModelProvider(this, factory)[CompanyViewModel::class.java]
 
         val userRoleList: List<String> = User.UserRole.values().map { it.name }
         val roleAdapter = ArrayAdapter(
@@ -68,9 +68,7 @@ class AddUserToCompanyFragment : DialogFragment() {
         binding?.actvChooseUserRole?.addTextChangedListener(textWatcher)
 
         binding?.btnAddUser?.setOnClickListener(3000L) {
-            lifecycleScope.launch {
-                addUserToCompany()
-            }
+            addUserToCompany()
         }
     }
 
@@ -82,14 +80,16 @@ class AddUserToCompanyFragment : DialogFragment() {
         )
     }
 
-    private suspend fun addUserToCompany() {
+    private fun addUserToCompany() {
         val userId = binding?.edUserIdInput?.text.toString()
         val userRole = when (binding?.actvChooseUserRole?.text.toString()) {
             "MANAGER" -> User.UserRole.MANAGER
             "EMPLOYEE" -> User.UserRole.EMPLOYEE
             else -> User.UserRole.EMPLOYEE
         }
-        user = viewModel.getUserData(userId)
+        runBlocking {
+            user = viewModel.getUserData(userId)
+        }
         viewModel.addUserToCompany(companyId, user, userRole)
             .observe(this) { result ->
                 if (result != null) {

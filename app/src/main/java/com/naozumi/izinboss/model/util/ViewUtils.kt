@@ -7,13 +7,34 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.view.WindowInsets
 import android.view.WindowManager
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
+import com.naozumi.izinboss.R
 
 object ViewUtils {
     fun isValidEmail(email: String): Boolean {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
+
+    fun showContinueDialog(context: Context, title: String, message: String, target: Class<*>? = null) {
+        AlertDialog.Builder(context).apply {
+            setTitle(title)
+            setMessage(message)
+            setPositiveButton(context.getString(R.string.continue_on)) { _, _ ->
+                if (target != null) {
+                    moveActivityNoHistory(context, target)
+                }
+            }
+            setOnCancelListener {
+                if (target != null) {
+                    moveActivityNoHistory(context, target)
+                }
+            }
+            create()
+            show()
+        }
     }
 
     fun setupFullScreen(activity: AppCompatActivity) {

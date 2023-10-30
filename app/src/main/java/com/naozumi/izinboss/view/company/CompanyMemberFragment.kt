@@ -8,11 +8,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.naozumi.izinboss.R
 import com.naozumi.izinboss.databinding.FragmentCompanyMemberBinding
+import com.naozumi.izinboss.model.datamodel.Company
 import com.naozumi.izinboss.model.datamodel.User
 import com.naozumi.izinboss.model.helper.Result
 import com.naozumi.izinboss.model.helper.setOnClickListener
@@ -26,8 +28,11 @@ import kotlinx.coroutines.launch
 class CompanyMemberFragment : DialogFragment() {
     private var _binding: FragmentCompanyMemberBinding? = null
     private val binding get() = _binding
-    private lateinit var viewModel: CompanyViewModel
+    private val viewModel by viewModels<CompanyViewModel> {
+        ViewModelFactory.getInstance(requireActivity())
+    }
     private var user: User? = null
+    private var companyName: String? = null
     private var clickedUser: User? = null
 
     override fun getTheme() = R.style.RoundedCornersDialog
@@ -55,15 +60,12 @@ class CompanyMemberFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val factory: ViewModelFactory = ViewModelFactory.getInstance(requireContext())
-        viewModel = ViewModelProvider(this, factory)[CompanyViewModel::class.java]
-
         binding?.progressBar?.visibility = View.GONE
 
         lifecycleScope.launch {
             user = viewModel.getUser().first()
-            setUserData(clickedUser)
         }
+        setUserData(clickedUser)
 
         if(user?.role == User.UserRole.MANAGER && clickedUser?.uid != user?.uid) {
             binding?.btnKickFromCompany?.setOnClickListener(3000L) {
@@ -76,12 +78,11 @@ class CompanyMemberFragment : DialogFragment() {
         }
     }
 
-    private suspend fun setUserData(user: User?) {
-        val company = viewModel.getCompanyData(user?.companyId.toString())
+    private fun setUserData(user: User?) {
         binding?.apply {
             if (user != null) {
                 tvFullNameInput.text = user.name
-                tvCompanyInput.text = company?.name
+                tvCompanyInput.text = companyName
                 tvRoleInput.text = user.role.toString().lowercase().replaceFirstChar { it.uppercase() }
                 tvUidInput.text = user.uid
                 tvUidInput.setOnClickListener {
@@ -96,7 +97,29 @@ class CompanyMemberFragment : DialogFragment() {
         }
     }
 
-    private suspend fun kickUserFromCompany(userId: String?) {
+    private fun getCompanyName(companyId: String) {
+        viewModel.getCompanyData(companyId).observe(viewLifecycleOwner) { result ->
+            when(result)  {
+                is Result.Loading -> {
+                    binding?.progressBar?.visibility = View.VISIBLE
+                }
+                is Result.Success -> {
+                    binding?.progressBar?.visibility = View.GONE
+                    companyName = result.data.name
+                }
+                is Result.Error -> {
+                    binding?.progressBar?.visibility = View.GONE
+                    ViewUtils.showContinueDialog(
+                        requireActivity(),
+                        getString(R.string.error),
+                        result.error
+                    )
+                }
+            }
+        }
+    }
+
+    private fun kickUserFromCompany(userId: String?) {
         viewModel.kickUserFromCompany(userId).observe(viewLifecycleOwner) { result ->
             if (result != null) {
                 when (result) {

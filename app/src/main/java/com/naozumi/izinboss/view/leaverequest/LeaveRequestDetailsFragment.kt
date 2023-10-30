@@ -9,7 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.naozumi.izinboss.R
 import com.naozumi.izinboss.databinding.FragmentLeaveRequestDetailsBinding
@@ -20,7 +20,6 @@ import com.naozumi.izinboss.model.helper.setOnClickListener
 import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.view.HomeFragment
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
-import com.naozumi.izinboss.viewmodel.company.CompanyViewModel
 import com.naozumi.izinboss.viewmodel.leavereq.LeaveRequestDetailsViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -28,7 +27,9 @@ import kotlinx.coroutines.launch
 class LeaveRequestDetailsFragment : DialogFragment() {
     private var _binding: FragmentLeaveRequestDetailsBinding? = null
     private val binding get() = _binding
-    private lateinit var viewModel: LeaveRequestDetailsViewModel
+    private val viewModel by viewModels<LeaveRequestDetailsViewModel> {
+        ViewModelFactory.getInstance(requireActivity())
+    }
     private var leaveRequest: LeaveRequest? = null
     private var user: User? = null
 
@@ -56,8 +57,6 @@ class LeaveRequestDetailsFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val factory: ViewModelFactory = ViewModelFactory.getInstance(requireContext())
-        viewModel = ViewModelProvider(this, factory)[LeaveRequestDetailsViewModel::class.java]
         lifecycleScope.launch {
             user = viewModel.getUser().first()
         }
