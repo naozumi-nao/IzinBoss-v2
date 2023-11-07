@@ -70,7 +70,7 @@ class CreateCompanyFragment : Fragment() {
             registerCompany()
         }
 
-        binding?.btnJoinCompany?.setOnClickListener {
+        binding?.btnAlreadyHaveCompany?.setOnClickListener {
             JoinCompanyFragment().show(parentFragmentManager, "JoinCompanyDialog")
         }
     }

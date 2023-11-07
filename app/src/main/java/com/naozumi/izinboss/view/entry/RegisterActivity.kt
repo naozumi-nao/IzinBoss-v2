@@ -5,17 +5,12 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.naozumi.izinboss.R
 import com.naozumi.izinboss.databinding.ActivityRegisterBinding
 import com.naozumi.izinboss.model.helper.Result
 import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.viewmodel.entry.RegisterViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
-import com.naozumi.izinboss.viewmodel.leavereq.LeaveRequestDetailsViewModel
-import kotlinx.coroutines.launch
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
@@ -64,36 +59,20 @@ class RegisterActivity : AppCompatActivity() {
                             }
                             is Result.Success -> {
                                 binding.progressBar.visibility = View.GONE
-                                AlertDialog.Builder(this).apply {
-                                    setTitle(getString(R.string.success))
-                                    setMessage(getString(R.string.account_created))
-                                    setPositiveButton(getString(R.string.continue_on)) { _, _ ->
-                                        ViewUtils.moveActivityNoHistory(
-                                            this@RegisterActivity,
-                                            LoginActivity::class.java
-                                        )
-                                    }
-                                    create()
-                                    show()
-                                }.apply {
-                                    setOnCancelListener { // Set an OnCancelListener to handle the case when the user clicks outside of the dialog
-                                        ViewUtils.moveActivityNoHistory(
-                                            this@RegisterActivity,
-                                            LoginActivity::class.java
-                                        )
-                                    }
-                                    show()
-                                }
+                                ViewUtils.showContinueDialog(
+                                    this@RegisterActivity,
+                                    getString(R.string.success),
+                                    getString(R.string.account_created),
+                                    LoginActivity::class.java
+                                )
                             }
                             is Result.Error -> {
                                 binding.progressBar.visibility = View.GONE
-                                AlertDialog.Builder(this).apply {
-                                    setTitle(getString(R.string.error))
-                                    setMessage(result.error)
-                                    setPositiveButton(getString(R.string.continue_on)) { _, _ -> }
-                                    create()
-                                    show()
-                                }
+                                ViewUtils.showContinueDialog(
+                                    this@RegisterActivity,
+                                    getString(R.string.error),
+                                    result.error
+                                )
                             }
                         }
                     }

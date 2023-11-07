@@ -12,14 +12,19 @@ import com.naozumi.izinboss.model.datamodel.User
 import com.naozumi.izinboss.model.helper.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class MainViewModel(private val dataRepository: DataRepository) : ViewModel() {
 
-    val user = dataRepository.getUser()
+    val user= runBlocking {
+        dataRepository.getUser()
+    }
 
     val userData: LiveData<User> = liveData(Dispatchers.Main) {
-        val user = dataRepository.getUserData(getCurrentUser())
+        val user = dataRepository.getUserData(getCurrentUserId())
         if (user != null) {
             emit(user)
         }
@@ -33,7 +38,7 @@ class MainViewModel(private val dataRepository: DataRepository) : ViewModel() {
         }
     }
 
-    fun getCurrentUser() = dataRepository.getCurrentUserID()
+    fun getCurrentUserId() = dataRepository.getCurrentUserId()
 
     fun saveUserToPreferences(user: User) {
         viewModelScope.launch(Dispatchers.IO) {

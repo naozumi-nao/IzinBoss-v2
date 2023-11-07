@@ -12,11 +12,16 @@ import com.naozumi.izinboss.model.repo.DataRepository
 import com.naozumi.izinboss.model.repo.UserPreferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
-class UserProfileViewModel(private val dataRepository: DataRepository, private val userPreferences: UserPreferences): ViewModel() {
-    val user = dataRepository.getUser()
-
+class UserProfileViewModel(private val dataRepository: DataRepository): ViewModel() {
+    val user= runBlocking {
+        dataRepository.getUser()
+    }
     fun changeFullName(newName: String, user: User?): LiveData<Result<Unit>> {
         return liveData(Dispatchers.Main) {
             val result = dataRepository.changeFullName(newName, user)

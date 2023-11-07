@@ -16,7 +16,7 @@ interface UserRepository {
     fun signOut()
     suspend fun convertFirebaseUserToUser(firebaseUser: FirebaseUser)
     fun getSignInIntent(): Intent
-    fun getCurrentUserID(): String?
+    fun getCurrentUserId(): String?
     suspend fun getUserData(userId: String?): User?
 
     //suspend fun saveUser(user: User)

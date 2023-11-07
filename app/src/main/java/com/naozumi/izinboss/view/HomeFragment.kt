@@ -54,25 +54,25 @@ class HomeFragment : Fragment() {
             binding?.animEmptyList?.playAnimation()
             binding?.tvNoLeaveRequests?.visibility = View.VISIBLE
             binding?.swipeToRefresh?.visibility = View.GONE
-            binding?.fabAddLeave?.visibility = View.GONE
+            binding?.fabAddLeaveRequest?.visibility = View.GONE
         } else {
             if (user?.role == User.UserRole.MANAGER) {
-                binding?.fabAddLeave?.visibility = View.GONE
+                binding?.fabAddLeaveRequest?.visibility = View.GONE
             }
             setupLeaveList()
             binding?.swipeToRefresh?.setOnRefreshListener {
                 setupLeaveList()
             }
         }
-        binding?.fabAddLeave?.setOnClickListener(1000L) {
-            //ViewUtils.moveActivity(requireActivity(), RequestLeaveActivity::class.java)
-            RequestLeaveFragment().show(parentFragmentManager, "leaveRequest")
+        binding?.fabAddLeaveRequest?.setOnClickListener(1000L) {
+            ViewUtils.moveActivity(requireActivity(), RequestLeaveActivity::class.java)
+            //RequestLeaveFragment().show(parentFragmentManager, "leaveRequest")
         }
     }
 
     private fun setupLeaveList() {
         val leaveListAdapter = LeaveListAdapter()
-        binding?.rvLeaves?.apply {
+        binding?.rvLeaveRequests?.apply {
             layoutManager = LinearLayoutManager(context)
             setHasFixedSize(true)
             adapter = leaveListAdapter

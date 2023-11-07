@@ -3,7 +3,8 @@ package com.naozumi.izinboss.model.datamodel
 data class Company (
     val id: String? = null,
     val name: String? = null,
-    val industrySector: IndustrySector? = null
+    val industrySector: IndustrySector? = null,
+    val memberCount: Int = 1
 ) {
     enum class IndustrySector {
         INFORMATION_TECHNOLOGY,

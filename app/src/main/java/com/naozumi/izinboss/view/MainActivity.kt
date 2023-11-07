@@ -151,7 +151,7 @@ class MainActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this, backPressedCallback)
 
         //DEBUG FOR STUCK LOGINS
-        if (viewModel.getCurrentUser().isBlank()) {
+        if (viewModel.getCurrentUserId().isBlank()) {
             viewModel.signOut()
             viewModel.deleteCurrentUserPref()
             ViewUtils.moveActivityNoHistory(this@MainActivity, LoginActivity::class.java)

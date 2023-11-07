@@ -74,13 +74,11 @@ class LoginActivity : AppCompatActivity() {
                 }
                 is Result.Error -> {
                     binding.progressBar.visibility = View.GONE
-                    AlertDialog.Builder(this).apply {
-                        setTitle(getString(R.string.error))
-                        setMessage(result.error)
-                        setPositiveButton(getString(R.string.continue_on)) { _, _ -> }
-                        create()
-                        show()
-                    }
+                    ViewUtils.showContinueDialog(
+                        this@LoginActivity,
+                        getString(R.string.error),
+                        result.error
+                    )
                 }
             }
         }
@@ -111,13 +109,11 @@ class LoginActivity : AppCompatActivity() {
                         }
                         is Result.Error -> {
                             binding.progressBar.visibility = View.GONE
-                            AlertDialog.Builder(this).apply {
-                                setTitle(getString(R.string.error))
-                                setMessage(result.error)
-                                setPositiveButton(getString(R.string.continue_on)) { _, _ -> }
-                                create()
-                                show()
-                            }
+                            ViewUtils.showContinueDialog(
+                                this@LoginActivity,
+                                getString(R.string.error),
+                                result.error
+                            )
                         }
                     }
                 }

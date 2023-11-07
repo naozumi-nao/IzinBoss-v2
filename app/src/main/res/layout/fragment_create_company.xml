@@ -108,7 +108,7 @@
         app:layout_constraintTop_toBottomOf="@id/til_select_industry_sector" />
 
     <Button
-        android:id="@+id/btn_join_company"
+        android:id="@+id/btn_already_have_company"
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

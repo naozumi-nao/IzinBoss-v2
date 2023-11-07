@@ -82,12 +82,13 @@ class AddUserToCompanyFragment : DialogFragment() {
 
     private fun addUserToCompany() {
         val userId = binding?.edUserIdInput?.text.toString()
+        val newMember = runBlocking { viewModel.getUserData(userId) }
         val userRole = when (binding?.actvChooseUserRole?.text.toString()) {
             "MANAGER" -> User.UserRole.MANAGER
             "EMPLOYEE" -> User.UserRole.EMPLOYEE
             else -> User.UserRole.EMPLOYEE
         }
-        viewModel.addUserToCompany(companyId, user, userRole)
+        viewModel.addUserToCompany(companyId, newMember, userRole)
             .observe(this) { result ->
                 if (result != null) {
                     when (result) {

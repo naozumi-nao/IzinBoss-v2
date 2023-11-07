@@ -3,7 +3,8 @@ package com.naozumi.izinboss.uitest
 import androidx.test.espresso.Espresso.*
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions
-import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.espresso.assertion.ViewAssertions
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -18,7 +19,7 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
-class UIT1Register {
+class UIT6ChangeName {
     @get:Rule
     val activityRule = ActivityScenarioRule(LoginActivity::class.java)
 
@@ -33,15 +34,18 @@ class UIT1Register {
     }
 
     @Test
-    fun testIfRegisterSuccess() {
-        onView(withId(R.id.btn_create_account)).perform(ViewActions.click())
-        onView(withId(R.id.ed_register_full_name))
-            .perform(ViewActions.typeText("Bima Adityo Kurniawan"))
-        onView(withId(R.id.ed_register_email))
-            .perform(ViewActions.typeText("test@gmail.com"))
-        onView(withId(R.id.ed_register_password))
-            .perform(ViewActions.typeText("12345678"), ViewActions.closeSoftKeyboard())
-        onView(withId(R.id.btn_register_user)).perform(ViewActions.click())
-        onView(withText(R.string.continue_on)).perform(ViewActions.click())
+    fun testChangeName() {
+        TestAccount.loginGenericUser()
+
+        onView(ViewMatchers.withId(R.id.bottom_nav_profile))
+            .perform(ViewActions.click())
+        onView(ViewMatchers.withId(R.id.btn_profile_info))
+            .perform(ViewActions.click())
+        onView(ViewMatchers.withId(R.id.ed_new_name_input))
+            .perform(ViewActions.typeText("Bima A.K."))
+        onView(ViewMatchers.withId(R.id.btn_confirm_new_name))
+            .perform(ViewActions.click())
+        onView(ViewMatchers.withId(R.id.tv_full_name_input))
+            .check(ViewAssertions.matches(ViewMatchers.withText("Bima A.K.")))
     }
 }

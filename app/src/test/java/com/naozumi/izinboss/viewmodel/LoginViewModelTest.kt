@@ -38,7 +38,7 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `when loginWithEmail is valid should Return Success`() = runBlocking {
+    fun testLoginEmailReturnSuccess() = runBlocking {
         val expectedData = Unit
         val expectedResult = Result.Success(Unit)
 
@@ -57,20 +57,35 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `when loginWithEmail is invalid should Return Error`() = runBlocking {
+    fun testLoginEmailReturnError() = runBlocking {
         val expectedErrorMessage = "Invalid input"
         val expectedResult = Result.Error(expectedErrorMessage)
 
-        Mockito.`when`(dataRepository.loginWithEmail("invalidEmail", "invalidPassword"))
+        Mockito.`when`(dataRepository.loginWithEmail("invalidEmail", "123"))
             .thenReturn(flowOf(expectedResult))
-        val actualResult = loginViewModel.loginWithEmail("invalidEmail", "invalidPassword")
+        val actualResult = loginViewModel.loginWithEmail("invalidEmail", "123")
             .getOrAwaitValue()
-        Mockito.verify(dataRepository).loginWithEmail("invalidEmail", "invalidPassword")
+        Mockito.verify(dataRepository).loginWithEmail("invalidEmail", "123")
 
         Assert.assertNotNull(actualResult)
         Assert.assertTrue(actualResult is Result.Error)
         if (actualResult is Result.Error) {
             Assert.assertEquals(expectedErrorMessage, actualResult.error)
         }
+    }
+
+    @Test
+    fun testLoginEmailReturnLoading() = runBlocking {
+        val expectedResult = Result.Loading
+
+        Mockito.`when`(dataRepository.loginWithEmail("test@gmail.com", "12345678"))
+            .thenReturn(flowOf(expectedResult))
+
+        val actualResult = loginViewModel.loginWithEmail("test@gmail.com", "12345678")
+            .getOrAwaitValue()
+
+        Mockito.verify(dataRepository).loginWithEmail("test@gmail.com", "12345678")
+        Assert.assertNotNull(actualResult)
+        Assert.assertTrue(actualResult is Result.Loading)
     }
 }

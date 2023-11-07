@@ -1,8 +1,6 @@
 package com.naozumi.izinboss.model.repo
 
 import android.content.Intent
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -80,7 +78,7 @@ class DataRepository (
         wrapIdlingResource {
             try {
                 firebaseAuth.signInWithEmailAndPassword(email, password).await()
-                val user = getUserData(getCurrentUserID())
+                val user = getUserData(getCurrentUserId())
                 if (user != null) {
                     saveUserToPreferences(user)
                     emit(Result.Success(Unit))
@@ -107,7 +105,8 @@ class DataRepository (
                     val company = Company(
                         companyId,
                         companyName,
-                        industrySector
+                        industrySector,
+                        memberCount = 1
                     )
 
                     val companyCollection = firestore.collection("Companies")
@@ -158,7 +157,8 @@ class DataRepository (
             try {
                 if (user != null) {
                     // Check if the company with the specified companyId exists
-                    val companyDocument = firestore.collection("Companies").document(companyId).get().await()
+                    val companyDocumentRef = firestore.collection("Companies").document(companyId)
+                    val companyDocument = companyDocumentRef.get().await()
                     if (companyDocument.exists()) {
                         val company = companyDocument.toObject(Company::class.java)
                         val userDocumentRef = firestore.collection("Users").document(user.uid.toString())
@@ -170,14 +170,23 @@ class DataRepository (
                             else -> User.UserRole.EMPLOYEE
                         }
                         user.companyId = companyId
+                        user.companyName = company?.name
+                        saveUserToPreferences(user)
 
+                        //Update User in Firestore
                         val userUpdate = mapOf(
                             "companyId" to companyId,
                             "companyName" to company?.name,
                             "role" to user.role
                         )
                         userDocumentRef.update(userUpdate).await()
-                        saveUserToPreferences(user)
+
+                        if (company != null) {
+                            val companyUpdate = mapOf(
+                                "memberCount" to company.memberCount + 1
+                            )
+                            companyDocumentRef.update(companyUpdate).await()
+                        }
 
                         emit(Result.Success(Unit))
                     } else {
@@ -218,6 +227,21 @@ class DataRepository (
             try {
                 val user = getUserData(userId)
                 if (user != null) {
+                    val companyDocumentRef = firestore.collection("Companies").document(user.companyId.toString())
+                    val companyDocument = companyDocumentRef.get().await()
+                    val company = companyDocument.toObject(Company::class.java)
+
+                    if (company != null) {
+                        if(company.memberCount == 1) {
+                            companyDocumentRef.delete().await()
+                        } else {
+                            val companyUpdate = mapOf(
+                                "memberCount" to company.memberCount - 1
+                            )
+                            companyDocumentRef.update(companyUpdate).await()
+                        }
+                    }
+
                     val userDocumentRef = firestore.collection("Users").document(user.uid.toString())
 
                     user.companyId = null
@@ -230,7 +254,7 @@ class DataRepository (
                         "role" to null
                     )
                     userDocumentRef.update(userUpdate).await()
-                    if (user.uid == getCurrentUserID()) {
+                    if (user.uid == getCurrentUserId()) {
                         saveUserToPreferences(user)
                     }
 
@@ -382,8 +406,21 @@ class DataRepository (
                     firestore.collection("Users").document(userId).delete().await()
 
                     val companyId = databaseUser.companyId.toString()
-                    val companyRef = firestore.collection("Companies").document(companyId)
-                    companyRef.delete().await()
+                    val companyDocumentRef = firestore.collection("Companies")
+                        .document(companyId)
+                    val companyDocument = companyDocumentRef.get().await()
+                    val company = companyDocument.toObject(Company::class.java)
+
+                    if (company != null) {
+                        if(company.memberCount == 1) {
+                            companyDocumentRef.delete().await()
+                        } else {
+                            val companyUpdate = mapOf(
+                                "memberCount" to company.memberCount - 1
+                            )
+                            companyDocumentRef.update(companyUpdate).await()
+                        }
+                    }
 
                     firebaseUser.delete().await()
                     signOut()
@@ -432,7 +469,7 @@ class DataRepository (
         }
     }
 
-    override fun getCurrentUserID(): String {
+    override fun getCurrentUserId(): String {
         val currentUser = firebaseAuth.currentUser
         return currentUser?.uid.toString()
     }
@@ -451,11 +488,10 @@ class DataRepository (
         userPreferences.saveUser(user)
     }
 
-    fun getUser(): User? {
-        return runBlocking {
-            userPreferences.getUser().first()
-        }
+    suspend fun getUser(): User? {
+        return userPreferences.getUser().first()
     }
+
     override fun signOut() {
         googleSignInClient.signOut()
         firebaseAuth.signOut()

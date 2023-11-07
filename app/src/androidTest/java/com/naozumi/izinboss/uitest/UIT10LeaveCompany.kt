@@ -11,7 +11,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.naozumi.izinboss.R
 import com.naozumi.izinboss.model.helper.EspressoIdlingResource
-import com.naozumi.izinboss.view.MainActivity
 import com.naozumi.izinboss.view.entry.LoginActivity
 import org.junit.After
 import org.junit.Before
@@ -21,9 +20,9 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
-class UIT9LeaveCurrentCompany {
+class UIT10LeaveCompany {
     @get:Rule
-    val activityRule = ActivityScenarioRule(MainActivity::class.java)
+    val activityRule = ActivityScenarioRule(LoginActivity::class.java)
 
     @Before
     fun setUp() {
@@ -36,9 +35,13 @@ class UIT9LeaveCurrentCompany {
     }
 
     @Test
-    fun testIfLoginSuccess() {
+    fun testLeaveCompany() {
+        TestAccount.loginEmployeeUser()
+
         onView(ViewMatchers.withId(R.id.bottom_nav_profile)).perform(ViewActions.click())
         onView(ViewMatchers.withId(R.id.btn_leave_current_company)).perform(ViewActions.click())
-        onView(ViewMatchers.withText(R.string.continue_on)).perform(ViewActions.click())
+        onView(ViewMatchers.withText("Yes")).perform(ViewActions.click())
+        onView(ViewMatchers.withText("Success"))
+            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }
 }

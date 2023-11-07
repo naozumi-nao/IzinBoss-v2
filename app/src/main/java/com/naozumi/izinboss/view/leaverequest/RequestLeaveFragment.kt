@@ -28,7 +28,8 @@ import com.naozumi.izinboss.viewmodel.user.UserProfileViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class RequestLeaveFragment : DialogFragment() {
+class RequestLeaveFragment : DialogFragment() {}
+    /*
 
     private var _binding: FragmentRequestLeaveBinding? = null
     private val binding get() = _binding
@@ -82,8 +83,8 @@ class RequestLeaveFragment : DialogFragment() {
         (requireActivity() as AppCompatActivity).supportActionBar?.title = "Add Leave Request"
     }
 
-    private suspend fun uploadLeave() {
-        val user = viewModel.getUser().first()
+    private fun uploadLeave() {
+        val user = viewModel.user
         val timeStamp = TimeUtils.getCurrentDateAndTime()
         val typeString = binding?.actvAddType?.text.toString().trim()
         val typeMap = mapOf(
@@ -166,3 +167,5 @@ class RequestLeaveFragment : DialogFragment() {
         TimeUtils.showMaterialDateRangePicker(childFragmentManager, callback)
     }
 }
+
+ */

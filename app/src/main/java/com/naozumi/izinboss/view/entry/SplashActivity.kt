@@ -6,12 +6,14 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.naozumi.izinboss.R
 import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.view.MainActivity
 import com.naozumi.izinboss.viewmodel.user.UserProfileViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -19,6 +21,9 @@ import kotlinx.coroutines.runBlocking
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
+    private val viewModel by viewModels<UserProfileViewModel> {
+        ViewModelFactory.getInstance(this)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
@@ -30,13 +35,11 @@ class SplashActivity : AppCompatActivity() {
             content.viewTreeObserver.addOnDrawListener { false }
         }
 
-        val factory: ViewModelFactory =
-            ViewModelFactory.getInstance(this)
-        val viewModel: UserProfileViewModel by viewModels {
-            factory
-        }
+        showSplash()
+    }
 
-        lifecycleScope.launch {
+    private fun showSplash() {
+        lifecycleScope.launch(Dispatchers.Main) {
             delay(500.toLong())
 
             if (viewModel.user != null)

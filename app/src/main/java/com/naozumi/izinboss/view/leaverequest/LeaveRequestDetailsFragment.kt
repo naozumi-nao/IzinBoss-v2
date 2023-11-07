@@ -57,22 +57,16 @@ class LeaveRequestDetailsFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        lifecycleScope.launch {
-            user = viewModel.getUser().first()
-        }
+        user = viewModel.user
 
         binding?.btnDeleteLeaveRequest?.visibility = View.GONE
 
         if (user?.role == User.UserRole.MANAGER) {
             binding?.btnApprove?.setOnClickListener(3000L) {
-                lifecycleScope.launch {
-                    changeLeaveRequestStatus(leaveRequest, true, user?.name.toString())
-                }
+                changeLeaveRequestStatus(leaveRequest, true, user?.name.toString())
             }
             binding?.btnReject?.setOnClickListener(3000L) {
-                lifecycleScope.launch {
-                    changeLeaveRequestStatus(leaveRequest, false, user?.name.toString())
-                }
+                changeLeaveRequestStatus(leaveRequest, false, user?.name.toString())
             }
         } else {
             binding?.btnApprove?.visibility = View.GONE
@@ -146,7 +140,7 @@ class LeaveRequestDetailsFragment : DialogFragment() {
         }
     }
 
-    private suspend fun changeLeaveRequestStatus(leaveRequest: LeaveRequest?, isApproved: Boolean, managerName: String) {
+    private fun changeLeaveRequestStatus(leaveRequest: LeaveRequest?, isApproved: Boolean, managerName: String) {
         if (leaveRequest?.companyId != null) {
             viewModel.changeLeaveRequestStatus(leaveRequest, isApproved, managerName).observe(viewLifecycleOwner) { result ->
                 if (result != null) {
@@ -178,7 +172,7 @@ class LeaveRequestDetailsFragment : DialogFragment() {
         }
     }
 
-    private suspend fun deleteLeaveRequest(leaveRequest: LeaveRequest?) {
+    private fun deleteLeaveRequest(leaveRequest: LeaveRequest?) {
         viewModel.deleteLeaveRequest(leaveRequest).observe(viewLifecycleOwner) { result ->
             if (result != null) {
                 when (result) {

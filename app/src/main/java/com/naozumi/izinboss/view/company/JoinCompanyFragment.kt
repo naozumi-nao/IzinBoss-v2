@@ -18,6 +18,7 @@ import com.naozumi.izinboss.model.helper.Result
 import com.naozumi.izinboss.model.helper.setOnClickListener
 import com.naozumi.izinboss.model.util.TextInputUtils
 import com.naozumi.izinboss.model.util.ViewUtils
+import com.naozumi.izinboss.view.MainActivity
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import com.naozumi.izinboss.viewmodel.company.CompanyViewModel
 import com.naozumi.izinboss.viewmodel.entry.RegisterViewModel
@@ -86,11 +87,9 @@ class JoinCompanyFragment : DialogFragment() {
                                 Toast.LENGTH_LONG
                             ).show()
                             dismiss()
-                            ViewUtils.replaceFragment(
-                                requireActivity() as AppCompatActivity,
-                                R.id.nav_main_content_container,
-                                CompanyProfileFragment(),
-                                CompanyProfileFragment::class.java.simpleName
+                            ViewUtils.moveActivityNoHistory(
+                                requireContext(),
+                                MainActivity::class.java
                             )
                         }
                         is Result.Error -> {

@@ -12,10 +12,13 @@ import com.naozumi.izinboss.model.repo.DataRepository
 import com.naozumi.izinboss.model.repo.UserPreferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.runBlocking
 
-class CompanyViewModel(private val dataRepository: DataRepository, private val userPreferences: UserPreferences): ViewModel() {
+class CompanyViewModel(private val dataRepository: DataRepository): ViewModel() {
 
-    val user = dataRepository.getUser()
+    val user= runBlocking {
+        dataRepository.getUser()
+    }
 
     fun createCompany(companyName: String, industrySector: Company.IndustrySector?, user: User?): LiveData<Result<Company>> {
         return liveData(Dispatchers.Main) {

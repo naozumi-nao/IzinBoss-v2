@@ -69,8 +69,8 @@ class RequestLeaveActivity : AppCompatActivity() {
         supportActionBar?.title = "Add Leave Request"
     }
 
-    private suspend fun uploadLeave() {
-        val user = viewModel.getUser().first()
+    private fun uploadLeave() {
+        val user = viewModel.user
         val timeStamp = TimeUtils.getCurrentDateAndTime()
         val typeString = binding.actvAddType.text.toString().trim()
         val typeMap = mapOf(
@@ -131,19 +131,19 @@ class RequestLeaveActivity : AppCompatActivity() {
                 Editable.Factory.getInstance().newEditable(TimeUtils.convertLongToDate(endDate))
         }
 
-        binding.edStartDateInput.setOnClickListener(1000L) {
+        binding.edStartDateInput.setOnClickListener(3000L) {
             showDateRangePicker(dateRangePickerCallback)
         }
 
-        binding.edEndDateInput.setOnClickListener(1000L) {
+        binding.edEndDateInput.setOnClickListener(3000L) {
             showDateRangePicker(dateRangePickerCallback)
         }
 
-        binding.tilStartDate.setOnClickListener(1000L) {
+        binding.tilStartDate.setOnClickListener(3000L) {
             showDateRangePicker(dateRangePickerCallback)
         }
 
-        binding.tilEndDate.setOnClickListener(1000L) {
+        binding.tilEndDate.setOnClickListener(3000L) {
             showDateRangePicker(dateRangePickerCallback)
         }
     }

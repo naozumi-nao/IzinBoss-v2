@@ -37,7 +37,7 @@ class RegisterViewModelTest {
     }
 
     @Test
-    fun `when registerUser is valid should Return Success`() = runBlocking {
+    fun testRegisterUserReturnSuccess() = runBlocking {
         val expectedData = Unit
         val expectedResult = Result.Success(Unit)
 
@@ -56,7 +56,7 @@ class RegisterViewModelTest {
     }
 
     @Test
-    fun `when registerUser is invalid should Return Error`() = runBlocking {
+    fun testRegisterUserReturnError() = runBlocking {
         val expectedErrorMessage = "Invalid input"
         val expectedResult = Result.Error(expectedErrorMessage)
 
@@ -72,4 +72,21 @@ class RegisterViewModelTest {
             Assert.assertEquals(expectedErrorMessage, actualResult.error)
         }
     }
+
+    @Test
+    fun testRegisterUserReturnLoading() = runBlocking {
+        val expectedResult = Result.Loading
+
+        Mockito.`when`(dataRepository.registerWithEmail("Bima", "test@gmail.com", "12345678"))
+            .thenReturn(flowOf(expectedResult))
+
+        val actualResult = registerViewModel.registerWithEmail("Bima", "test@gmail.com", "12345678")
+            .getOrAwaitValue()
+
+        Mockito.verify(dataRepository).registerWithEmail("Bima", "test@gmail.com", "12345678")
+
+        Assert.assertNotNull(actualResult)
+        Assert.assertTrue(actualResult is Result.Loading)
+    }
+
 }

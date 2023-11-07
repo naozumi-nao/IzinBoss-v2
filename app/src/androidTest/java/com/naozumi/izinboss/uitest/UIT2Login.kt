@@ -34,7 +34,7 @@ class UIT2Login {
     }
 
     @Test
-    fun testIfLoginSuccess() {
+    fun testLogin() {
         onView(ViewMatchers.withId(R.id.ed_login_email))
             .perform(ViewActions.typeText("test@gmail.com"))
         onView(ViewMatchers.withId(R.id.ed_login_password))

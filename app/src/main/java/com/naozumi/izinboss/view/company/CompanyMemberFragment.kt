@@ -62,7 +62,10 @@ class CompanyMemberFragment : DialogFragment() {
         binding?.progressBar?.visibility = View.GONE
         user = viewModel.user
         setUserData(clickedUser)
+        binding?.btnKickFromCompany?.visibility = View.GONE
 
+        // TODO: Gives the power to kick company members to managers
+        /*
         if(user?.role == User.UserRole.MANAGER && clickedUser?.uid != user?.uid) {
             binding?.btnKickFromCompany?.setOnClickListener(3000L) {
                 lifecycleScope.launch {
@@ -72,6 +75,7 @@ class CompanyMemberFragment : DialogFragment() {
         } else {
             binding?.btnKickFromCompany?.visibility = View.GONE
         }
+         */
     }
 
     private fun setUserData(user: User?) {

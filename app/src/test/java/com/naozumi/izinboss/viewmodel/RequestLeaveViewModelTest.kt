@@ -12,26 +12,6 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 
-/*
-@OptIn(ExperimentalCoroutinesApi::class)
-@RunWith(MockitoJUnitRunner::class)
-class RegisterViewModelTest {
-
-    @get:Rule
-    val instantExecutorRule = InstantTaskExecutorRule()
-    @get:Rule
-    val mainDispatcherRule = MainDispatcherRule()
-
-    @Mock
-    private lateinit var dataRepository: DataRepository
-    private lateinit var registerViewModel: RegisterViewModel
-
-    @Before
-    fun setUp() {
-        registerViewModel = RegisterViewModel(dataRepository)
-    }
-
- */
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(MockitoJUnitRunner::class)
 class RequestLeaveViewModelTest {
