@@ -1,32 +1,53 @@
 package com.naozumi.izinboss.model.util
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
+import android.text.Editable
+import android.text.TextWatcher
+import android.widget.Button
+import android.widget.TextView
 
 object FormValidator {
+    fun createTextWatcherWithButton( //Disables Button if Input Fields are Blank
+        button: Button?,
+        vararg textview: TextView?
+    ): TextWatcher {
+        return object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-    fun validateEmail(email: Flow<String>): Flow<Boolean> {
-        return email.map {
-            android.util.Patterns.EMAIL_ADDRESS.matcher(it).matches()
-        }
-    }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
-    fun validatePassword(password: Flow<String>): Flow<Boolean> {
-        return password.map {
-            it.isNotEmpty() && it.length >= 8
-        }
-    }
-
-    fun validateConfirmPassword(confirmPassword: Flow<String>): Flow<Boolean> {
-        return confirmPassword.map {
-            it.isNotEmpty() && it.length >= 8
-        }
-    }
-
-    fun validateForm(confirmPassword: Flow<String>, email: Flow<String>, password: Flow<String>): Flow<Boolean> {
-        return combine(validateEmail(email), validatePassword(password), validateConfirmPassword(confirmPassword)) { confirmPasswordIsValid, emailIsValid, passwordIsValid ->
-            emailIsValid && passwordIsValid && confirmPasswordIsValid
+            override fun afterTextChanged(s: Editable?) {
+                val isFormFilled = textview.all { it?.text?.isNotBlank() ?: false }
+                button?.isEnabled = isFormFilled
+            }
         }
     }
 }
+
+/*
+object TextInputUtils {
+    private val semaphore = Semaphore(1) // Initialize with a single permit
+
+    fun createTextWatcherWithButton(
+        button: Button?,
+        vararg textview: TextView?
+    ): TextWatcher {
+        return object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                try {
+                    semaphore.acquire() // Acquire the semaphore to enter the critical section
+
+                    val isFormFilled = textview.all { it?.text?.isNotBlank() ?: false }
+                    button?.isEnabled = isFormFilled
+                } finally {
+                    semaphore.release() // Release the semaphore when done
+                }
+            }
+        }
+    }
+}
+
+ */

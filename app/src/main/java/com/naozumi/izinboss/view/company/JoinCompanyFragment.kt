@@ -5,25 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.naozumi.izinboss.R
 import com.naozumi.izinboss.databinding.FragmentJoinCompanyBinding
 import com.naozumi.izinboss.model.datamodel.User
 import com.naozumi.izinboss.model.helper.Result
 import com.naozumi.izinboss.model.helper.setOnClickListener
-import com.naozumi.izinboss.model.util.TextInputUtils
+import com.naozumi.izinboss.model.util.FormValidator
 import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.view.MainActivity
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import com.naozumi.izinboss.viewmodel.company.CompanyViewModel
-import com.naozumi.izinboss.viewmodel.entry.RegisterViewModel
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 
 class JoinCompanyFragment : DialogFragment() {
     private var _binding: FragmentJoinCompanyBinding? = null
@@ -46,7 +39,7 @@ class JoinCompanyFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val textWatcher = TextInputUtils.createTextWatcherWithButton(
+        val textWatcher = FormValidator.createTextWatcherWithButton(
             binding?.btnJoinCompany,
             binding?.edCompanyIdInput
         )

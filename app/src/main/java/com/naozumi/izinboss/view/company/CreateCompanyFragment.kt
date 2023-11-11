@@ -9,21 +9,17 @@ import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import com.naozumi.izinboss.R
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.naozumi.izinboss.databinding.FragmentCreateCompanyBinding
 import com.naozumi.izinboss.model.datamodel.Company
 import com.naozumi.izinboss.model.datamodel.User
 import com.naozumi.izinboss.model.helper.Result
 import com.naozumi.izinboss.model.helper.setOnClickListener
 import com.naozumi.izinboss.model.util.StringUtils
-import com.naozumi.izinboss.model.util.TextInputUtils
+import com.naozumi.izinboss.model.util.FormValidator
 import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.view.MainActivity
 import com.naozumi.izinboss.viewmodel.company.CompanyViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 
 class CreateCompanyFragment : Fragment() {
     private var _binding: FragmentCreateCompanyBinding? = null
@@ -55,7 +51,7 @@ class CreateCompanyFragment : Fragment() {
         binding?.actvSelectIndustrySector?.setAdapter(typeAdapter)
         binding?.progressBar?.visibility = View.GONE
 
-        val textWatcher = TextInputUtils.createTextWatcherWithButton(
+        val textWatcher = FormValidator.createTextWatcherWithButton(
             binding?.btnRegisterCompany,
             binding?.edRegisterCompanyName,
             binding?.actvSelectIndustrySector

@@ -1,9 +1,8 @@
 package com.naozumi.izinboss.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.naozumi.izinboss.model.repo.DataRepository
-import com.naozumi.izinboss.viewmodel.entry.RegisterViewModel
 import com.naozumi.izinboss.model.helper.Result
+import com.naozumi.izinboss.model.repo.DataRepository
 import com.naozumi.izinboss.util.MainDispatcherRule
 import com.naozumi.izinboss.util.getOrAwaitValue
 import com.naozumi.izinboss.viewmodel.entry.LoginViewModel
@@ -49,6 +48,7 @@ class LoginViewModelTest {
             .getOrAwaitValue()
 
         Mockito.verify(dataRepository).loginWithEmail("test@gmail.com", "12345678")
+
         Assert.assertNotNull(actualResult)
         Assert.assertTrue(actualResult is Result.Success)
         if (actualResult is Result.Success) {
@@ -85,6 +85,7 @@ class LoginViewModelTest {
             .getOrAwaitValue()
 
         Mockito.verify(dataRepository).loginWithEmail("test@gmail.com", "12345678")
+
         Assert.assertNotNull(actualResult)
         Assert.assertTrue(actualResult is Result.Loading)
     }

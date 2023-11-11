@@ -20,7 +20,7 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
-class UIT8CreateCompany {
+class E2E8CreateCompany {
     @get:Rule
     val activityRule = ActivityScenarioRule(LoginActivity::class.java)
 
@@ -35,8 +35,8 @@ class UIT8CreateCompany {
     }
 
     @Test
-    fun testCreateCompany() {
-        TestAccount.loginManagerUser()
+    fun testCreateCompanyValid_E2E8A() {
+        TestAccount.loginManager2User()
 
         onView(ViewMatchers.withId(R.id.bottom_nav_company))
             .perform(ViewActions.click())
@@ -62,5 +62,42 @@ class UIT8CreateCompany {
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
         onView(ViewMatchers.withText("Test Company"))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+    }
+
+    @Test
+    fun testCreateCompanyEmptyFields_E2E8B() {
+        TestAccount.loginManager3User()
+
+        onView(ViewMatchers.withId(R.id.bottom_nav_company))
+            .perform(ViewActions.click())
+        onView(ViewMatchers.withId(R.id.btn_register_company))
+            .check(ViewAssertions.matches(ViewMatchers.isNotEnabled()))
+    }
+
+    @Test
+    fun testCreateCompanyEmptySector_E2E8C() {
+        TestAccount.loginManager3User()
+
+        onView(ViewMatchers.withId(R.id.bottom_nav_company))
+            .perform(ViewActions.click())
+        onView(ViewMatchers.withId(R.id.ed_register_company_name))
+            .perform(ViewActions.typeText("Test Company"), ViewActions.closeSoftKeyboard())
+        onView(ViewMatchers.withId(R.id.btn_register_company))
+            .check(ViewAssertions.matches(ViewMatchers.isNotEnabled()))
+    }
+
+    @Test
+    fun testCreateCompanyEmptyName_E2E8D() {
+        TestAccount.loginManager3User()
+
+        onView(ViewMatchers.withId(R.id.bottom_nav_company))
+            .perform(ViewActions.click())
+        onView(ViewMatchers.withId(R.id.actv_select_industry_sector))
+            .perform(ViewActions.click())
+        onView(ViewMatchers.withText("Manufacturing"))
+            .inRoot(RootMatchers.isPlatformPopup())
+            .perform(ViewActions.click())
+        onView(ViewMatchers.withId(R.id.btn_register_company))
+            .check(ViewAssertions.matches(ViewMatchers.isNotEnabled()))
     }
 }

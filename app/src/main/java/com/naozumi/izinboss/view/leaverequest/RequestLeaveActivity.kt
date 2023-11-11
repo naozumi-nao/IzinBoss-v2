@@ -8,21 +8,19 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.naozumi.izinboss.R
 import com.naozumi.izinboss.model.helper.Result
 import com.naozumi.izinboss.model.helper.setOnClickListener
 import com.naozumi.izinboss.databinding.ActivityRequestLeaveBinding
 import com.naozumi.izinboss.model.datamodel.LeaveRequest
-import com.naozumi.izinboss.model.util.TextInputUtils
+import com.naozumi.izinboss.model.util.FormValidator
 import com.naozumi.izinboss.model.util.TimeUtils
 import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.view.MainActivity
 import com.naozumi.izinboss.viewmodel.RequestLeaveViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class RequestLeaveActivity : AppCompatActivity() {
@@ -46,15 +44,13 @@ class RequestLeaveActivity : AppCompatActivity() {
         binding.actvAddType.setAdapter(typeAdapter)
 
         setupDateRangePicker()
-
-        val textWatcher = TextInputUtils.createTextWatcherWithButton(
+        val textWatcher = FormValidator.createTextWatcherWithButton(
             binding.btnRequestLeave,
             binding.actvAddType,
             binding.edStartDateInput,
             binding.edEndDateInput,
             binding.edAddReason
         )
-
         binding.btnRequestLeave.isEnabled = false
         binding.actvAddType.addTextChangedListener(textWatcher)
         binding.edStartDateInput.addTextChangedListener(textWatcher)
@@ -62,10 +58,11 @@ class RequestLeaveActivity : AppCompatActivity() {
         binding.edAddReason.addTextChangedListener(textWatcher)
 
         binding.btnRequestLeave.setOnClickListener(2000L) {
-            lifecycleScope.launch {
+            lifecycleScope.launch(Dispatchers.Main) {
                 uploadLeave()
             }
         }
+
         supportActionBar?.title = "Add Leave Request"
     }
 

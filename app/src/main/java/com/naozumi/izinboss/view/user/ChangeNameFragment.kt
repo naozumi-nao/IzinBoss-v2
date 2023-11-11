@@ -8,19 +8,15 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.naozumi.izinboss.R
 import com.naozumi.izinboss.databinding.FragmentChangeNameBinding
 import com.naozumi.izinboss.model.datamodel.User
 import com.naozumi.izinboss.model.helper.Result
 import com.naozumi.izinboss.model.helper.setOnClickListener
-import com.naozumi.izinboss.model.util.TextInputUtils
+import com.naozumi.izinboss.model.util.FormValidator
 import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.viewmodel.user.UserProfileViewModel
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 
 class ChangeNameFragment : DialogFragment() {
     private var _binding: FragmentChangeNameBinding? = null
@@ -43,7 +39,7 @@ class ChangeNameFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val textWatcher = TextInputUtils.createTextWatcherWithButton(
+        val textWatcher = FormValidator.createTextWatcherWithButton(
             binding?.btnConfirmNewName,
             binding?.edNewNameInput
         )

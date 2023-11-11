@@ -75,7 +75,7 @@ class LeaveRequestDetailsFragment : DialogFragment() {
         }
 
         if (user?.uid == leaveRequest?.employeeId) {
-            //binding?.btnDeleteLeaveRequest?.visibility = View.VISIBLE
+            binding?.btnDeleteLeaveRequest?.visibility = View.VISIBLE
             binding?.btnDeleteLeaveRequest?.setOnClickListener(3000L) {
                 lifecycleScope.launch {
                     deleteLeaveRequest(leaveRequest)

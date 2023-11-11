@@ -9,18 +9,15 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.naozumi.izinboss.R
 import com.naozumi.izinboss.databinding.FragmentAddUserToCompanyBinding
 import com.naozumi.izinboss.model.datamodel.User
 import com.naozumi.izinboss.model.helper.Result
 import com.naozumi.izinboss.model.helper.setOnClickListener
-import com.naozumi.izinboss.model.util.TextInputUtils
+import com.naozumi.izinboss.model.util.FormValidator
 import com.naozumi.izinboss.model.util.ViewUtils
 import com.naozumi.izinboss.viewmodel.ViewModelFactory
 import com.naozumi.izinboss.viewmodel.company.CompanyViewModel
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class AddUserToCompanyFragment : DialogFragment() {
@@ -56,7 +53,7 @@ class AddUserToCompanyFragment : DialogFragment() {
         )
         binding?.actvChooseUserRole?.setAdapter(roleAdapter)
 
-        val textWatcher = TextInputUtils.createTextWatcherWithButton(
+        val textWatcher = FormValidator.createTextWatcherWithButton(
             binding?.btnAddUser,
             binding?.edUserIdInput,
             binding?.actvChooseUserRole

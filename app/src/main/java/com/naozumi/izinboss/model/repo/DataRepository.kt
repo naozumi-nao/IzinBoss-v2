@@ -123,7 +123,7 @@ class DataRepository (
 
                     emit(Result.Success(company))
                 } else {
-                    emit(Result.Error("Error: User is Null!"))
+                    emit(Result.Error("User is Null!"))
                 }
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
@@ -141,7 +141,7 @@ class DataRepository (
                     if (company != null) {
                         emit(Result.Success(company))
                     } else {
-                        emit(Result.Error("Error: Company is Null!"))
+                        emit(Result.Error("Company is Null!"))
                     }
                 }
             }
@@ -190,10 +190,10 @@ class DataRepository (
 
                         emit(Result.Success(Unit))
                     } else {
-                        emit(Result.Error("Error: Company with ID $companyId does not exist"))
+                        emit(Result.Error("Company with ID $companyId does not exist"))
                     }
                 } else {
-                    emit(Result.Error("Error: User is Null"))
+                    emit(Result.Error("User is Null"))
                 }
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
@@ -260,7 +260,7 @@ class DataRepository (
 
                     emit(Result.Success(Unit))
                 } else {
-                    emit(Result.Error("Error: User is Null"))
+                    emit(Result.Error("User is Null"))
                 }
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
@@ -340,7 +340,7 @@ class DataRepository (
                     leaveRequestCollection.document(leaveRequest.id.toString()).update(leaveRequestUpdate).await()
                     emit(Result.Success(Unit))
                 } else {
-                    emit(Result.Error("ERROR: Leave Request is Null"))
+                    emit(Result.Error("Leave Request is Null"))
                 }
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
@@ -361,7 +361,7 @@ class DataRepository (
                     leaveRequestRef.delete().await()
                     emit(Result.Success(Unit))
                 } else {
-                    emit(Result.Error("ERROR: Leave Request is null"))
+                    emit(Result.Error("Leave Request is null"))
                 }
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
@@ -386,7 +386,7 @@ class DataRepository (
 
                     emit(Result.Success(Unit))
                 } else {
-                    emit(Result.Error("ERROR: User is Null"))
+                    emit(Result.Error("User is Null"))
                 }
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))
@@ -428,7 +428,7 @@ class DataRepository (
 
                     emit(Result.Success(Unit))
                 } else {
-                    emit(Result.Error("Error: User Not Found"))
+                    emit(Result.Error("User Not Found"))
                 }
             } catch (e: Exception) {
                 emit(Result.Error(e.message.toString()))

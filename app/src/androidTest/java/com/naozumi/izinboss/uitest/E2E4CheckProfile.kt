@@ -1,6 +1,6 @@
 package com.naozumi.izinboss.uitest
 
-import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.Espresso.*
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions
@@ -19,24 +19,25 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
-class UIT3GoogleSSO {
+class E2E4CheckProfile {
     @get:Rule
     val activityRule = ActivityScenarioRule(LoginActivity::class.java)
-
     @Before
     fun setUp() {
         IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
     }
-
     @After
     fun tearDown() {
         IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource)
     }
 
     @Test
-    fun testGoogleSSO() {
-        onView(ViewMatchers.withId(R.id.btn_google_single_sign_on)).perform(ViewActions.click())
-        onView(ViewMatchers.withId(R.id.bottom_nav_home))
+    fun testProfileShowsData() {
+        TestAccount.loginGenericUser()
+
+        onView(ViewMatchers.withId(R.id.bottom_nav_profile))
+            .perform(ViewActions.click())
+        onView(ViewMatchers.withId(R.id.tv_full_name_input))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }
 }
