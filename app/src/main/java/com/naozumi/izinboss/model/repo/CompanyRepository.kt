@@ -12,4 +12,5 @@ interface CompanyRepository {
     fun getCompanyMembers(companyId: String?): Flow<Result<List<User>>>
     fun removeUserFromCompany(userId: String?): Flow<Result<Unit>>
     fun getCompanyData(companyId: String): Flow<Result<Company>>
+    fun joinCompany(companyId: String, user: User?): Flow<Result<Unit>>
 }

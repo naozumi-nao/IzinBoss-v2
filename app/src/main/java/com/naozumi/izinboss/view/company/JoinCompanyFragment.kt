@@ -65,7 +65,7 @@ class JoinCompanyFragment : DialogFragment() {
 
     private fun joinCompany() {
         val companyId = binding?.edCompanyIdInput?.text.toString()
-        viewModel.addUserToCompany(companyId, user, user?.role)
+        viewModel.joinCompany(companyId, user)
             .observe(this) { result ->
                 if (result != null) {
                     when (result) {

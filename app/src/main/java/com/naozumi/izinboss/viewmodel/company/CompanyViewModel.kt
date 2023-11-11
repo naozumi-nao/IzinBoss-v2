@@ -34,6 +34,13 @@ class CompanyViewModel(private val dataRepository: DataRepository): ViewModel() 
         }
     }
 
+    fun joinCompany(companyId: String, user: User?): LiveData<Result<Unit>> {
+        return liveData(Dispatchers.Main) {
+            val result = dataRepository.joinCompany(companyId, user)
+            emitSource(result.asLiveData())
+        }
+    }
+
     fun kickUserFromCompany(userId: String?): LiveData<Result<Unit>> {
         return liveData(Dispatchers.Main) {
             val result = dataRepository.removeUserFromCompany(userId)

@@ -44,6 +44,8 @@ class UserProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding?.progressBar?.visibility = View.GONE
 
+        refreshUser()
+
         user =  viewModel.user
         setUserData(user)
 
@@ -148,6 +150,28 @@ class UserProfileFragment : Fragment() {
                         "Account Deleted",
                         LoginActivity::class.java
                     )
+                }
+                is Result.Error -> {
+                    binding?.progressBar?.visibility = View.GONE
+                    ViewUtils.showContinueDialog(
+                        requireActivity(),
+                        getString(R.string.error),
+                        result.error
+                    )
+                }
+            }
+        }
+    }
+
+    private fun refreshUser() {
+        viewModel.getUserData().observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Result.Loading -> {
+                    binding?.progressBar?.visibility = View.VISIBLE
+                }
+                is Result.Success -> {
+                    binding?.progressBar?.visibility = View.GONE
+                    viewModel.updateLocalUser(result.data)
                 }
                 is Result.Error -> {
                     binding?.progressBar?.visibility = View.GONE

@@ -163,12 +163,53 @@ class DataRepository (
                         val company = companyDocument.toObject(Company::class.java)
                         val userDocumentRef = firestore.collection("Users").document(user.uid.toString())
 
-                        //Update User Locally
                         user.role = when (position) {
                             User.UserRole.MANAGER -> User.UserRole.MANAGER
                             User.UserRole.EMPLOYEE -> User.UserRole.EMPLOYEE
                             else -> User.UserRole.EMPLOYEE
                         }
+                        //Update User in Firestore
+                        val userUpdate = mapOf(
+                            "companyId" to companyId,
+                            "companyName" to company?.name,
+                            "role" to user.role
+                        )
+                        userDocumentRef.update(userUpdate).await()
+
+                        if (company != null) {
+                            val companyUpdate = mapOf(
+                                "memberCount" to company.memberCount + 1
+                            )
+                            companyDocumentRef.update(companyUpdate).await()
+                        }
+
+                        emit(Result.Success(Unit))
+                    } else {
+                        emit(Result.Error("Company with ID $companyId does not exist"))
+                    }
+                } else {
+                    emit(Result.Error("User is Null"))
+                }
+            } catch (e: Exception) {
+                emit(Result.Error(e.message.toString()))
+            }
+        }
+    }.flowOn(Dispatchers.IO)
+
+    override fun joinCompany(companyId: String, user: User?): Flow<Result<Unit>> = flow {
+        emit(Result.Loading)
+        wrapIdlingResource {
+            try {
+                if (user != null) {
+                    // Check if the company with the specified companyId exists
+                    val companyDocumentRef = firestore.collection("Companies").document(companyId)
+                    val companyDocument = companyDocumentRef.get().await()
+                    if (companyDocument.exists()) {
+                        val company = companyDocument.toObject(Company::class.java)
+                        val userDocumentRef = firestore.collection("Users").document(user.uid.toString())
+
+                        //Update User Locally
+                        user.role = User.UserRole.EMPLOYEE
                         user.companyId = companyId
                         user.companyName = company?.name
                         saveUserToPreferences(user)

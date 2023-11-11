@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.naozumi.izinboss.model.datamodel.Company
 import com.naozumi.izinboss.model.datamodel.User
 import com.naozumi.izinboss.model.helper.Result
+import com.naozumi.izinboss.model.helper.wrapIdlingResource
 import com.naozumi.izinboss.model.repo.DataRepository
 import com.naozumi.izinboss.model.repo.UserPreferences
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +22,25 @@ import kotlinx.coroutines.runBlocking
 class UserProfileViewModel(private val dataRepository: DataRepository): ViewModel() {
     val user= runBlocking {
         dataRepository.getUser()
+    }
+    fun getUserData(): LiveData<Result<User>> = liveData(Dispatchers.Main) {
+        wrapIdlingResource {
+            emit(Result.Loading)
+            try {
+                val result = dataRepository.getUserData(user?.uid)
+                if (result != null) {
+                    emit(Result.Success(result))
+                }
+            } catch (e: Exception) {
+                emit(Result.Error(e.toString()))
+            }
+        }
+    }
+
+    fun updateLocalUser(user: User) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataRepository.saveUserToPreferences(user)
+        }
     }
     fun changeFullName(newName: String, user: User?): LiveData<Result<Unit>> {
         return liveData(Dispatchers.Main) {

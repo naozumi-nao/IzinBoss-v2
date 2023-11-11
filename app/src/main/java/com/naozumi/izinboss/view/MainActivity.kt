@@ -34,10 +34,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel.userData.observe(this) { user ->
-            viewModel.saveUserToPreferences(user)
-        }
-
         binding.bottomNavigation.setOnItemSelectedListener { menuItem ->
             when(menuItem.itemId) {
                 R.id.bottom_nav_home -> {
@@ -169,6 +165,13 @@ class MainActivity : AppCompatActivity() {
                 .load(viewModel.user?.profilePicture)
                 .error(R.drawable.baseline_person_24)
                 .into(ivProfilePhoto)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.userData.observe(this) { user ->
+            viewModel.saveUserToPreferences(user)
         }
     }
 
