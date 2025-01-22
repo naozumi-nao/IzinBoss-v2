@@ -15,6 +15,9 @@ import com.naozumi.izinboss.model.helper.wrapIdlingResource
 import com.naozumi.izinboss.model.util.TimeUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn

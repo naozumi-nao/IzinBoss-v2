@@ -48,7 +48,7 @@ class E2E15CheckLeaveRequestsList {
 
     @Test
     fun testCheckLeaveRequestListUnregistered_E2E15C() {
-        TestAccount.loginEmployee2User()
+        TestAccount.loginEmployee3User()
 
         onView(ViewMatchers.withId(R.id.anim_empty_list))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
