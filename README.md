@@ -2,7 +2,7 @@
 
 IzinBoss is an Android-based employee leave management application designed to simplify and accelerate the leave request process in organizations. By leveraging modern technologies and best practices, this app aims to eliminate inefficiencies found in manual leave request systems and provide a user-friendly platform for employees and managers.
 
-canva presentation link (undergraduate thesis seminar): https://www.canva.com/design/DAF0WtDYm7I/J0CAyrQu6iQaIvAXu_rRFg/view?utm_content=DAF0WtDYm7I&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h47e148f638#7
+Presentation link (undergraduate thesis seminar): https://shorturl.at/35Lfo
 
 ## Background
 Effective leave management is essential for maintaining employee productivity and ensuring smooth organizational operations. Traditional manual leave request processes often involve filling out forms and awaiting manager approvals, which can be time-consuming and frustrating for employees. To address these issues, IzinBoss provides an automated and streamlined solution for managing employee leave requests.
@@ -43,9 +43,3 @@ While the current version of IzinBoss focuses on core functionality, future upda
 
 ## Contribution
 Contributions to IzinBoss are welcome! If you have ideas for improving the app or want to report issues, feel free to open an issue or submit a pull request on GitHub.
-
-## License
-IzinBoss is released under the MIT License. See the LICENSE file for details.
-
----
-Thank you for using IzinBoss! Together, we can make leave management more efficient and enjoyable for everyone.
